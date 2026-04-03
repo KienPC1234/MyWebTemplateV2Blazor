@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="MyWebTemplateV2/MyWebTemplateV2.Client/MyWebTemplateV2.Client.csproj" />
+  <Project Path="MyWebTemplateV2/MyWebTemplateV2/MyWebTemplateV2.csproj" />
+</Solution>

@@ -1,0 +1,284 @@
+@page "/"
+@using MyWebTemplateV2.Components.UI.Group1_Layout
+@using MyWebTemplateV2.Components.UI.Group2_Actions
+@using MyWebTemplateV2.Components.UI.Group3_DataDisplay
+@using MyWebTemplateV2.Components.UI.Group4_Forms
+@using MyWebTemplateV2.Components.UI.Group5_Overlays
+@using MyWebTemplateV2.Components.UI.Group6_Navigation
+@using MyWebTemplateV2.Components.UI.Group7_Specialized
+@using MyWebTemplateV2.Components.UI.Group8_Immersive
+@using MyWebTemplateV2.Components.UI.Group9_AI
+@using MyWebTemplateV2.Components.UI.Group10_Advanced
+@using MyWebTemplateV2.Components.UI.Group11_FutureData
+@using MyWebTemplateV2.Components.UI.Group12_Interactions
+@using MyWebTemplateV2.Components.UI.Group13_Entry
+
+<PageTitle>Zinc Monochrome Lab | Full 13-Group Suite</PageTitle>
+
+<InitialLoader @bind-Visible="showLoader" />
+<MeshGradientCanvas />
+<EdgeBlur />
+<ConfettiGlass @bind-Active="showConfetti" />
+
+<div class="space-y-16 py-12 px-4 lg:px-8 max-w-7xl mx-auto relative z-10">
+    <!-- Hero Section -->
+    <header class="text-center space-y-4 mb-16 lg:mb-20 animate-fade-in">
+        <div class="flex justify-center gap-2">
+            <StatusBadge Status="active">v2.5 Full Suite</StatusBadge>
+            <StatusBadge Status="inactive">Zinc Monochrome</StatusBadge>
+        </div>
+        <h1 class="text-6xl lg:text-8xl font-extrabold italic tracking-tight uppercase text-zinc-900 dark:text-white drop-shadow-md">
+            UI Engine
+        </h1>
+        <p class="max-w-2xl mx-auto text-lg text-zinc-600 dark:text-zinc-300 font-medium">
+            A precision-engineered UI library for luxury SaaS. 13 categorized groups for complete interface control.
+        </p>
+    </header>
+
+    <!-- Interactive Lab Tabs -->
+    <div class="flex justify-center sticky top-20 z-40 bg-zinc-50/50 dark:bg-zinc-950/50 backdrop-blur-md py-4 rounded-3xl max-w-5xl mx-auto border border-zinc-200 dark:border-zinc-700">
+        <SaaSTabs Tabs="@groups" @bind-ActiveTab="activeGroup" />
+    </div>
+
+    <!-- Group Showcase Content -->
+    <div class="min-h-[800px] transition-all duration-700">
+        @if (activeGroup == "Core")
+        {
+            <div class="space-y-12 animate-fade-in">
+                <SectionHeader Title="Group 1: Layout & Scaffolding" Description="The structural foundation of your interface." />
+                <BentoGrid>
+                    <BentoItem Span="4x2" Class="glass-card flex flex-col justify-end bg-white/20 dark:bg-zinc-900/20">
+                         <div class="absolute top-8 right-8">
+                             <SaaSButton Variant="secondary" OnClick="() => showSidebar = !showSidebar">Toggle Sidebar</SaaSButton>
+                         </div>
+                         <h2 class="text-4xl m-0">SaaS Shell</h2>
+                         <p>Responsive containers with integrated noise overlays and mouse tracking.</p>
+                    </BentoItem>
+                    <BentoItem Span="2x2" Class="flex items-center justify-center bg-zinc-950 text-white">
+                         <div class="text-center">
+                             <div class="h-20 w-20 rounded-full border-4 border-zinc-500/20 mb-4 animate-pulse mx-auto"></div>
+                             <span class="text-xl font-black italic uppercase tracking-widest">Active Node</span>
+                         </div>
+                    </BentoItem>
+                </BentoGrid>
+                @if (showSidebar) { <AcrylicSidebar /> }
+            </div>
+        }
+        else if (activeGroup == "Interactions")
+        {
+            <div class="space-y-16 animate-fade-in">
+                <SectionHeader Title="Group 2: Actions & Triggers" Description="High-fidelity tactile response elements." />
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <Card Class="glass-card">
+                        <Header><h4 class="text-[10px] m-0">Tactile Triggers</h4></Header>
+                        <ChildContent>
+                            <div class="flex flex-wrap gap-4 items-center">
+                                <SaaSButton Variant="primary">Execute Command</SaaSButton>
+                                <SaaSButton Variant="secondary">Secondary</SaaSButton>
+                                <GlassIconButton><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg></GlassIconButton>
+                                <CopyButton Text="https://zinc.antigravity.io" />
+                            </div>
+                        </ChildContent>
+                    </Card>
+                    <Card>
+                        <Header><h4 class="text-[10px] m-0">Contextual Flow</h4></Header>
+                        <ChildContent>
+                            <div class="flex flex-col gap-6">
+                                <BackLink Url="#">Return to Origin</BackLink>
+                                <DoubleAction ConfirmLabel="SYNC CLUSTER" CancelLabel="ABORT" />
+                                <SaaSButton Variant="secondary" OnClick="() => showPalette = true">Launch Command Palette (⌘K)</SaaSButton>
+                            </div>
+                        </ChildContent>
+                    </Card>
+                </div>
+                <CommandPalette @bind-Visible="showPalette" />
+            </div>
+        }
+        else if (activeGroup == "Data")
+        {
+            <div class="space-y-16 animate-fade-in">
+                <SectionHeader Title="Group 3: Data & Group 11: Future Data" Description="Information architecture & predictive telemetry displays." />
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <StatsCard Label="TOTAL AGENTS" Value="1,421" Trend="+12.4%" />
+                    <StatsCard Label="SYNC STATUS" Value="OPTIMAL" />
+                    <StatsCard Label="LATENCY" Value="0.4ms" Trend="-0.1ms" />
+                    <div class="glass p-6 rounded-3xl flex flex-col items-center justify-center">
+                         <GlassGlobe Value="99.4%" Label="UPTIME" />
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <div class="space-y-8">
+                        <Card>
+                            <Header><h4 class="text-[10px] m-0">Real-time Activity</h4></Header>
+                            <ChildContent><ActivityFeed Items="@sampleActivity" /></ChildContent>
+                        </Card>
+                        <table>
+                            <thead>
+                                <tr><th>Node Name</th><th class="text-right">Commit Hash</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td><UserSnippet Name="Alpha Cloud" Email="core@node.io" /></td><td class="text-right"><span class="font-mono text-zinc-400">#42A9B</span></td></tr>
+                                <tr><td><UserSnippet Name="Beta Cluster" Email="sync@node.io" /></td><td class="text-right"><AvatarStack Avatars="@sampleAvatars" /></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="space-y-8">
+                        <Card>
+                            <Header><h4 class="text-[10px] m-0">Holographic Telemetry</h4></Header>
+                            <ChildContent><HolographicBarChart Data="@(new List<int> { 20, 80, 45, 90, 60, 30, 85 })" /></ChildContent>
+                        </Card>
+                        <Card>
+                            <Header><h4 class="text-[10px] m-0">Global Heatmap</h4></Header>
+                            <ChildContent>
+                                <HeatmapGlass Data="@(Enumerable.Range(0, 48).Select(_ => Random.Shared.Next(0, 100)).ToList())" />
+                            </ChildContent>
+                        </Card>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (activeGroup == "Forms")
+        {
+            <div class="space-y-16 animate-fade-in">
+                <SectionHeader Title="Group 4: Forms & Group 12: Precision" Description="Data entry and granular control systems." />
+                <div class="glass-card max-w-4xl mx-auto space-y-12">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div><FieldLabel>Environment Mapping</FieldLabel><MinimalInput Placeholder="Staging Node 04" /></div>
+                        <div><FieldLabel>Compute Region</FieldLabel><SaaSSelect Value="US-EAST-1"><option>US-EAST-1</option><option>EU-WEST-4</option></SaaSSelect></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                         <div class="space-y-6">
+                            <FieldLabel>Liquid Progress Bar (74%)</FieldLabel>
+                            <ProgressGlassBar Value="74" />
+                            <FieldLabel>Interactive Intensity</FieldLabel>
+                            <GlassSlider Value="42" />
+                         </div>
+                         <div class="space-y-6">
+                            <div class="flex items-center justify-between p-6 glass rounded-2xl">
+                                <div class="flex flex-col"><span class="text-xs font-bold text-zinc-900 uppercase">Encryption</span><span class="text-[10px] text-zinc-400 mt-1">AES-256 for cluster traffic.</span></div>
+                                <SoftToggle @bind-Value="isSwitchOn" />
+                            </div>
+                            <div class="flex gap-4">
+                                <CheckboxCustom @bind-Value="check1">Enable Monitoring</CheckboxCustom>
+                                <CheckboxCustom @bind-Value="check2">Persistence Active</CheckboxCustom>
+                            </div>
+                         </div>
+                    </div>
+                    <div><FieldLabel>Manifest Summary</FieldLabel><GlassTextArea Placeholder="Enter node configuration manifest..." /></div>
+                </div>
+            </div>
+        }
+        else if (activeGroup == "Intelligence")
+        {
+            <div class="space-y-16 animate-fade-in">
+                <SectionHeader Title="Group 9: AI Agents & Group 10: Advanced" Description="Intelligent processing and hardware-accelerated UI." />
+                
+                <FloatingIsland Status="NODE SYNC ACTIVE" Label="VERIFYING MANIFEST 4022">
+                     <Icon><div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div></Icon>
+                     <Actions><KbdShortcutHint Keys="@(new List<string> { "⌘", "I" })" /></Actions>
+                </FloatingIsland>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-8">
+                        <div class="p-1 glass rounded-[40px]">
+                            <AIPromptConsole Placeholder="Analyze cluster stability..." />
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <ThoughtBubble>Stability is at 99.42%. No critical overflows detected in the last 24h.</ThoughtBubble>
+                            <ThoughtBubble Orientation="right">Confirming node alignment. Synchronization complete.</ThoughtBubble>
+                        </div>
+                    </div>
+                    <div class="space-y-8">
+                        <MagicActionPill Label="AI SMART REPAIR" OnClick="() => showCommandBar = true" />
+                        <TheCommandBar @bind-Visible="showCommandBar" />
+                        <GlassCodeSnippet FileName="config.json" Code="@("{\n  \"env\": \"forge-mono\",\n  \"auth\": \"OIDC\"\n}")" />
+                        <MagneticButton Class="w-full">
+                            <div class="px-8 py-4 glass rounded-2xl w-full text-center font-bold text-xs">MAGNETIC SUBMIT</div>
+                        </MagneticButton>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (activeGroup == "Feedback")
+        {
+            <div class="space-y-16 animate-fade-in">
+                <SectionHeader Title="Group 5: Overlays & Group 13: Entry" Description="Presence and validation feedback systems." />
+                <div class="flex flex-wrap gap-8 justify-center py-20 bg-zinc-100 dark:bg-zinc-900/40 rounded-[3rem] border border-zinc-200 dark:border-zinc-800">
+                    <SaaSButton Variant="primary" OnClick="() => showModal = true">Open Glass Modal</SaaSButton>
+                    <SaaSButton Variant="secondary" OnClick="() => showToast = true">Trigger Toast</SaaSButton>
+                    <SaaSButton Variant="ghost" OnClick="async () => { showLoader = true; await Task.Delay(2500); showLoader = false; }">Show Loader</SaaSButton>
+                    
+                    <MinimalTooltip Text="Hardware Key: Secure (⌘K)">
+                         <div class="px-8 py-3 glass rounded-xl border border-zinc-200/50 font-bold text-[10px] tracking-widest cursor-help">HOVER FOR TOOLTIP</div>
+                    </MinimalTooltip>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                     <SkeletonPulse />
+                     <SkeletonGlass Class="h-24"><div class="p-8 text-[10px] font-bold text-zinc-400">SHIMMER WRAPPER MODE</div></SkeletonGlass>
+                     <div class="glass p-8 rounded-3xl text-center"><h3 class="m-0">Verification State</h3><p class="text-xs mb-0 mt-2">Checking cluster status...</p></div>
+                </div>
+
+                <SaaSToast @bind-Visible="showToast" Title="Synchronization Complete" Message="All nodes are now aligned to version 2.5." />
+                <GlassModal @bind-IsOpen="showModal">
+                     <Header><h2>DANGER ZONE</h2></Header>
+                     <ChildContent><p>Warning: You are about to purge the staging cluster. This action is irreversible.</p></ChildContent>
+                     <Footer><DoubleAction ConfirmLabel="PURGE CLUSTER" CancelLabel="ABORT" OnCancel="() => showModal = false" /></Footer>
+                </GlassModal>
+            </div>
+        }
+    </div>
+
+    <!-- Group 8: Immersive Footer -->
+    <footer class="mt-32 pt-20 border-t border-zinc-200 dark:border-zinc-800 text-center space-y-10">
+        <h2 class="text-5xl italic opacity-20">Immersive Experience</h2>
+        <div class="flex justify-center h-40 items-center">
+             <GlassParallaxStack>
+                <div class="p-10 glass rounded-3xl border-zinc-900/20 bg-white/20">PARALLAX LAYER 1</div>
+                <div class="p-10 glass rounded-3xl border-white/20 bg-zinc-900/20">PARALLAX LAYER 2</div>
+             </GlassParallaxStack>
+        </div>
+        <div class="max-w-xs mx-auto">
+             <Stepper Steps="@(new List<string> { "INIT", "REPLICATE", "SYNC", "FINAL" })" CurrentStep="2" />
+        </div>
+    </footer>
+</div>
+
+@code {
+    private List<string> groups = new() { "Core", "Interactions", "Data", "Forms", "Intelligence", "Feedback" };
+    private string activeGroup = "Core";
+    
+    private bool showLoader = true;
+    [Parameter] public string AppTitle { get; set; } = "ANTIGRAVITY";
+    [Parameter] public string SubTitle { get; set; } = "Forge Protocol Initializing...";
+    [Parameter] public bool Visible { get; set; } = true;
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    private bool showSidebar = false;
+    private bool showPalette = false;
+    private bool isSwitchOn = true;
+    private bool check1 = true;
+    private bool check2 = false;
+    private bool showModal = false;
+    private bool showToast = false;
+    private bool showConfetti = false;
+    [Parameter] public EventCallback<bool> ActiveChanged { get; set; }
+    private bool showCommandBar = false;
+
+    private List<string> sampleAvatars = new() {
+        "https://i.pravatar.cc/150?u=1",
+        "https://i.pravatar.cc/150?u=2",
+        "https://i.pravatar.cc/150?u=3"
+    };
+
+    private List<ActivityFeed.ActivityItem> sampleActivity = new() {
+        new() { Timestamp = "2M AGO", Title = "NODE SYNCED", Description = "Node-042 correctly aligned." },
+        new() { Timestamp = "1H AGO", Title = "BACKUP FINISHED", Description = "Global persistence map snapshot." }
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(2000);
+        showLoader = false;
+    }
+}

@@ -1,0 +1,112 @@
+@page "/weather"
+@attribute [StreamRendering]
+@using MyWebTemplateV2.Components.UI.Group3_DataDisplay
+@using MyWebTemplateV2.Components.UI.Group1_Layout
+
+<PageTitle>Weather Intelligence</PageTitle>
+
+<div class="space-y-10 animate-fade-in">
+    <SectionHeader Title="Weather Analytics" Description="Real-time atmospheric telemetry from global nodes." />
+
+    @if (forecasts == null)
+    {
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <SkeletonGlass Class="h-32" />
+            <SkeletonGlass Class="h-32" />
+            <SkeletonGlass Class="h-32" />
+        </div>
+        <div class="mt-10">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Temp (C)</th>
+                        <th>Temp (F)</th>
+                        <th>Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < 5; i++)
+                    {
+                        <tr>
+                            <td><div class="h-4 w-24 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded"></div></td>
+                            <td><div class="h-4 w-12 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded"></div></td>
+                            <td><div class="h-4 w-12 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded"></div></td>
+                            <td><div class="h-4 w-32 bg-zinc-200 dark:bg-zinc-800 animate-pulse rounded"></div></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <StatsCard Label="AVG TEMPERATURE" Value="@($"{forecasts.Average(f => f.TemperatureC):F1}°C")" Trend="+1.2%" />
+            <StatsCard Label="HIGHEST PEAK" Value="@($"{forecasts.Max(f => f.TemperatureC)}°C")" />
+            <StatsCard Label="STABILITY INDEX" Value="94%" Trend="OPTIMAL" />
+        </div>
+
+        <div class="mt-10">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Temp (C)</th>
+                        <th>Temp (F)</th>
+                        <th>Summary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var forecast in forecasts)
+                    {
+                        <tr>
+                            <td class="font-bold tracking-tight text-zinc-900 dark:text-zinc-100">@forecast.Date.ToShortDateString()</td>
+                            <td>@forecast.TemperatureC°</td>
+                            <td>@forecast.TemperatureF°</td>
+                            <td>
+                                <StatusBadge Status="@GetBadgeStatus(forecast.Summary)">@forecast.Summary</StatusBadge>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@code {
+    private WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1500);
+
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
+        forecasts = Enumerable.Range(1, 10).Select(index => new WeatherForecast
+        {
+            Date = startDate.AddDays(index),
+            TemperatureC = Random.Shared.Next(-20, 55),
+            Summary = summaries[Random.Shared.Next(summaries.Length)]
+        }).ToArray();
+    }
+
+    private string GetBadgeStatus(string? summary)
+    {
+        return summary switch
+        {
+            "Hot" or "Sweltering" or "Scorching" => "active", // Warm/Hot
+            "Freezing" or "Bracing" or "Chilly" => "inactive", // Cold
+            _ => "active" // Default
+        };
+    }
+
+    private class WeatherForecast
+    {
+        public DateOnly Date { get; set; }
+        public int TemperatureC { get; set; }
+        public string? Summary { get; set; }
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+}
