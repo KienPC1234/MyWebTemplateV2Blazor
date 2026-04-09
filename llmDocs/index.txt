@@ -1,0 +1,31 @@
+﻿# NeoUI LLM Index
+# Format: Title | URL
+# Base URL: https://neoui.io
+# Generated: 2026-04-07T09:50:44Z
+
+## Core
+Getting Started | https://neoui.io/llms/getting-started.txt
+Installation | https://neoui.io/llms/installation.txt
+Architecture | https://neoui.io/llms/architecture.txt
+Theming | https://neoui.io/llms/theming.txt
+CLI & Build | https://neoui.io/llms/cli.txt
+Templates | https://neoui.io/llms/templates.txt
+
+## Components
+Components Overview | https://neoui.io/llms/components.txt
+Full Component Reference | https://neoui.io/llms/components-full.txt
+DataGrid | https://neoui.io/llms/datagrid.txt
+Primitives | https://neoui.io/llms/primitives.txt
+
+## Patterns & Icons
+Usage Patterns | https://neoui.io/llms/patterns.txt
+Icons | https://neoui.io/llms/icons.txt
+
+## Blocks
+Blocks Catalog | https://neoui.io/llms/blocks.txt
+
+## Reference
+Changelog | https://neoui.io/llms/changelog.txt
+
+## Full Dump
+Complete Documentation | https://neoui.io/llms/llms-full.txt

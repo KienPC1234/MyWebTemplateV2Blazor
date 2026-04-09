@@ -1,0 +1,1424 @@
+﻿# NeoUI -- Components Reference
+
+Version: 3.8.3
+Last Updated: 2026-03-30
+
+NeoUI ships 100+ production-ready styled components. All require `@using NeoUI.Blazor`.
+
+## Quick Import
+
+```razor
+@using NeoUI.Blazor
+@using NeoUI.Blazor.Services
+@using NeoUI.Icons.Lucide
+```
+
+---
+
+## Inputs & Forms
+
+### Button
+```razor
+<Button Variant="ButtonVariant.Default" Size="ButtonSize.Default" OnClick="@Handler" Disabled="false">
+ Click me
+</Button>
+```
+Variants: `Default` | `Secondary` | `Destructive` | `Outline` | `Ghost` | `Link`
+Sizes: `Default` | `Sm` | `Lg` | `Icon`
+
+### Input
+```razor
+<Input Type="text" Placeholder="Enter text..." @bind-Value="value" Disabled="false" Class="" />
+```
+Types: text | password | email | number | search | url | tel
+
+### Textarea
+```razor
+<Textarea Placeholder="Multi-line..." @bind-Value="value" Rows="4" AutoResize="true" />
+```
+
+### Checkbox
+```razor
+<Checkbox @bind-Checked="isChecked" Indeterminate="false" Disabled="false">
+ Label text
+</Checkbox>
+```
+
+### Switch
+```razor
+<Switch @bind-Checked="isOn" Disabled="false" />
+```
+
+### RadioGroup
+```razor
+<RadioGroup @bind-Value="selected" Orientation="Orientation.Vertical">
+ <RadioGroupItem Value="a">Option A</RadioGroupItem>
+ <RadioGroupItem Value="b">Option B</RadioGroupItem>
+</RadioGroup>
+```
+
+### Select
+```razor
+<Select @bind-Value="selected" Placeholder="Choose...">
+ <SelectTrigger />
+ <SelectContent>
+  <SelectItem Value="opt1">Option 1</SelectItem>
+  <SelectItem Value="opt2">Option 2</SelectItem>
+  <SelectGroup Label="Group">
+<SelectItem Value="opt3">Option 3</SelectItem>
+  </SelectGroup>
+ </SelectContent>
+</Select>
+```
+
+### NativeSelect
+```razor
+<NativeSelect @bind-Value="selected">
+ <option value="a">Option A</option>
+ <option value="b">Option B</option>
+</NativeSelect>
+```
+
+### Label
+```razor
+<Label For="inputId">Field Label</Label>
+```
+
+### Field (Label + Input + Help Text)
+```razor
+<Field Label="Email" For="email" HelpText="We won't share your email.">
+ <Input Id="email" Type="email" @bind-Value="email" />
+</Field>
+```
+
+### Slider
+```razor
+<Slider @bind-Value="sliderValue" Min="0" Max="100" Step="1" />
+```
+
+### RangeSlider
+```razor
+<RangeSlider @bind-Values="rangeValues" Min="0" Max="100" />
+```
+
+### Toggle / ToggleGroup
+```razor
+<Toggle @bind-Pressed="isPressed" Variant="ToggleVariant.Default">Bold</Toggle>
+
+<ToggleGroup @bind-Value="format" Type="ToggleGroupType.Single">
+ <ToggleGroupItem Value="bold"><LucideIcon Name="bold" Size="16" /></ToggleGroupItem>
+ <ToggleGroupItem Value="italic"><LucideIcon Name="italic" Size="16" /></ToggleGroupItem>
+</ToggleGroup>
+```
+
+### Rating
+```razor
+<Rating @bind-Value="rating" Max="5" AllowHalf="true" ReadOnly="false" />
+```
+
+---
+
+## Advanced Inputs
+
+### Calendar
+```razor
+<Calendar @bind-Value="selectedDate" Mode="CalendarMode.Single" />
+```
+Modes: `Single` | `Multiple` | `Range`
+
+### DatePicker
+```razor
+<DatePicker @bind-Value="date" Placeholder="Pick a date" Format="yyyy-MM-dd" />
+```
+
+### DateRangePicker
+```razor
+<DateRangePicker @bind-Start="startDate" @bind-End="endDate" ShowPresets="true" />
+```
+
+### TimePicker
+```razor
+<TimePicker @bind-Value="time" Format="HH:mm" />
+```
+
+### Combobox
+```razor
+<Combobox @bind-Value="selected" Placeholder="Search...">
+ <ComboboxTrigger />
+ <ComboboxContent>
+  <ComboboxInput Placeholder="Search..." />
+  <ComboboxList>
+<ComboboxItem Value="item1">Item 1</ComboboxItem>
+  </ComboboxList>
+ </ComboboxContent>
+</Combobox>
+```
+Infinite scroll (v3.7.2): `OnLoadMore` (`EventCallback`), `IsLoading` (`bool`), `EndOfListMessage` (`string?`), `SearchQueryChanged` (`EventCallback<string>`).
+
+### MultiSelect
+```razor
+<MultiSelect @bind-Values="selectedItems" Placeholder="Select items...">
+ <MultiSelectItem Value="a">Apple</MultiSelectItem>
+ <MultiSelectItem Value="b">Banana</MultiSelectItem>
+</MultiSelect>
+```
+Infinite scroll (v3.7.2): `OnLoadMore` (`EventCallback`), `IsLoading` (`bool`), `EndOfListMessage` (`string?`), `SearchQueryChanged` (`EventCallback<string>`).
+
+### InputGroup
+```razor
+<InputGroup>
+ <InputGroupAddon><LucideIcon Name="mail" Size="16" /></InputGroupAddon>
+ <Input Type="email" Placeholder="email@example.com" />
+ <InputGroupButton><Button>Send</Button></InputGroupButton>
+</InputGroup>
+```
+
+### InputOtp
+```razor
+<InputOtp Length="6" @bind-Value="otpValue" OnComplete="@HandleComplete" />
+```
+
+### NumericInput
+```razor
+<NumericInput @bind-Value="quantity" Min="0" Max="999" Step="1" Format="N0" />
+```
+
+### CurrencyInput
+```razor
+<CurrencyInput @bind-Value="amount" Currency="USD" Locale="en-US" />
+```
+
+### MaskedInput
+```razor
+<MaskedInput @bind-Value="phone" Mask="(000) 000-0000" Placeholder="(555) 123-4567" />
+```
+
+### FileUpload
+```razor
+<FileUpload Accept=".pdf,.docx" Multiple="true" MaxSize="10485760"
+OnFilesSelected="@HandleFiles" OnError="@HandleError" />
+```
+
+### MarkdownEditor
+```razor
+<MarkdownEditor @bind-Value="markdown" Placeholder="Write markdown..." />
+```
+
+### RichTextEditor
+```razor
+<RichTextEditor @bind-Value="htmlContent" Placeholder="Start writing..." />
+```
+
+### ColorPicker
+```razor
+<ColorPicker @bind-Value="color" ShowHex="true" ShowRgb="true" />
+```
+
+---
+
+## Data Display
+
+### Card
+```razor
+<Card Class="w-[350px]">
+ <CardHeader>
+  <CardTitle>Card Title</CardTitle>
+  <CardDescription>Card description</CardDescription>
+ </CardHeader>
+ <CardContent>
+  <p>Card content here.</p>
+ </CardContent>
+ <CardFooter>
+  <Button>Action</Button>
+ </CardFooter>
+</Card>
+```
+
+### Badge
+```razor
+<Badge Variant="BadgeVariant.Default">New</Badge>
+```
+Variants: `Default` | `Secondary` | `Destructive` | `Outline` | `Success` | `Warning`
+
+### Avatar
+```razor
+<Avatar>
+ <AvatarImage Src="/avatar.jpg" Alt="User" />
+ <AvatarFallback>JD</AvatarFallback>
+</Avatar>
+```
+
+### DataGrid
+See `datagrid.txt` for the complete DataGrid reference.
+
+```razor
+<DataGrid TItem="Product" Data="@products">
+ <DataGridColumn Field="@nameof(Product.Name)" Header="Name" Sortable="true" />
+ <DataGridColumn Field="@nameof(Product.Price)" Header="Price" />
+</DataGrid>
+```
+
+### DataTable
+```razor
+<DataTable TItem="User" Data="@users" PageSize="10" Searchable="true" Sortable="true">
+ <DataTableColumn Field="@nameof(User.Name)" Header="Name" />
+ <DataTableColumn Field="@nameof(User.Email)" Header="Email" />
+</DataTable>
+
+@* Striped rows (3.6.3) *@
+<DataTable TItem="User" Data="@users" Striped="true" SyncWidthOnResize="true" TableContainerClass="rounded-md border">
+ <DataTableColumn Field="@nameof(User.Name)" Header="Name" />
+</DataTable>
+
+@* Pinned columns (3.6.2) *@
+<DataTable TItem="User" Data="@users">
+ <DataTableColumn Field="@nameof(User.Name)" Header="Name" Pinned="ColumnPinnedSide.Left" />
+ <DataTableColumn Field="@nameof(User.Email)" Header="Email" />
+</DataTable>
+
+@* Client-side virtualization for large datasets (3.6.1) *@
+<DataTable TItem="User" Data="@users" Virtualize="true" ItemHeight="40" Height="400px">
+ <DataTableColumn Field="@nameof(User.Name)" Header="Name" />
+</DataTable>
+
+@* Server-side virtualization (3.6.1) *@
+<DataTable TItem="User" ItemsProvider="@LoadUsers" Virtualize="true" Height="400px">
+ <DataTableColumn Field="@nameof(User.Name)" Header="Name" />
+</DataTable>
+
+@* Hierarchical/tree rows (3.6.2) *@
+<DataTable TItem="Category" Data="@categories" ChildrenProperty="@nameof(Category.Children)" HasChildrenField="@nameof(Category.HasChildren)">
+ <DataTableColumn Field="@nameof(Category.Name)" Header="Name" />
+</DataTable>
+```
+
+### FilterBuilder
+```razor
+<FilterBuilder TData="Product" @bind-Filters="filters" OnFilterChange="HandleChange">
+ <FilterFields>
+  <FilterField Field="Name" Label="Name" Icon="tag" Type="FilterFieldType.Text" />
+  <FilterField Field="Category" Label="Category" Type="FilterFieldType.Select" Options="@opts" />
+  <FilterField Field="Price" Label="Price" Type="FilterFieldType.Number" Min="0" />
+  <FilterField Field="InStock" Label="In Stock" Type="FilterFieldType.Boolean" />
+ </FilterFields>
+</FilterBuilder>
+```
+Inline chip-based filter builder. 8 field types: `Text` | `Number` | `Date` | `DateRange` | `Boolean` | `Select` | `MultiSelect` | `Custom`. LINQ: `items.ApplyFilters(filters)`. See `components-full.txt` for presets and full reference.
+
+### Skeleton
+```razor
+<Skeleton Class="h-4 w-[250px]" />
+<Skeleton Class="h-4 w-[200px]" />
+```
+
+### ScrollArea
+```razor
+<ScrollArea Class="h-[200px] w-[350px]">
+ @* long content *@
+</ScrollArea>
+```
+
+### AspectRatio
+```razor
+<AspectRatio Ratio="16/9">
+ <img src="image.jpg" alt="Image" class="object-cover w-full h-full" />
+</AspectRatio>
+```
+
+### Empty
+```razor
+<Empty Icon="inbox" Title="No results" Description="Try adjusting your search.">
+ <Button>Create New</Button>
+</Empty>
+```
+
+### Item
+```razor
+<Item>
+ <ItemMedia><LucideIcon Name="file" Size="20" /></ItemMedia>
+ <ItemContent>
+  <ItemTitle>Document.pdf</ItemTitle>
+  <ItemDescription>2.4 MB</ItemDescription>
+ </ItemContent>
+ <ItemAction><Button Variant="ButtonVariant.Ghost" Size="ButtonSize.Icon">...</Button></ItemAction>
+</Item>
+```
+
+### Kbd
+```razor
+<Kbd>Ctrl</Kbd> + <Kbd>K</Kbd>
+```
+
+### Typography
+```razor
+<TypographyH1>Heading 1</TypographyH1>
+<TypographyH2>Heading 2</TypographyH2>
+<TypographyH3>Heading 3</TypographyH3>
+<TypographyP>Paragraph text</TypographyP>
+<TypographyLead>Lead / intro text</TypographyLead>
+<TypographyMuted>Muted text</TypographyMuted>
+<TypographyBlockquote>A quotation</TypographyBlockquote>
+<TypographyInlineCode>const x = 1;</TypographyInlineCode>
+<TypographyList><li>Item 1</li><li>Item 2</li></TypographyList>
+```
+
+---
+
+## Navigation
+
+### Breadcrumb
+```razor
+<Breadcrumb>
+ <BreadcrumbList>
+  <BreadcrumbItem><BreadcrumbLink Href="/">Home</BreadcrumbLink></BreadcrumbItem>
+  <BreadcrumbSeparator />
+  <BreadcrumbItem><BreadcrumbLink Href="/docs">Docs</BreadcrumbLink></BreadcrumbItem>
+  <BreadcrumbSeparator />
+  <BreadcrumbItem><BreadcrumbPage>Components</BreadcrumbPage></BreadcrumbItem>
+ </BreadcrumbList>
+</Breadcrumb>
+```
+
+### Pagination
+```razor
+<Pagination TotalPages="@totalPages" @bind-CurrentPage="currentPage"
+ShowFirstLast="true" MaxVisiblePages="5" />
+```
+
+### Sidebar
+```razor
+<SidebarProvider>
+ <Sidebar>
+  <SidebarHeader>Logo / Brand</SidebarHeader>
+  <SidebarContent>
+<SidebarGroup>
+ <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+ <SidebarGroupContent>
+  <SidebarMenu>
+<SidebarMenuItem>
+ <SidebarMenuButton Href="/dashboard">
+  <LucideIcon Name="home" Size="16" />
+  <span>Dashboard</span>
+ </SidebarMenuButton>
+</SidebarMenuItem>
+  </SidebarMenu>
+ </SidebarGroupContent>
+</SidebarGroup>
+  </SidebarContent>
+  <SidebarFooter>User info / logout</SidebarFooter>
+ </Sidebar>
+ <SidebarInset>
+  @Body
+ </SidebarInset>
+</SidebarProvider>
+```
+
+**Pill Mode (v3.7.0)** — set `CollapsedMode="SidebarCollapsedMode.Pill"` on `<Sidebar>`:
+```razor
+@* Pill-style collapsed sidebar *@
+<SidebarProvider>
+ <Sidebar CollapsedMode="SidebarCollapsedMode.Pill">
+  <SidebarContent>
+<SidebarPillNav>
+ <SidebarPillNavItem Href="/dashboard" Icon="home" Title="Dashboard" />
+ <SidebarPillNavItem Href="/settings"  Icon="settings" Title="Settings" />
+ <SidebarPillFade />
+ <SidebarPillSpacer />
+</SidebarPillNav>
+  </SidebarContent>
+ </Sidebar>
+ <SidebarPillInset>
+  @Body
+ </SidebarPillInset>
+</SidebarProvider>
+```
+Pill sub-components: `SidebarPillNav`, `SidebarPillNavItem` (`Href`, `Icon`, `Title`), `SidebarPillFade`, `SidebarPillInset`, `SidebarPillSpacer`.
+`SidebarTrigger` accepts `Icon` (`RenderFragment?`) to override the default panel-left icon (v3.7.0).
+
+### NavigationMenu (requires InteractiveAuto/Server render mode)
+```razor
+<NavigationMenu>
+ <NavigationMenuList>
+  <NavigationMenuItem>
+<NavigationMenuTrigger>Components</NavigationMenuTrigger>
+<NavigationMenuContent>
+ <ul class="grid gap-3 p-4 md:w-[400px]">
+  <li><NavigationMenuLink Href="/docs/button">Button</NavigationMenuLink></li>
+ </ul>
+</NavigationMenuContent>
+  </NavigationMenuItem>
+  <NavigationMenuItem>
+<NavigationMenuLink Href="/about">About</NavigationMenuLink>
+  </NavigationMenuItem>
+ </NavigationMenuList>
+</NavigationMenu>
+```
+
+### Menubar
+```razor
+<Menubar>
+ <MenubarMenu>
+  <MenubarTrigger>File</MenubarTrigger>
+  <MenubarContent>
+<MenubarItem>New <MenubarShortcut>Ctrl+N</MenubarShortcut></MenubarItem>
+<MenubarSeparator />
+<MenubarItem>Exit</MenubarItem>
+  </MenubarContent>
+ </MenubarMenu>
+</Menubar>
+```
+
+### Command (Command Palette)
+```razor
+<Command>
+ <CommandInput Placeholder="Search..." />
+ <CommandList>
+  <CommandEmpty>No results found.</CommandEmpty>
+  <CommandGroup Heading="Actions">
+<CommandItem Value="new" OnSelect="@HandleNew">
+ <LucideIcon Name="plus" Size="16" />
+ <span>New File</span>
+ <CommandShortcut>Ctrl+N</CommandShortcut>
+</CommandItem>
+  </CommandGroup>
+ </CommandList>
+</Command>
+```
+
+### ResponsiveNav
+```razor
+<ResponsiveNav>
+ <NavBrand Href="/">MyApp</NavBrand>
+ <NavItems>
+  <NavLink Href="/features">Features</NavLink>
+  <NavLink Href="/pricing">Pricing</NavLink>
+ </NavItems>
+ <NavActions>
+  <Button>Sign In</Button>
+ </NavActions>
+</ResponsiveNav>
+```
+
+---
+
+## Overlays
+
+### Dialog
+```razor
+<Dialog @bind-Open="isOpen">
+ <DialogTrigger AsChild>
+  <Button>Open Dialog</Button>
+ </DialogTrigger>
+ <DialogContent>
+  <DialogHeader>
+<DialogTitle>Dialog Title</DialogTitle>
+<DialogDescription>Description text.</DialogDescription>
+  </DialogHeader>
+  <p>Dialog body content.</p>
+  <DialogFooter>
+<Button Variant="ButtonVariant.Outline" OnClick="@(() => isOpen = false)">Cancel</Button>
+<Button OnClick="@Confirm">Confirm</Button>
+  </DialogFooter>
+ </DialogContent>
+</Dialog>
+```
+
+### AlertDialog
+```razor
+<AlertDialog @bind-Open="showAlert">
+ <AlertDialogTrigger AsChild>
+  <Button Variant="ButtonVariant.Destructive">Delete</Button>
+ </AlertDialogTrigger>
+ <AlertDialogContent>
+  <AlertDialogHeader>
+<AlertDialogTitle>Are you sure?</AlertDialogTitle>
+<AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+  </AlertDialogHeader>
+  <AlertDialogFooter>
+<AlertDialogCancel>Cancel</AlertDialogCancel>
+<AlertDialogAction OnClick="@Delete">Delete</AlertDialogAction>
+  </AlertDialogFooter>
+ </AlertDialogContent>
+</AlertDialog>
+```
+
+### Sheet (Slide-out Panel)
+```razor
+<Sheet @bind-Open="sheetOpen" Side="SheetSide.Right">
+ <SheetTrigger AsChild>
+  <Button>Open Sheet</Button>
+ </SheetTrigger>
+ <SheetContent>
+  <SheetHeader>
+<SheetTitle>Panel Title</SheetTitle>
+<SheetDescription>Panel description.</SheetDescription>
+  </SheetHeader>
+  <p>Sheet content.</p>
+  <SheetFooter>
+<Button OnClick="@Save">Save</Button>
+  </SheetFooter>
+ </SheetContent>
+</Sheet>
+```
+Sides: `Top` | `Right` | `Bottom` | `Left`
+
+### Drawer
+```razor
+<Drawer @bind-Open="drawerOpen" Side="DrawerSide.Bottom">
+ <DrawerTrigger AsChild><Button>Open Drawer</Button></DrawerTrigger>
+ <DrawerContent>
+  <DrawerHeader><DrawerTitle>Title</DrawerTitle></DrawerHeader>
+  <p>Content</p>
+  <DrawerFooter><Button OnClick="@Close">Close</Button></DrawerFooter>
+ </DrawerContent>
+</Drawer>
+```
+
+### Popover
+```razor
+<Popover @bind-Open="popoverOpen">
+ <PopoverTrigger AsChild>
+  <Button Variant="ButtonVariant.Outline">Settings</Button>
+ </PopoverTrigger>
+ <PopoverContent Class="w-80">
+  <p>Popover content</p>
+ </PopoverContent>
+</Popover>
+```
+
+### HoverCard
+```razor
+<HoverCard>
+ <HoverCardTrigger AsChild>
+  <a href="/user">@username</a>
+ </HoverCardTrigger>
+ <HoverCardContent Class="w-80">
+  <div class="flex gap-4">
+<Avatar><AvatarFallback>U</AvatarFallback></Avatar>
+<p>User bio here</p>
+  </div>
+ </HoverCardContent>
+</HoverCard>
+```
+
+### DropdownMenu
+```razor
+<DropdownMenu>
+ <DropdownMenuTrigger AsChild>
+  <Button Variant="ButtonVariant.Outline">Options</Button>
+ </DropdownMenuTrigger>
+ <DropdownMenuContent>
+  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+  <DropdownMenuSeparator />
+  <DropdownMenuItem OnClick="@Profile">Profile</DropdownMenuItem>
+  <DropdownMenuItem OnClick="@Settings">Settings</DropdownMenuItem>
+  <DropdownMenuSeparator />
+  <DropdownMenuItem OnClick="@Logout" Class="text-destructive">Logout</DropdownMenuItem>
+ </DropdownMenuContent>
+</DropdownMenu>
+```
+
+### ContextMenu
+```razor
+<ContextMenu>
+ <ContextMenuTrigger>
+  <div class="border rounded p-8">Right-click me</div>
+ </ContextMenuTrigger>
+ <ContextMenuContent>
+  <ContextMenuItem>Copy</ContextMenuItem>
+  <ContextMenuItem>Paste</ContextMenuItem>
+  <ContextMenuSeparator />
+  <ContextMenuItem Class="text-destructive">Delete</ContextMenuItem>
+ </ContextMenuContent>
+</ContextMenu>
+
+@* Programmatic open at coordinates (3.6.2) *@
+<ContextMenu @ref="_ctxMenu">
+ <ContextMenuContent>
+  <ContextMenuItem>Action</ContextMenuItem>
+ </ContextMenuContent>
+</ContextMenu>
+
+@code {
+ ContextMenu? _ctxMenu;
+ // Open programmatically (e.g. on canvas click, virtual list row, etc.)
+ async Task OnCanvasClick(MouseEventArgs e) =>
+  await _ctxMenu!.OpenAt(e.ClientX, e.ClientY);
+}
+```
+`X` / `Y` parameters on `ContextMenuContent` set a fixed position. `OpenAt(x, y)` opens at runtime coordinates.
+
+### Tooltip
+```razor
+<TooltipProvider>
+ <Tooltip DelayDuration="300">
+  <TooltipTrigger AsChild>
+<Button Variant="ButtonVariant.Outline" Size="ButtonSize.Icon">
+ <LucideIcon Name="info" Size="16" />
+</Button>
+  </TooltipTrigger>
+  <TooltipContent>Helpful information</TooltipContent>
+ </Tooltip>
+</TooltipProvider>
+```
+
+---
+
+## Feedback
+
+### Alert
+```razor
+<Alert Variant="AlertVariant.Info">
+ <Icon><LucideIcon Name="info" Size="16" /></Icon>
+ <ChildContent>
+  <AlertTitle>Note</AlertTitle>
+  <AlertDescription>This is an informational alert.</AlertDescription>
+ </ChildContent>
+</Alert>
+```
+Variants: `Default` | `Info` | `Success` | `Warning` | `Destructive`
+
+### Toast
+```razor
+@inject IToastService ToastService
+
+<Button OnClick="@ShowToast">Show Toast</Button>
+
+@code {
+ void ShowToast() => ToastService.Show("Saved successfully!", ToastVariant.Success);
+}
+```
+Variants: `Default` | `Success` | `Error` | `Warning` | `Info`
+
+### Progress
+```razor
+<Progress Value="@progress" Max="100" Class="w-full" />
+```
+
+### Spinner
+```razor
+<Spinner Size="SpinnerSize.Default" />
+```
+Sizes: `Sm` | `Default` | `Lg`
+
+---
+
+## Layout
+
+### Accordion
+```razor
+<Accordion Type="AccordionType.Single" Collapsible="true">
+ <AccordionItem Value="item-1">
+  <AccordionTrigger>Is it accessible?</AccordionTrigger>
+  <AccordionContent>Yes. It adheres to WAI-ARIA design patterns.</AccordionContent>
+ </AccordionItem>
+ <AccordionItem Value="item-2">
+  <AccordionTrigger>Is it styled?</AccordionTrigger>
+  <AccordionContent>Yes. Pre-built CSS with shadcn/ui design.</AccordionContent>
+ </AccordionItem>
+</Accordion>
+```
+Types: `AccordionType.Single` | `AccordionType.Multiple`
+
+### Tabs (requires interactive render mode)
+```razor
+<Tabs @bind-Value="activeTab" DefaultValue="account">
+ <TabsList>
+  <TabsTrigger Value="account">Account</TabsTrigger>
+  <TabsTrigger Value="password">Password</TabsTrigger>
+ </TabsList>
+ <TabsContent Value="account">Account settings...</TabsContent>
+ <TabsContent Value="password">Password settings...</TabsContent>
+</Tabs>
+```
+
+### Collapsible
+```razor
+<Collapsible @bind-Open="isOpen">
+ <CollapsibleTrigger AsChild>
+  <Button Variant="ButtonVariant.Ghost">Toggle</Button>
+ </CollapsibleTrigger>
+ <CollapsibleContent>
+  <p>Collapsible content here.</p>
+ </CollapsibleContent>
+</Collapsible>
+```
+
+### Separator
+```razor
+<Separator />@* horizontal *@
+<Separator Orientation="Orientation.Vertical" Class="h-6" />
+```
+
+### Resizable
+```razor
+<ResizablePanelGroup Direction="ResizeDirection.Horizontal">
+ <ResizablePanel DefaultSize="50">Left panel</ResizablePanel>
+ <ResizableHandle />
+ <ResizablePanel DefaultSize="50">Right panel</ResizablePanel>
+</ResizablePanelGroup>
+```
+
+### ButtonGroup
+```razor
+<ButtonGroup>
+ <Button Variant="ButtonVariant.Outline">Left</Button>
+ <Button Variant="ButtonVariant.Outline">Center</Button>
+ <Button Variant="ButtonVariant.Outline">Right</Button>
+</ButtonGroup>
+```
+
+### ThemeSwitcher / DarkModeToggle
+```razor
+<ThemeSwitcher /> @* Full palette picker *@
+<DarkModeToggle />@* Toggle light/dark *@
+```
+
+### DarkModeToggle
+```razor
+<DarkModeToggle />
+```
+Sun/moon toggle that controls dark mode via `ThemeService`. Self-contained, no parameters needed.
+
+---
+
+## Sortable (Layout)
+
+### Sortable
+```razor
+@* Basic vertical sortable list *@
+<Sortable TItem="TodoItem"
+          Items="@todos"
+          GetItemId="t => t.Id.ToString()"
+          OnItemsReordered="@(items => todos = items.ToList())">
+ <SortableContent>
+  <SortableItem Value="@context.Id.ToString()">
+   @context.Title
+  </SortableItem>
+ </SortableContent>
+</Sortable>
+
+@* With drag handle *@
+<Sortable TItem="TodoItem" Items="@todos" GetItemId="t => t.Id.ToString()"
+          Orientation="SortableOrientation.Vertical"
+          OnItemsReordered="@(items => todos = items.ToList())"
+          Context="scope">
+ <SortableContent>
+  @foreach (var item in todos)
+  {
+   <SortableItem Value="@item.Id.ToString()" AsHandle="false" @key="item.Id">
+    <SortableItemHandle />
+    @item.Title
+   </SortableItem>
+  }
+ </SortableContent>
+ <SortableOverlay>
+  <div class="opacity-80">Dragging...</div>
+ </SortableOverlay>
+</Sortable>
+
+@* Cross-list drag-and-drop (v3.8.2) *@
+<Sortable TItem="Task" Items="@todoList" GetItemId="t => t.Id" Group="tasks"
+          OnItemsReordered="@(l => todoList = l.ToList())"
+          OnItemTransferredIn="@HandleTransferIn">
+ <SortableContent>...</SortableContent>
+</Sortable>
+<Sortable TItem="Task" Items="@doneList" GetItemId="t => t.Id" Group="tasks"
+          OnItemsReordered="@(l => doneList = l.ToList())"
+          OnItemTransferredOut="@HandleTransferOut">
+ <SortableContent>...</SortableContent>
+</Sortable>
+```
+Orientations: `Vertical` | `Horizontal` | `Grid` | `Mixed`
+Cross-list params (v3.8.2): `Group`, `OnItemTransferredIn`, `OnItemTransferredOut`, `OnCanDrop`.
+
+---
+
+## Charts (`@using NeoUI.Blazor.Charts`)
+
+All charts accept `Data`, `Width`, `Height`, and chart-specific configuration.
+
+```razor
+@using NeoUI.Blazor.Charts
+
+<AreaChart Data="@chartData" XField="Month" YFields='new[]{"Revenue","Expenses"}' />
+<BarChart Data="@chartData" XField="Month" YFields='new[]{"Sales"}' Orientation="ChartOrientation.Vertical" />
+<LineChart Data="@chartData" XField="Month" YFields='new[]{"Users"}' />
+
+@* Pie with custom slice colors (3.6.3) *@
+<PieChart Data="@pieData" TData="Slice">
+ <ChartTooltip />
+ <Pie DataKey="value" NameKey="name" Colors="@(new[]{"#6366f1","#f59e0b","#22c55e"})" />
+</PieChart>
+
+<ScatterChart Data="@scatterData" XField="X" YField="Y" />
+<RadarChart Data="@radarData" CategoryField="Subject" ValueFields='new[]{"Score"}' />
+<ComposedChart Data="@composedData" XField="Month">
+ <BarSeries YField="Revenue" />
+ <LineSeries YField="Trend" />
+</ComposedChart>
+
+@* Funnel / conversion pipeline *@
+<FunnelChart Data="@funnelData" TData="Stage">
+ <ChartTooltip />
+ <Funnel DataKey="count" NameKey="stage" Sort="FunnelSort.Descending" />
+</FunnelChart>
+
+@* Gauge — single KPI, multi-tile, or progress ring *@
+<GaugeChart>
+ <Gauge Value="72" Min="0" Max="100" Title="CPU" ShowPointer="true" />
+</GaugeChart>
+
+@* Heatmap — requires XAxis, YAxis, VisualMap *@
+<HeatmapChart Data="@heatData" TData="Cell">
+ <XAxis DataKey="hour" /><YAxis DataKey="day" />
+ <VisualMap Min="0" Max="100" InRange='new[]{"var(--muted)","var(--primary)"}' ShowLegend="true" />
+ <ChartTooltip />
+ <Heatmap DataKey="value" XKey="hour" YKey="day" />
+</HeatmapChart>
+
+@* Candlestick — OHLC financial chart *@
+<CandlestickChart Data="@ohlcData" TData="OhlcPoint">
+ <XAxis DataKey="date" />
+ <ChartTooltip />
+ <Candlestick DataKey="open" OpenKey="open" CloseKey="close" HighKey="high" LowKey="low" />
+</CandlestickChart>
+```
+
+---
+
+## Animation
+
+### Carousel
+```razor
+<Carousel>
+ <CarouselContent>
+  <CarouselItem>Slide 1</CarouselItem>
+  <CarouselItem>Slide 2</CarouselItem>
+  <CarouselItem>Slide 3</CarouselItem>
+ </CarouselContent>
+ <CarouselPrevious />
+ <CarouselNext />
+</Carousel>
+```
+
+### Motion
+```razor
+<Motion Preset="MotionPreset.FadeIn" Duration="0.3">
+ <div>Animated content</div>
+</Motion>
+```
+20+ presets: `FadeIn`, `FadeOut`, `SlideInLeft`, `SlideInRight`, `SlideInUp`, `SlideInDown`,
+`ZoomIn`, `ZoomOut`, `Bounce`, `Pulse`, `Shake`, `Spin`, and more.
+
+### SelectionIndicator
+```razor
+@* Drop as last child of any selection container *@
+<div class="flex">
+ <button data-state="active" class="relative z-1">Tab A</button>
+ <button class="relative z-1">Tab B</button>
+ <button class="relative z-1">Tab C</button>
+ <SelectionIndicator />
+</div>
+
+@* Underline mode with custom height *@
+<div class="flex" style="--si-height: 2px">
+ <button data-state="active" class="relative z-1">Tab A</button>
+ <button class="relative z-1">Tab B</button>
+ <SelectionIndicator Class="bottom-0 h-[var(--si-height)]" />
+</div>
+```
+Params: `Selector` (`string`, default `[data-state=active]`), `Hover` (`bool`, default `false`), `Class` (`string?`).
+CSS vars: `--si-duration` (350ms), `--si-easing` (spring cubic-bezier), `--si-height` (optional fixed height).
+Items in container need `relative z-1` to appear above the indicator.
+
+### HeightAnimation
+```razor
+<HeightAnimation Visible="isExpanded">
+ <div>Animated height content</div>
+</HeightAnimation>
+```
+Animates height from `0` to `auto` when `Visible` changes. Zero JS required. See `components-full.txt` for full reference.
+
+### PageTransition
+```razor
+@* In MainLayout.razor *@
+<RenderStateProvider>
+ <PageTransition EnableSlide="true" Duration="0.3">
+  @Body
+ </PageTransition>
+</RenderStateProvider>
+```
+Fade (+ optional slide-from-bottom) on page navigation. Requires `RenderStateProvider` ancestor. SSR-safe — no animation during prerender.
+
+### RenderStateProvider
+```razor
+@* Wrap layout body *@
+<RenderStateProvider>
+ @Body
+</RenderStateProvider>
+
+@* Consume in child components *@
+@code {
+ [CascadingParameter] public AppRenderContext? RenderContext { get; set; }
+ // RenderContext.IsInteractive, .IsHydrating, .IsEnhancedNavigation
+}
+```
+Cascades `AppRenderContext` to children. Required ancestor for `PageTransition`.
+
+---
+
+## DialogService (Programmatic Dialogs)
+
+```csharp
+// Program.cs
+builder.Services.AddNeoUIComponents(); // includes IDialogService, ILocalizer
+
+// Localization (3.6.4+) -- override built-in English strings at startup
+builder.Services.AddNeoUIComponents(loc =>
+{
+ loc.Set("Combobox.Placeholder", "Waehlen Sie...");
+ loc.Set("DataTable.Loading", "Laden...");
+ // 70+ keys -- see /components/localization for full key reference
+});
+// Option B: subclass DefaultLocalizer for .resx / IStringLocalizer<T> integration
+// builder.Services.AddScoped<ILocalizer, AppLocalizer>();
+```
+
+```razor
+@inject IDialogService DialogService
+
+@code {
+ async Task ShowConfirm()
+ {
+  var result = await DialogService.ShowAsync<ConfirmDialog>(
+title: "Confirm Delete",
+parameters: new() { ["Message"] = "Delete this item?" });
+
+  if (result.Confirmed)
+await DeleteItem();
+ }
+}
+```
+
+### DialogHost
+```razor
+@* In MainLayout.razor — place once *@
+<DialogHost />
+
+@* In a component *@
+@inject IDialogService DialogService
+
+@code {
+ async Task Delete()
+ {
+  var result = await DialogService.ShowAsync(new DialogOptions
+  {
+   Title = "Delete Item",
+   Message = "Are you sure?",
+   Buttons = DialogButtons.YesNo,
+   Variant = DialogVariant.Destructive,
+   Icon = "trash-2"
+  });
+  if (result == DialogResult.Confirmed)
+   await DeleteAsync();
+ }
+}
+```
+`DialogButtons`: `OkOnly` | `OkCancel` | `YesNo` | `YesNoCancel`
+`DialogVariant`: `Default` | `Destructive` | `Warning` | `Success` | `Info`
+
+---
+
+## New in 3.5 -- Advanced Components
+
+### Timeline
+```razor
+<Timeline>
+ <TimelineItem Status="TimelineStatus.Completed" Title="Order Placed" Time="Jan 1" />
+ <TimelineItem Status="TimelineStatus.Active"    Title="Processing"   Time="Jan 2" />
+ <TimelineItem Status="TimelineStatus.Pending"   Title="Shipped"      Time="Pending" />
+</Timeline>
+
+@* With custom icons and content *@
+<Timeline Align="TimelineAlign.Left">
+ <TimelineItem Status="TimelineStatus.Completed">
+  <IconContent><LucideIcon Name="check-circle" Size="16" /></IconContent>
+  <ChildContent>
+<TimelineHeader>
+ <TimelineTitle>Deployment complete</TimelineTitle>
+ <TimelineTime>2 hours ago</TimelineTime>
+</TimelineHeader>
+<TimelineDescription>v3.5.0 deployed to production.</TimelineDescription>
+  </ChildContent>
+ </TimelineItem>
+</Timeline>
+```
+Statuses: `Pending` | `Active` | `Completed`
+Aligns: `Left` | `Right` | `Alternate`
+ConnectorStyles: `Solid` | `Dashed` | `Dotted`
+Sizes: `Small` | `Default` | `Large`
+
+---
+
+### TreeView
+```razor
+<TreeView TItem="FileNode"
+          Items="@rootNodes"
+          ChildrenSelector="n => n.Children"
+          TextSelector="n => n.Name"
+          IconSelector="n => n.IsFolder ? &quot;folder&quot; : &quot;file&quot;"
+          SelectionMode="TreeSelectionMode.Single"
+          @bind-SelectedItem="selectedNode" />
+
+@* Multi-select with tri-state checkboxes *@
+<TreeView TItem="FileNode"
+          Items="@rootNodes"
+          ChildrenSelector="n => n.Children"
+          TextSelector="n => n.Name"
+          SelectionMode="TreeSelectionMode.Multiple"
+          PropagateChecks="true"
+          ShowLines="true"
+          @bind-SelectedItems="checkedNodes" />
+```
+SelectionModes: `None` | `Single` | `Multiple`
+
+---
+
+### DataView
+```razor
+<DataView TItem="Product" Items="@products" PageSize="12">
+ <DataViewColumn TItem="Product" Field="@nameof(Product.Name)"     Sortable="true" Filterable="true" />
+ <DataViewColumn TItem="Product" Field="@nameof(Product.Category)" Sortable="true" />
+ <DataViewColumn TItem="Product" Field="@nameof(Product.Price)"    Sortable="true" />
+ <ListTemplate Context="p">
+  <div class="flex gap-3 p-3 border rounded">
+   <span>@p.Name</span><span class="ml-auto">@p.Price.ToString("C")</span>
+  </div>
+ </ListTemplate>
+ <GridTemplate Context="p">
+  <Card><CardContent>@p.Name</CardContent></Card>
+ </GridTemplate>
+</DataView>
+
+@* Responsive grid with min column width (3.6.1) -- overrides GridColumns *@
+<DataView TItem="Product" Items="@products" GridColumnMinWidth="250px">
+ <GridTemplate Context="p"><Card><CardContent>@p.Name</CardContent></Card></GridTemplate>
+</DataView>
+
+@* Server-side infinite scroll *@
+<DataView TItem="Order" OnLoadMore="@LoadMoreOrders" PageSize="20">
+ <DataViewColumn TItem="Order" Field="@nameof(Order.Id)" />
+ <ListTemplate Context="o"><div>@o.Id</div></ListTemplate>
+</DataView>
+```
+SelectionModes: `None` | `Single` | `Multiple`
+Layouts: `List` | `Grid`
+
+---
+
+### DynamicForm
+```razor
+@* Define a schema *@
+@code {
+ private FormSchema _schema = new()
+ {
+  Fields =
+  [
+   new FormFieldDefinition { Key = "name",  Label = "Full Name", Type = FieldType.Text,   IsRequired = true },
+   new FormFieldDefinition { Key = "email", Label = "Email",     Type = FieldType.Email,  IsRequired = true },
+   new FormFieldDefinition { Key = "role",  Label = "Role",      Type = FieldType.Select,
+    Options = [new("admin","Admin"), new("user","User")] },
+  ]
+ };
+ private Dictionary<string, object?> _values = new();
+}
+
+<DynamicForm Schema="@_schema"
+             @bind-Values="_values"
+             OnFieldChanged="@((e) => Console.WriteLine($&quot;{e.Key} = {e.Value}&quot;))" />
+```
+FieldTypes: `Text` | `Email` | `Password` | `Number` | `Date` | `DateRange` | `Select` | `MultiSelect` |
+`Checkbox` | `Switch` | `Slider` | `SliderRange` | `Textarea` | `Rating` | `ColorPicker` |
+`TimePicker` | `FileUpload` | `InputOtp` | `MaskedInput` | `CurrencyInput` | `RichText` | `MarkdownEditor`
+FormLayouts: `SingleColumn` | `TwoColumn`
+
+---
+
+### TagInput
+```razor
+<TagInput @bind-Tags="tags" Placeholder="Add tag..." />
+
+@* With async suggestions *@
+<TagInput @bind-Tags="tags"
+          OnSearchSuggestions="@SearchTags"
+          AddTrigger="TagInputTrigger.Enter | TagInputTrigger.Comma"
+          MaxTags="10"
+          AllowDuplicates="false"
+          Clearable="true" />
+
+@code {
+ private List<string> tags = new();
+ private async Task<IEnumerable<string>> SearchTags(string q) =>
+  await TagService.SearchAsync(q);
+}
+```
+Variants: `Default` | `Outlined` | `Ghost`
+Triggers (flags): `Enter` | `Comma` | `Tab` | `Space` | `Blur`
+
+---
+
+### SplitButton
+```razor
+<SplitButton Label="Save" OnPrimaryClick="@Save">
+ <SplitButtonItem OnClick="@SaveDraft">Save as Draft</SplitButtonItem>
+ <SplitButtonItem OnClick="@SaveTemplate">Save as Template</SplitButtonItem>
+ <SplitButtonSeparator />
+ <SplitButtonItem OnClick="@Discard">Discard</SplitButtonItem>
+</SplitButton>
+
+@* With variant and icon *@
+<SplitButton Label="Deploy" Variant="ButtonVariant.Default" Size="ButtonSize.Default">
+ <Icon><LucideIcon Name="rocket" Size="14" /></Icon>
+ <SplitButtonItem OnClick="@DeployStaging">Deploy to Staging</SplitButtonItem>
+ <SplitButtonItem OnClick="@DeployProd">Deploy to Production</SplitButtonItem>
+</SplitButton>
+
+@* Independent CSS on each segment (v3.7.1) *@
+<SplitButton Label="Publish" PrimaryClass="rounded-l-full" DropdownClass="rounded-r-full">
+ <SplitButtonItem OnClick="@PublishDraft">Publish as Draft</SplitButtonItem>
+</SplitButton>
+```
+New in v3.7.1: `PrimaryClass` (`string?`) and `DropdownClass` (`string?`) for independent per-segment CSS overrides.
+
+---
+
+## New in 3.5 -- New Chart Types
+
+All new charts use `@using NeoUI.Blazor.Charts`.
+
+### CandlestickChart
+```razor
+<CandlestickChart Data="@ohlcData" TData="OhlcPoint">
+ <XAxis DataKey="date" />
+ <ChartTooltip />
+ <Candlestick DataKey="open"
+              OpenKey="open" CloseKey="close" HighKey="high" LowKey="low"
+              RisingColor="#22c55e" FallingColor="#ef4444" />
+</CandlestickChart>
+```
+
+### FunnelChart
+```razor
+<FunnelChart Data="@funnelData" TData="Stage">
+ <ChartTooltip />
+ <Funnel DataKey="count" NameKey="stage" Sort="FunnelSort.Descending" Align="FunnelAlign.Center" />
+</FunnelChart>
+
+@* Custom color palette (3.6.3) *@
+<FunnelChart Data="@funnelData" TData="Stage">
+ <Funnel DataKey="count" NameKey="stage"
+         Colors="@(new[]{"#6366f1","#8b5cf6","#a78bfa","#c4b5fd","#ddd6fe"})" />
+</FunnelChart>
+```
+Sorts: `Descending` | `Ascending` | `None`
+`Colors` cycles through the array for each segment; `null` = auto `--chart-1…5` palette.
+
+### GaugeChart
+```razor
+@* Single KPI *@
+<GaugeChart Data="@_kpi" TData="Metric">
+ <Gauge DataKey="value" Name="Score" Min="0" Max="100" ShowPointer="true" ShowDetail="true" />
+</GaugeChart>
+
+@* Multi-tile: each Gauge series drives one tile *@
+<GaugeChart Data="@_metrics" TData="Metric">
+ <ChartTooltip />
+ <Gauge DataKey="value" Name="CPU"    Min="0" Max="100" ShowProgress="true" ShowDetail="true" />
+ <Gauge DataKey="value" Name="Memory" Min="0" Max="100" ShowProgress="true" ShowDetail="true" />
+ <Gauge DataKey="value" Name="Disk"   Min="0" Max="100" ShowProgress="true" ShowDetail="true" />
+</GaugeChart>
+
+@* Progress ring *@
+<GaugeChart Data="@_kpi" TData="Metric">
+ <Gauge DataKey="value" Name="Progress" Min="0" Max="100"
+        StartAngle="90" EndAngle="-270" ShowPointer="false" SplitNumber="0"
+        ShowProgress="true" ShowDetail="true" DetailFormatter="{value}%" />
+</GaugeChart>
+
+@code { record Metric(string name, double value); }
+```
+
+
+### HeatmapChart
+```razor
+<HeatmapChart Data="@heatData" TData="Cell">
+ <XAxis DataKey="hour"><AxisLabel Color="var(--muted-foreground)" /></XAxis>
+ <YAxis DataKey="day"><AxisLabel Color="var(--muted-foreground)" /></YAxis>
+ <VisualMap Min="0" Max="100" InRange='new[]{"var(--muted)","var(--primary)"}' ShowLegend="true" />
+ <ChartTooltip />
+ <Heatmap DataKey="value" XKey="hour" YKey="day" />
+</HeatmapChart>
+
+@code { record Cell(int hour, int day, int value); }
+```
+
+### RadialBarChart
+```razor
+<RadialBarChart Data="@radialData">
+ <RadialBar DataKey="Value" NameKey="Category" InnerRadius="30%" OuterRadius="80%" />
+ <ChartLegend />
+ <ChartTooltip />
+</RadialBarChart>
+```
+
+
+---
+
+## New in 3.8 -- SelectionIndicator + Sortable
+
+### SelectionIndicator
+
+Spring-animated indicator that slides between active items (e.g. tabs, toggle groups).
+
+```razor
+<Tabs @bind-Value="tab">
+    <TabsList>
+        <SelectionIndicator />
+        <TabsTrigger Value="a">Alpha</TabsTrigger>
+        <TabsTrigger Value="b">Beta</TabsTrigger>
+    </TabsList>
+    ...
+</Tabs>
+```
+
+Parameters: `Selector` (string, default `[data-state=active]`), `Hover` (bool), `Class` (string?).
+CSS variables: `--si-duration`, `--si-easing`, `--si-height`.
+Works with: Tabs, ToggleGroup, RadioGroup, Pagination, and any custom markup using `data-state=active`.
+
+### Sortable + Cross-list Drag-and-Drop
+
+```razor
+<Sortable @bind-Items="items" TItem="MyItem">
+    <SortableItem Context="item">
+        <SortableContent>@item.Name</SortableContent>
+    </SortableItem>
+</Sortable>
+```
+
+Cross-list DnD: share `Group` name across multiple `Sortable` instances.
+
+```razor
+<Sortable @bind-Items="listA" TItem="MyItem" Group="shared"
+          OnItemTransferredOut="HandleOut" OnItemTransferredIn="HandleIn">
+    <SortableItem Context="item"><SortableContent>@item.Name</SortableContent></SortableItem>
+</Sortable>
+<Sortable @bind-Items="listB" TItem="MyItem" Group="shared"
+          OnItemTransferredOut="HandleOut" OnItemTransferredIn="HandleIn">
+    <SortableItem Context="item"><SortableContent>@item.Name</SortableContent></SortableItem>
+</Sortable>
+```
+
+`SortableContent` exposes `data-[state=over]` attribute for visual drag-over feedback.
+
+---
+
+## New in 3.9 -- Mobile Components
+
+### AppBar
+
+Mobile top app bar with optional back button and right-side content slot.
+
+```razor
+<AppBar Title="Settings" OnBack="@GoBack">
+    <RightContent><Button Size="ButtonSize.Icon" Variant="ButtonVariant.Ghost"><LucideIcon Name="ellipsis-vertical" /></Button></RightContent>
+</AppBar>
+```
+
+### BottomNav + BottomNavItem
+
+Persistent mobile tab bar pinned to the bottom of the screen.
+
+```razor
+<BottomNav @bind-ActiveTab="activeTab">
+    <BottomNavItem Value="home" Icon="home" Label="Home" />
+    <BottomNavItem Value="search" Icon="search" Label="Search" BadgeCount="3" />
+    <BottomNavItem Value="profile" Icon="user" Label="Profile" />
+</BottomNav>
+```
+
+### NotificationBadge
+
+Wraps any element and overlays a count badge in the top-right corner.
+
+```razor
+<NotificationBadge Count="5" Variant="NotificationBadgeVariant.Destructive">
+    <LucideIcon Name="bell" />
+</NotificationBadge>
+```
+
+Use `Dot="true"` for a dot indicator without a count. `ShowZero="true"` displays the badge when Count is 0.
+
+### QuantityStepper
+
+Circular +/- quantity control. `DestructiveAtMin` replaces the minus button with a trash icon at the minimum value.
+
+```razor
+<QuantityStepper @bind-Value="qty" Min="1" Max="10"
+                 DestructiveAtMin="true" OnDestructiveAction="@RemoveItem" />
+```
+
+### SectionHeader
+
+Title row with an optional "view all" chevron and separator line.
+
+```razor
+<SectionHeader Title="Featured Items" OnViewAll="@ViewAll" ShowSeparator="true" />
+```
+
+### ScreenTransition
+
+Animated wrapper for multi-screen navigation. Changing `Key` triggers the entrance animation.
+
+```razor
+<ScreenTransition Key="@currentScreen" Direction="ScreenTransitionDirection.Push">
+    @* current screen content *@
+</ScreenTransition>
+```
+
+`ScreenTransitionDirection` enum: `None` (no animation) | `Tab` (fade-in) | `Push` (slide from right) | `Pop` (slide from left)
+
+---
+
+## New in 3.9 -- Component Enhancements
+
+- **Carousel:** `DotsPosition` (`CarouselDotsPosition`: Bottom/Top/Left/Right, default Bottom). Drag-click suppression prevents accidental navigation.
+- **Drawer:** `DrawerContent` gains `SnapPoints` (float[]?), `SnapIndex` (@bind, int), `ShowHandle` (bool). Bottom direction only.
+- **Select:** `Presentation` (`SelectPresentation`: Popover/BottomSheet) -- BottomSheet opens options in a bottom Drawer.
+- **Separator:** `LineStyle` (`SeparatorStyle`: Solid/Dashed/Dotted, default Solid).
+- **ToggleGroup:** `Scrollable` (bool, false -- horizontal scroll strip), `Required` (bool, false -- prevents deselecting the active item).
+- **BadgeIcon:** New sub-component -- renders an icon inside a Badge chip.
+  ```razor
+  <BadgeIcon Variant="BadgeVariant.Destructive"><LucideIcon Name="x" /></BadgeIcon>
+  ```
+- **ScrollArea:** Non-horizontal instances no longer force `width:100%` on the inner container.
+
+---
+
+## New in 4.0 -- AppProvider + Theme v2
+
+### AppProvider
+
+Required wrapper in `MainLayout.razor` (v4.0.0+). Initializes ThemeService, restores the persisted theme from localStorage, and broadcasts the active `StyleVariant` as a CascadingValue to all child components.
+
+```razor
+@* MainLayout.razor *@
+<AppProvider>
+    @Body
+    <ToastViewport />
+    <SpotlightCommandPalette />
+    <DialogHost />
+</AppProvider>
+```
+
+Theme v2 adds 6 new dimensions on top of base/primary colors: **StyleVariant** (visual style preset), **RadiusPreset** (named radius override), **FontPreset** (font pairing), **MenuColor** (floating surface treatment), **MenuAccent** (hover intensity), and **ThemePreset** (bundles all 8 dimensions). BaseColor expands to 10 values (5 new chromatic neutrals). See `theming.txt` for the complete reference.

@@ -1,4 +1,6 @@
 using MyWebTemplateV2.Components;
+using Microsoft.EntityFrameworkCore;
+using MyWebTemplateV2.Data;
 using NeoUI.Blazor;
 using NeoUI.Blazor.Extensions;
 using NeoUI.Blazor.Primitives.Extensions;
@@ -6,6 +8,9 @@ using NeoUI.Blazor.Primitives.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();

@@ -1,0 +1,351 @@
+## Version 4.0.0 -- Theme v2: Full Dimension Expansion + AppProvider
+
+### Breaking Changes
+- **AppProvider** is now required in `MainLayout.razor` wrapping all content including portal hosts. Without it, ThemeService will not initialize persisted theme, and StyleVariant will not cascade to components.
+
+### New Features
+- **AppProvider** -- required outermost wrapper in MainLayout. Initializes ThemeService, restores persisted theme from localStorage, broadcasts StyleVariant as CascadingValue.
+- **StyleVariant enum** -- 7 named visual styles controlling `--radius`, `--spacing-scale`, and shadow values: Default, Vega (0.625rem/1), Nova (0.375rem/0.85, compact), Maia (1rem/1.15, spacious), Lyra (0rem/1, sharp/boxy), Mira (0.25rem/0.7, ultra-dense), Luma (0.75rem/1, glassmorphism). CSS: `_content/NeoUI.Blazor/css/themes/styles/{vega,nova,maia,lyra,mira,luma}.css`
+- **RadiusPreset enum** -- independent named radius overrides (wins over StyleVariant in CSS cascade): None=0rem, Small=0.45rem, Medium=0.625rem (default, no file), Large=0.875rem. CSS: `_content/NeoUI.Blazor/css/themes/radius/{none,small,large}.css`
+- **FontPreset enum** -- 6 curated font pairings: System (default), Inter, Geist, CalSans, DmSans, PlusJakarta. Sets `--font-sans` and `--font-heading`. CSS files set variables only; load actual font faces separately. CSS: `_content/NeoUI.Blazor/css/themes/fonts/{inter,geist,calsans,dmsans,plusjakarta}.css`
+- **--font-heading CSS variable** -- new variable for distinct heading typography; falls back to `--font-sans`.
+- **7-step proportional radius scale** -- `--radius-xs` (x0.4) through `--radius-4xl` (x2.6); all safe at `--radius: 0rem`.
+- **MenuColor enum** -- controls background treatment of floating surfaces (Popover, DropdownMenu, Select, Combobox): Default, Inverted, DefaultTranslucent (50% opacity + blur(18px) + saturate(150%)), InvertedTranslucent.
+- **MenuAccent enum** -- controls menu item hover intensity: Subtle (--accent, default), Bold (--primary, high-contrast).
+- **BaseColor enum** -- 5 new chromatic neutrals: Luma (blue-indigo), Mist (cool blue-gray), Mauve (warm purple-gray), Taupe (warm brownish-gray), Olive (muted green-gray). Total: 10 base x 17 primary = 170 combinations.
+- **ThemePreset record** -- bundles all 8 dimensions atomically. Built-in presets: Default, Luma (Zinc+Luma+Inter), Nova (Zinc+Nova+Small+Geist), Maia (Mauve+Maia+Large+PlusJakarta), Lyra (Slate+Lyra+None+Geist).
+- **ThemeService** -- new properties: CurrentStyleVariant, CurrentRadiusPreset, CurrentFontPreset, CurrentMenuAccent, CurrentMenuColor. New methods: SetBaseColorAsync, SetPrimaryColorAsync, SetStyleVariantAsync, SetRadiusPresetAsync, SetFontPresetAsync, SetMenuAccentAsync, SetMenuColorAsync, ApplyPresetAsync. Old `SetTheme(base, primary)` still works.
+- **ThemeSwitcher** -- new `ShowStyles` param (bool, false). When true: tabbed layout with Colors tab + Styles tab (variant, radius, font, menu accent, menu color). Trigger button shows two-tone swatch (base fill + primary border).
+- **Tailwind v4:** Must add `@theme inline` to Tailwind build input to prevent hardcoded oklch() values overriding runtime CSS variable changes.
+
+---
+
+## Version 3.9.0 -- Mobile Components + ScreenTransition + Enhancements
+
+### New Components
+- **AppBar** -- mobile top app bar. Params: TitleContent (RenderFragment?), Title (string?), OnBack (EventCallback -- shows back chevron when set), Transparent (bool, false), RightContent (RenderFragment?), Class (string?)
+- **BottomNav + BottomNavItem** -- persistent mobile tab bar. BottomNav: @bind-ActiveTab, Fixed (bool, true), AriaLabel ("Main navigation"). BottomNavItem: Value (required), Icon (string?), IconContent (RenderFragment?), Label (string?), BadgeCount (int, 0), MaxBadgeCount (int, 99), ShowZeroBadge (bool, false)
+- **NotificationBadge** -- wraps any element, overlays count badge top-right. Params: Count (int, 0), ShowZero (bool, false), Dot (bool, false), Max (int, 99), Variant (NotificationBadgeVariant: Destructive/Primary/Success)
+- **QuantityStepper** -- circular +/- quantity buttons. Params: @bind-Value (int, 1), Min (int, 1), Max (int.MaxValue), Step (int, 1), Size (QuantityStepperSize: Small/Default/Large), DestructiveAtMin (bool, false), OnDestructiveAction (EventCallback), Disabled (bool, false)
+- **SectionHeader** -- title row with optional "view all" chevron and separator. Params: TitleContent (RenderFragment?), Title (string?), OnViewAll (EventCallback -- shows chevron when set), ShowSeparator (bool, false), Class (string?)
+- **ScreenTransition** -- animated container for multi-screen navigation. Changing Key triggers entrance animation. Params: Key (string, required), Direction (ScreenTransitionDirection: None/Tab/Push/Pop), Class, ChildContent. Tab=fade-in, Push=slide from right, Pop=slide from left.
+
+### Enhancements
+- **Carousel:** `DotsPosition` (CarouselDotsPosition: Bottom/Top/Left/Right, default Bottom). Drag-click suppression.
+- **Drawer:** DrawerContent gains `SnapPoints` (float[]?), `SnapIndex` (@bind, int), `ShowHandle` (bool). Bottom direction only.
+- **Select:** `Presentation` (SelectPresentation: Popover/BottomSheet) -- BottomSheet opens options in a bottom Drawer.
+- **Separator:** `LineStyle` (SeparatorStyle: Solid/Dashed/Dotted, default Solid).
+- **ToggleGroup:** `Scrollable` (bool, false -- horizontal scroll strip), `Required` (bool, false -- active item cannot be deselected).
+- **BadgeIcon:** New sub-component -- renders icon inside a Badge chip.
+- **ScrollArea:** Non-horizontal instances no longer force width:100% on inner container.
+
+---
+
+## Version 3.8.2 -- SelectionIndicator + Sortable Cross-list DnD + ToggleGroupItem Fix
+
+### New Features
+- **SelectionIndicator** -- spring-animated indicator that slides between active items. Works with Tabs, ToggleGroup, RadioGroup, Pagination, and any custom markup. Params: Selector (string, default `[data-state=active]`), Hover (bool), Class (string?). CSS variables: `--si-duration`, `--si-easing`, `--si-height`.
+- **Sortable cross-list drag-and-drop** -- multiple `Sortable` instances sharing a `Group` name allow items to be dragged across containers. Events: OnItemTransferredOut, OnItemTransferredIn. `SortableContent` uses `data-[state=over]` for visual drag-over feedback.
+
+### Bug Fixes
+- **ToggleGroupItem:** `aria-checked` now always renders as lowercase `"true"/"false"` (previously Blazor serialized as Pascal-case `"True"/"False"`, which is invalid ARIA).
+
+---
+# NeoUI -- Changelog
+
+## Version 3.8.3 -- 2026-03-30
+
+### Changes
+- **Build:** Internal dependency version bump. No API changes.
+
+---
+
+## Version 3.8.2 -- 2026-03-30
+
+### New Features
+- **`SelectionIndicator`:** Spring-animated sliding indicator (category: Animation) that tracks the active item in any sibling selection container using a `MutationObserver`. Drop as last child of a selection container. Params: `Selector` (`string`, default `[data-state=active]`), `Hover` (`bool`, default `false` — also slides on hover and sets `data-si-hover`), `Class` (`string?`). CSS vars: `--si-duration` (350ms), `--si-easing` (cubic-bezier spring), `--si-height` (optional fixed height for underline mode). Items need `relative z-1` to appear above the indicator.
+
+### Enhancements
+- **`Sortable<TItem>` / `SortablePrimitive<TItem>`:** Cross-list drag-and-drop. New params: `Group` (`string?`), `OnItemTransferredIn` (`EventCallback<SortableTransferArgs>`), `OnItemTransferredOut` (`EventCallback<SortableTransferArgs>`), `OnCanDrop` (`Func<SortableDragQueryArgs, bool>?`). New types: `SortableTransferArgs` (`ActiveId`, `OverId`, `Index`, `SourceInstanceId`, `TargetInstanceId`), `SortableDragQueryArgs` (`ActiveId`, `SourceInstanceId`, `TargetInstanceId`). `SortableContent` gets `data-state="over"` during drag hover from a peer list.
+
+### Bug Fixes
+- **`ToggleGroupItem`:** `aria-checked` was rendering Pascal-case `"True"`/`"False"`; corrected to lowercase `"true"`/`"false"`.
+
+---
+
+## Version 3.8.1 -- 2026-03-28
+
+### Enhancements
+- **Sortable:** Drag-and-drop UX improvements — snapshot overlays prevent Blazor Server rendering flash during drag; opacity bridge eliminates visual discontinuity between drag-start and overlay appearance. No API changes.
+
+---
+
+## Version 3.8.0 -- 2026-03-27
+
+### New Features
+- **`Sortable<TItem>`** (`NeoUI.Blazor`, category: Layout): Drag-and-drop sortable list with pointer, touch, and keyboard support. Params: `Items` (`IList<TItem>`), `GetItemId` (`Func<TItem, string>`), `Orientation` (`SortableOrientation`: `Vertical`/`Horizontal`/`Grid`/`Mixed`), `OnItemsReordered` (`EventCallback<IList<TItem>>`), `OnDragStart` (`EventCallback<string>`), `OnDragEnd` (`EventCallback<SortableDragEndArgs>`), `OnDragCancel` (`EventCallback`), `Context` (exposes `SortableScope<TItem>`). Sub-components: `SortableContent` (`Class` — default `flex flex-col gap-2`), `SortableItem` (`Value` string required, `AsHandle` bool, `Class`), `SortableItemHandle` (`Class`, `ChildContent`), `SortableOverlay` (`Class`, `ChildContent` `RenderFragment<string>?`). `SortableScope<TItem>` context: `RowAttributes` (`Func<TItem, Dictionary<string,object>>`), `ActiveId` (`string?`), `IsDragging` (`bool`), `IsItemDragging(TItem)` (`bool`).
+- **`SortablePrimitive<TItem>`** (`NeoUI.Blazor.Primitives`): Headless equivalent. Same params as `Sortable<TItem>`. Sub-components: `SortableContentPrimitive`, `SortableItemPrimitive` (`Value`, `AsHandle`), `SortableItemHandlePrimitive`, `SortableOverlayPrimitive` (`ChildContent` `RenderFragment<string>?`).
+
+### Enhancements
+- **`DataTable<TData>`:** New `AdditionalRowAttributes` param (`Func<TData, Dictionary<string, object>?>?`) — stamps extra HTML attributes on each `<tr>` (e.g. `data-id`, `draggable`). Used by the Sortable integration demo.
+
+---
+
+## Version 3.7.2 -- 2026-03-26
+
+### New Features
+- **`Combobox<TItem>` / `MultiSelect<TItem>` / `SelectContent<TValue>`:** Infinite scroll / async loading. New params: `OnLoadMore` (`EventCallback` — fires when user scrolls near the bottom), `IsLoading` (`bool` — shows a loading indicator at the list foot), `EndOfListMessage` (`string?` — shown when no more items are available).
+- **`MultiSelect<TItem>` / `Combobox<TItem>`:** `SearchQueryChanged` (`EventCallback<string>`) — fires on every keystroke in the search input; use for server-side async filtering.
+- **`FileUpload`:** New `ClearFiles()` public method — programmatically empties the selected-file list and resets the hidden `<input type="file">`.
+
+### Bug Fixes
+- **`NativeSelect`:** Nullable value crash when a null value was bound; fixed null guard in value-change handler.
+- **`FilterExtensions.Between`:** Expression tree for range queries generated an incorrect predicate; corrected to `>= lower && <= upper`.
+- **`MultiSelect`:** Space key was closing the dropdown instead of toggling the hovered item; fixed event handler priority.
+- **Logging:** Structured logging throughout NeoUI JS interop migrated from string interpolation to structured `LogXxx` calls.
+
+---
+
+## Version 3.7.1 -- 2026-03-25
+
+### Enhancements
+- **`SplitButton`:** New `PrimaryClass` (`string?`) and `DropdownClass` (`string?`) params for independent CSS overrides on the primary and dropdown segments. Fixed `DropdownButtonSize` not respecting the `Size` parameter.
+- **`SidebarPillNavItem`:** New `Title` (`string?`) param — shown as tooltip when the sidebar is collapsed and as visible label when expanded.
+- **`SidebarPillNav`:** Built-in `TooltipProvider` wrapper (no manual wrapping required). Expand button now shows a tooltip.
+
+---
+
+## Version 3.7.0 -- 2026-03-23
+
+### New Features
+- **`SidebarCollapsedMode.Pill`:** New enum value enabling a pill-style collapsed sidebar. Set `CollapsedMode="SidebarCollapsedMode.Pill"` on `<Sidebar>` to activate.
+- **`SidebarPillNav`:** Pill-mode navigation host. Wraps items in a floating pill container when the sidebar is collapsed.
+- **`SidebarPillNavItem`:** Individual nav item inside `SidebarPillNav`. Params: `Href`, `Icon`, `Title`.
+- **`SidebarPillFade`:** Gradient fade overlay used at the top/bottom of the pill nav scroll area.
+- **`SidebarPillInset`:** Inset content area companion for pill-mode layouts.
+- **`SidebarPillSpacer`:** Vertical spacer for use inside `SidebarPillNav`.
+- **`SidebarTrigger`:** New `Icon` (`RenderFragment?`) param — replaces the default panel-left icon with a custom icon.
+
+---
+
+## Version 3.6.7 -- 2026-03-20
+
+### Changes
+- **Build:** Tailwind CSS build for components moved to CI/CD pipeline (no API changes).
+
+---
+
+## Version 3.6.6 -- 2026-03-20
+
+### Bug Fixes
+- **DataTable:** Keyboard focus ring now visible in Safari. CSS focus ring rules migrated from `<tr>`-level `box-shadow` (unsupported in Safari) to per-cell inset `box-shadow` on `[role="cell"]`/`[role="columnheader"]`. Rules scoped to `[data-keyboard-nav]` so they only activate inside `DataTable` with `EnableKeyboardNavigation="true"`.
+
+---
+
+## Version 3.6.5 -- 2026-03-20
+
+### Enhancements
+- **DataTable:** Mobile-responsive pagination bar. Three-tier layout: `< 640px` shows row count + Prev/Next only; `>= 640px` adds page-size selector + First/Last; `>= 1024px` adds Page X of Y display.
+
+---
+
+## Version 3.6.4 -- 2026-03-19
+
+### New Features
+- **`ILocalizer` / `DefaultLocalizer`:** DI-based localization abstraction for all UI-chrome strings rendered by NeoUI components (placeholders, button labels, ARIA text, pagination labels, empty states, screen-reader text). 70+ built-in English default keys. Register via `AddNeoUIComponents(localizer => { localizer.Set("Combobox.Placeholder", "..."); })`. Override globally at startup (Option A) or subclass `DefaultLocalizer` for `.resx`/`IStringLocalizer<T>` integration (Option B). Registered as **Scoped**.
+- **Components wired up with `ILocalizer`:** `Alert`, `Breadcrumb`, `Calendar`, `Carousel`, `Combobox`, `DataGrid`, `DataTable`, `DataView`, `DatePicker`, `DateRangePicker`, `Dialog`, `MultiSelect`, `NumericInput`, `Pagination`, `Rating`, `ResponsiveNav`, `Sheet`, `Sidebar`, `TagInput`.
+- **`ChartTooltip.AppendToBody`** (`bool?`) -- when `true`, appends the tooltip DOM to `document.body` instead of nesting inside the chart container. Prevents tooltip clipping inside `overflow:hidden` ancestors.
+
+---
+
+## Version 3.6.3 -- 2026-03-18
+
+### Enhancements
+- **DataTable:** `SyncWidthOnResize` (`bool`, default `false`) — keeps `<table>` width equal to sum of column widths during/after resize. Pair with `TableContainerClass="border-0"`.
+- **DataTable:** `TableContainerClass` (`string?`) — CSS classes on the inner table container div (wraps `<table>`). Use `border-0` to remove the border.
+- **DataTable:** `Striped` (`bool`, default `false`) and `StripeClass` (`string?`, default `even:bg-muted/30 even:hover:bg-muted/70`) — zebra row striping.
+- **DataTable:** Smooth column reorder animation — affected columns fade out, Blazor re-renders, then fade back in at new positions with 500 ms ease-in transition.
+- **DataTable:** Fixed column reorder double-invocation race condition via `_reorderInitializing`/`_resizeInitializing` bool flags.
+- **DataTable:** Fixed column reorder incorrect order after 3+ moves — removed `commitDomReorder` from JS; Blazor is now sole owner of DOM ordering.
+- **DataTable:** Fixed column resize width reset in Safari — remove all event listeners before `releasePointerCapture`.
+- **PieChart:** Fixed `PieChart` and `FunnelChart` not using CSS variable color palette (`--chart-1` … `--chart-5`). Each slice/segment now receives an `itemStyle.color` cycling through the auto palette.
+- **PieChart:** `Pie` series — new `Colors` (`string[]?`) parameter for custom slice palette.
+- **FunnelChart:** `Funnel` series — new `Colors` (`string[]?`) parameter for custom segment palette.
+
+### Breaking Changes
+- **`Pie.Color`** parameter removed. It was never wired into the chart builder. Replace with `Colors="@(new[] { "#hex" })"`.
+
+---
+
+## Version 3.6.2 -- 2026-03-17
+
+### Enhancements
+- **DataTable:** Column pinning — `DataTableColumn.Pinned` (`ColumnPinnedSide`: `None`/`Left`/`Right`). Pinned columns stay fixed during horizontal scroll with frosted-glass treatment and separator borders.
+- **DataTable:** Hierarchical/tree rows — `ChildrenProperty`, `LoadChildrenAsync`, `HasChildrenField`, `ValueField`, `ExpandedValues`, `ExpandedValuesChanged`. Pagination hidden in tree mode. Search auto-expands ancestor nodes.
+- **DataTable:** Keyboard navigation — `↑`/`↓` arrow-key row navigation and `Enter`/`Space` selection, independent of `SelectionMode`.
+- **ContextMenu:** Programmatic positioning — new `X`/`Y` parameters and `OpenAt(double x, double y)` method. Used by `DataTable` row context menu.
+
+---
+
+## Version 3.6.1 -- 2026-03-16
+
+### Enhancements
+- **DataTable:** Server-side virtualisation — `ItemsProvider` (`DataTableVirtualProvider<TData>`) for demand-driven infinite scroll via Blazor `<Virtualize>`. New types: `DataTableVirtualRequest`, `SortDescriptor`.
+- **DataTable:** Client-side DOM windowing — `Virtualize="true"` for large in-memory datasets. Requires `ItemHeight` and `Height`.
+- **DataTable:** New parameters: `ItemHeight` (`float`, 40), `Height` (`string`, "400px"), `VirtualizeOverscanCount` (`int`, 3).
+- **DataView:** `GridColumnMinWidth` (`string?`) — CSS `repeat(auto-fill, minmax(…, 1fr))` adaptive grid. Overrides `GridColumns` when set.
+
+### Breaking Changes
+- **`DataTableRequest.SortColumn`** and **`SortDirection`** removed. Use `SortDescriptors` (`IReadOnlyList<SortDescriptor>`) instead: `req.SortDescriptors.FirstOrDefault()?.Column`.
+
+---
+
+## Version 3.6.0 -- 2026-03-14
+
+### New Components (6)
+- **Timeline** -- Composable chronological event display. Three statuses (`Pending`, `Active`, `Completed`), custom icon content, `Solid`/`Dashed`/`Dotted` connectors, collapsible items, and `Left`/`Right`/`Alternate` alignment. Sub-components: `Timeline`, `TimelineItem`, `TimelineHeader`, `TimelineTitle`, `TimelineDescription`, `TimelineTime`, `TimelineIcon`, `TimelineConnector`, `TimelineContent`, `TimelineEmpty`.
+- **TreeView** -- Hierarchical data display with expand/collapse, single and multi-select, tri-state checkbox propagation, and optional drag-and-drop reordering. Generic `TItem` with lambda-based child/value/text/icon resolution. Sub-components: `TreeView<TItem>`, `TreeItem<TItem>`, `TreeItemNode<TItem>`.
+- **DataView** -- Switchable list/grid layout container. Declarative `DataViewColumn` definitions auto-wire the search input, sort dropdown, and keyboard navigation. Built-in pagination, grouping, single/multi/none selection, infinite scroll, and client-side virtualization. Sub-components: `DataView<TItem>`, `DataViewColumn<TItem>`, `DataViewListTemplate`, `DataViewGridTemplate`.
+- **DynamicForm** -- Schema-driven form renderer. Pass a `FormSchema` (list of `FormFieldDefinition`) and it renders the appropriate NeoUI input for all 24 `FieldType` values. Handles validation rules, `VisibleWhen` conditional visibility, and emits `@bind-Values` / `OnFieldChanged`. Components: `DynamicForm`, `FormSection`, `DynamicFieldRenderer`.
+- **TagInput** -- Tag/chip input managing a list of string tags. Configurable `AddTrigger` flags enum (`Enter`, `Comma`, `Tab`, `Space`, `Blur`), async `OnSearchSuggestions`, duplicate prevention, `MaxTags` limit, and `Backspace` removal. Variants: `Default`, `Outlined`, `Ghost`.
+- **SplitButton** -- Primary action button paired with a chevron-triggered dropdown for secondary actions. Matches `Button` `Variant` and `Size` tokens. Sub-components: `SplitButton`, `SplitButtonItem`, `SplitButtonSeparator`.
+
+### New Chart Types (4) + New Demo (1)
+- **CandlestickChart** -- OHLC chart. `Candlestick` series parameters: `OpenKey`, `HighKey`, `LowKey`, `CloseKey`, `DateKey`, `BullishColor`, `BearishColor`.
+- **FunnelChart** -- Pipeline/conversion funnel. `Funnel` series parameters: `DataKey`, `NameKey`, `Sort` (`Ascending`/`Descending`/`None`), `Align` (`Left`/`Center`/`Right`), `Gap`, `MinSize`, `MaxSize`, `Top`, `Bottom`.
+- **GaugeChart** -- Circular gauge and speedometer. Multiple `Gauge` series auto-tile horizontally. Key parameters: `StartAngle`, `EndAngle`, `SplitNumber`, `ShowPointer`, `ShowProgress`, `ProgressWidth`, `ShowSplitLine`, `ShowAxisLabel`, `Fill`.
+- **HeatmapChart** -- Intensity grid (activity calendars, correlation matrices). `Heatmap` series uses `XKey`/`YKey`/`ValueKey`. `VisualMap` sub-component controls color-stop ranges, orientation, and min/max.
+- **RadialBarChart** -- New demo page added for the pre-existing component at `/components/chart/radial-bar`.
+
+### Enhancements
+- **DataGrid:** New server-side demo page (`/components/datagrid/server-side`) with five patterns: `OnServerDataRequest` Func, `IDataGridServerDataProvider<TItem>` / `InMemoryProductProvider`, simulated latency, cross-page row selection (`@bind-SelectedItems`), and `FilterBuilder` integration.
+- **DataGrid:** Fixed initializing-state race condition that produced empty rows on pages with multiple simultaneous `DataGrid<TItem>` instances. Removed `_isInitializing` from the render gate; `_columnsRegistered` is now the sole guard.
+- **DataTable:** New appearance parameters -- `Dense` (`bool`, default `true`), `HeaderBackground` (`bool`, default `true`), `HeaderBorder` (`bool`, default `false`), `CellBorder` (`bool`, default `false`), `ColumnsVisibility` (`bool`, default `true`).
+- **DataTable:** Per-part CSS class overrides -- `HeaderClass`, `HeaderRowClass`, `BodyRowClass`.
+- **MultiSelect:** Selected-tag overflow now truncates visible tags and shows a `Tooltip` listing all selected values instead of reflowing the trigger width.
+- **Sidebar / Button / LinkButton:** Fixed stale `ElementReference` when used as `AsChild` trigger after conditional re-renders (e.g. sidebar collapsed/expanded toggling `TooltipPrimitive` wrapper).
+- **Sidebar:** Fixed `SidebarRail` absolute-positioned button causing a horizontal scrollbar. Removed `overflow-y-auto` and `h-screen` from layout variant classes; replaced with `min-h-full`.
+- **DropdownMenuContent:** `ForceMount` default changed from `false` to `true`. Eliminates mid-animation pop-in on first open by pre-mounting the portal at startup.
+
+---
+
+## Version 3.1.0 -- 2026-02-15
+
+### New Components
+- **ColorPicker** -- Full color selection with hex, RGB, HSL support, swatches, and opacity control
+- **CurrencyInput** -- Formatted currency input with locale-aware formatting and `@bind-Value`
+- **DateRangePicker** -- Dual-calendar date range picker with optional quick-select presets
+- **MaskedInput** -- Configurable format masks (phone, date, credit card, postal code, custom)
+- **NumericInput** -- Number input with increment/decrement buttons, step, min/max, and formatting
+- **RangeSlider** -- Dual-handle slider for selecting a min/max value range
+- **Rating** -- Star rating with half-star precision, readonly mode, and custom icons
+- **ResponsiveNav** -- Wrapper that shows full horizontal nav on desktop, hamburger sheet on mobile
+- **DrawerService** -- Programmatic drawer API mirroring DialogService
+
+### Enhancements
+- **Sidebar:** `AutoDetectActive` prop -- automatically highlights menu items based on current URL
+- **Sidebar:** `StaticRendering` prop -- click-delegation interop for SSR/prerendering scenarios
+- **DataGrid:** `OnServerDataRequest` (Func-based) -- replaces legacy `OnDataRequest` EventCallback
+- **DataGrid:** `DataFormatString` on `DataGridColumn` -- format cells without a CellTemplate
+- **Calendar:** `CaptionLayout = Dropdown` -- quick month/year jump dropdown mode
+- **Calendar:** `DisplayedMonthChanged` event -- react to user month navigation
+- **Select:** Generic `TValue` -- bind to enum or any non-string type natively
+- **RadioGroup:** Generic `TValue` -- bind to strongly-typed values
+- **DropdownMenuContent:** `MatchTriggerWidth` prop -- expand dropdown to trigger width
+- **DropdownMenuContent:** `Strategy = Fixed` -- escape stacking contexts (sidebars, modals)
+- **Motion:** `StaggerChildren` support -- animate list items in sequence
+- **Motion:** `RespectReducedMotion` prop -- honours `prefers-reduced-motion` media query
+- **ToastProvider:** `MaxToasts` prop -- cap simultaneous visible toasts
+- **ThemeSwitcher:** Live preview on hover before committing theme change
+- **Input, Textarea:** `AriaDescribedBy` and `AriaInvalid` props for richer accessibility
+
+### Bug Fixes
+- Fixed focus trap escaping in nested Dialog → Sheet scenarios
+- Fixed Combobox dropdown position in overflow containers
+- Fixed DataGrid column reorder losing sort state
+- Fixed Calendar year dropdown wrapping incorrectly in narrow viewports
+- Fixed Sheet `LockScroll` not restoring body padding on close
+- Fixed MultiSelect selected tags overflowing trigger button on small widths
+
+### Breaking Changes
+- **`DataGrid.OnDataRequest`** (EventCallback) deprecated; replaced by `OnServerDataRequest` (Func). Old binding still compiles but emits a warning and will be removed in 4.0.
+- **`DialogContent.TrapFocus`** now defaults `true` (was `false`). Add `TrapFocus="false"` to opt out.
+- **`SidebarProvider.HeightClass`** default changed from `h-screen` to `min-h-screen` to support content-taller-than-viewport layouts.
+
+---
+
+## Version 3.0.0 -- 2025-11-01
+
+### Highlights
+- Full rewrite targeting **.NET 10** and **Blazor InteractiveAuto**
+- New **shadcn/ui**-compatible theming with 85 out-of-the-box theme combinations
+- **NeoUI.Blazor.Primitives** headless layer extracted as standalone package
+- Three icon libraries: **NeoUI.Icons.Lucide** (1,640), **NeoUI.Icons.Heroicons** (1,288), **NeoUI.Icons.Feather** (286)
+- **Portal architecture** -- all floating UI (dialogs, sheets, toasts) rendered via `<PortalHost />`
+- **AG Grid integration** -- `Grid` component wrapping AG Grid Community Edition with NeoUI Shadcn theme
+
+### New in 3.0
+- Accordion, AlertDialog, AspectRatio, Avatar, Badge, Breadcrumb, Button, ButtonGroup
+- Calendar, Card, Carousel, Chart suite (Area, Bar, Line, Pie, Scatter, Radar, Composed, Radial)
+- Checkbox, Collapsible, Combobox, Command, ContextMenu, DataGrid, DataTable, DatePicker
+- Dialog, DialogService, DropdownMenu, Empty, Field, HeightAnimation, HoverCard
+- Input, InputGroup, InputOTP, Item, Kbd, Label, MarkdownEditor, Menubar
+- Motion (20+ animation presets), MultiSelect, NativeSelect, NavigationMenu
+- Pagination, Popover, Progress, RadioGroup, Resizable, RichTextEditor, ScrollArea
+- Select, Separator, Sheet, Sidebar, Skeleton, Slider, Spinner, Switch
+- Tabs, Textarea, TimePicker, Toast, Toggle, ToggleGroup, Tooltip, Typography
+
+### Breaking Changes from 2.x
+- All component namespaces consolidated -- `@using NeoUI.Blazor` covers everything
+- Theme system migrated from CSS classes to CSS custom properties
+- `PortalHost` required in `MainLayout.razor`
+- Service registration API changed: `AddNeoUIPrimitives()` + `AddNeoUIComponents()`
+- Icon components renamed: `Icon` → `LucideIcon`, `HeroIcon`, `FeatherIcon`
+
+---
+
+## Version 2.x → 3.0 Migration Guide
+
+### Package References
+
+```bash
+# Remove old packages
+dotnet remove package NeoBlazorUI
+dotnet remove package NeoBlazorUI.Primitives
+
+# Add new packages
+dotnet add package NeoUI.Blazor --version 3.6.7
+```
+
+### _Imports.razor
+
+```razor
+@* Old *@
+@using NeoBlazorUI
+@using NeoBlazorUI.Components
+
+@* New *@
+@using NeoUI.Blazor
+@using NeoUI.Blazor.Services
+@using NeoUI.Icons.Lucide
+```
+
+### Program.cs
+
+```csharp
+// Old
+builder.Services.AddBlazorUIPrimitives();
+builder.Services.AddBlazorUIComponents();
+
+// New
+builder.Services.AddNeoUIPrimitives();
+builder.Services.AddNeoUIComponents();
+builder.Services.AddScoped<IPortalService, PortalService>();
+```
+
+### MainLayout.razor
+
+```razor
+@* Add PortalHost (required for overlays) *@
+<PortalHost />
+```

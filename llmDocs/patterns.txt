@@ -1,0 +1,525 @@
+# NeoUI -- Usage Patterns & Best Practices
+
+Practical patterns for the most common scenarios when building Blazor apps with NeoUI.
+
+---
+
+## Forms
+
+### Basic Validated Form
+
+```razor
+@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="@_model" OnValidSubmit="HandleSubmit">
+ <DataAnnotationsValidator />
+
+ <FieldGroup>
+  <Field>
+<FieldLabel For="email">Email</FieldLabel>
+<FieldContent>
+ <Input Id="email" Type="InputType.Email"
+  @bind-Value="_model.Email"
+  Placeholder="you@example.com" />
+</FieldContent>
+<ValidationMessage For="() => _model.Email" />
+  </Field>
+
+  <Field>
+<FieldLabel For="password">Password</FieldLabel>
+<FieldContent>
+ <Input Id="password" Type="InputType.Password"
+  @bind-Value="_model.Password" />
+</FieldContent>
+<ValidationMessage For="() => _model.Password" />
+  </Field>
+ </FieldGroup>
+
+ <Button Type="ButtonType.Submit" Class="mt-4">Sign in</Button>
+</EditForm>
+
+@code {
+ private LoginModel _model = new();
+
+ private async Task HandleSubmit()
+ {
+  // validated, safe to submit
+ }
+
+ private class LoginModel
+ {
+  [Required, EmailAddress]
+  public string Email { get; set; } = "";
+
+  [Required, MinLength(8)]
+  public string Password { get; set; } = "";
+ }
+}
+```
+
+### Select / Combobox Binding
+
+```razor
+@* Native select -- simple, always works *@
+<Select @bind-Value="_country" Placeholder="Select country">
+ <SelectTrigger />
+ <SelectContent>
+  <SelectItem Value="us">United States</SelectItem>
+  <SelectItem Value="uk">United Kingdom</SelectItem>
+  <SelectItem Value="ca">Canada</SelectItem>
+ </SelectContent>
+</Select>
+
+@* Combobox -- searchable *@
+<Combobox @bind-Value="_country" Placeholder="Search countries..."
+ SearchPlaceholder="Type to search...">
+ @foreach (var country in _countries)
+ {
+  <ComboboxItem Value="@country.Code">@country.Name</ComboboxItem>
+ }
+</Combobox>
+```
+
+### Multi-Select
+
+```razor
+<MultiSelect @bind-Values="_tags" Placeholder="Select tags..." MaxDisplayTags="3">
+ <MultiSelectItem Value="react">React</MultiSelectItem>
+ <MultiSelectItem Value="vue">Vue</MultiSelectItem>
+ <MultiSelectItem Value="angular">Angular</MultiSelectItem>
+ <MultiSelectItem Value="svelte">Svelte</MultiSelectItem>
+</MultiSelect>
+
+@code {
+ private IEnumerable<string>? _tags;
+}
+```
+
+### Date & Time Pickers
+
+```razor
+@* Date only *@
+<DatePicker @bind-SelectedDate="_date" Placeholder="Pick a date" />
+
+@* Date range *@
+<DateRangePicker @bind-StartDate="_start" @bind-EndDate="_end" />
+
+@* Time picker *@
+<TimePicker @bind-SelectedTime="_time" Use24HourFormat="false" />
+
+@code {
+ private DateOnly? _date;
+ private DateOnly? _start;
+ private DateOnly? _end;
+ private TimeOnly? _time;
+}
+```
+
+### File Upload
+
+```razor
+<FileUpload Accept=".pdf,.docx"
+MaxFileSizeMb="10"
+Multiple="true"
+OnFilesChanged="HandleFiles">
+ <UploadPrompt>
+  <p>Drag files here or <span class="text-primary">browse</span></p>
+  <p class="text-xs text-muted-foreground mt-1">PDF, DOCX up to 10 MB</p>
+ </UploadPrompt>
+</FileUpload>
+```
+
+---
+
+## Data Binding Patterns
+
+### Two-Way Binding (@bind-Value)
+
+```razor
+@* Standard two-way binding *@
+<Input @bind-Value="_name" />
+<Switch @bind-Checked="_enabled" />
+<Slider @bind-Value="_volume" Min="0" Max="100" />
+<Checkbox @bind-Checked="_agreed" />
+<RadioGroup @bind-Value="_size">
+ <RadioGroupItem Value="sm">Small</RadioGroupItem>
+ <RadioGroupItem Value="md">Medium</RadioGroupItem>
+ <RadioGroupItem Value="lg">Large</RadioGroupItem>
+</RadioGroup>
+
+@code {
+ private string _name = "";
+ private bool _enabled = true;
+ private double _volume = 50;
+ private bool _agreed = false;
+ private string _size = "md";
+}
+```
+
+### Controlled Open/Close State
+
+```razor
+@* Controlled dialog *@
+<Dialog @bind-Open="_open">
+ <DialogTrigger AsChild>
+  <Button>Open</Button>
+ </DialogTrigger>
+ <DialogContent>
+  <DialogHeader><DialogTitle>Edit</DialogTitle></DialogHeader>
+  <DialogFooter>
+<Button Variant="ButtonVariant.Outline" OnClick="() => _open = false">Cancel</Button>
+<Button OnClick="Save">Save</Button>
+  </DialogFooter>
+ </DialogContent>
+</Dialog>
+
+@code {
+ private bool _open = false;
+ private void Save() { /* ... */ _open = false; }
+}
+```
+
+### Tab State
+
+```razor
+<Tabs @bind-Value="_activeTab" DefaultValue="overview">
+ <TabsList>
+  <TabsTrigger Value="overview">Overview</TabsTrigger>
+  <TabsTrigger Value="details">Details</TabsTrigger>
+  <TabsTrigger Value="history">History</TabsTrigger>
+ </TabsList>
+ <TabsContent Value="overview"><OverviewPanel /></TabsContent>
+ <TabsContent Value="details"><DetailsPanel /></TabsContent>
+ <TabsContent Value="history"><HistoryPanel /></TabsContent>
+</Tabs>
+
+@code {
+ private string? _activeTab;
+ // Switch programmatically: _activeTab = "details";
+}
+```
+
+---
+
+## Toasts / Notifications
+
+### Service Injection
+
+```razor
+@inject IToastService Toast
+
+<Button OnClick="ShowSuccess">Save</Button>
+<Button OnClick="ShowError" Variant="ButtonVariant.Destructive">Delete</Button>
+
+@code {
+ private void ShowSuccess() =>
+  Toast.Show("Changes saved", "Your changes have been saved successfully.", ToastVariant.Default);
+
+ private void ShowError() =>
+  Toast.Show("Error", "Could not delete item. Please try again.", ToastVariant.Destructive);
+}
+```
+
+### Setup (once in MainLayout.razor or App.razor)
+
+```razor
+<ToastProvider Position="ToastPosition.BottomRight" MaxToasts="5" />
+```
+
+---
+
+## Dialogs -- Programmatic (DialogService)
+
+```razor
+@inject IDialogService DialogService
+
+<Button OnClick="ConfirmDelete">Delete</Button>
+
+@code {
+ private async Task ConfirmDelete()
+ {
+  var result = await DialogService.ShowAsync<ConfirmDialog>(
+new DialogParameters { ["ItemName"] = "Document" });
+
+  if (result.Confirmed)
+await DeleteItemAsync();
+ }
+}
+```
+
+```razor
+@* ConfirmDialog.razor *@
+<DialogContent>
+ <DialogHeader>
+  <DialogTitle>Delete @ItemName?</DialogTitle>
+  <DialogDescription>This action cannot be undone.</DialogDescription>
+ </DialogHeader>
+ <DialogFooter>
+  <DialogClose AsChild>
+<Button Variant="ButtonVariant.Outline">Cancel</Button>
+  </DialogClose>
+  <Button Variant="ButtonVariant.Destructive" OnClick="Confirm">Delete</Button>
+ </DialogFooter>
+</DialogContent>
+
+@code {
+ [Parameter] public string ItemName { get; set; } = "";
+ [CascadingParameter] public DialogInstance Dialog { get; set; } = null!;
+ private async Task Confirm() => await Dialog.CloseAsync(new DialogResult { Confirmed = true });
+}
+```
+
+---
+
+## Theming
+
+### Runtime Theme Switching
+
+```razor
+@inject ThemeService ThemeService
+
+<ThemeSwitcher />@* Built-in UI -- picks base + accent *@
+<DarkModeToggle />  @* Built-in dark mode toggle *@
+
+@* Programmatic *@
+<Button OnClick="() => ThemeService.SetTheme(ThemeBase.Zinc, ThemeAccent.Violet)">
+ Apply Zinc + Violet
+</Button>
+```
+
+### CSS Variable Overrides
+
+```css
+/* In your app.css -- override any variable per-component or globally */
+:root {
+ --radius: 0.25rem; /* sharper corners */
+ --primary: oklch(0.6 0.2 250); /* custom brand color */
+}
+
+/* Scoped override */
+.my-card {
+ --card: oklch(0.98 0 0);
+}
+```
+
+### Conditional Dark Mode Classes
+
+```razor
+@* Tailwind dark: variant *@
+<div class="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100">
+ Content
+</div>
+```
+
+---
+
+## Sidebar Layout Pattern
+
+```razor
+@* MainLayout.razor *@
+<SidebarProvider DefaultOpen="true" StaticRendering="true">
+ <Sidebar AutoDetectActive="true">
+  <SidebarHeader>
+<SidebarHeaderContent>
+ <LucideIcon Name="layers" Size="20" />
+ <SidebarHeaderInfo>
+  <span class="font-semibold">My App</span>
+ </SidebarHeaderInfo>
+</SidebarHeaderContent>
+  </SidebarHeader>
+
+  <SidebarContent>
+<SidebarGroup>
+ <SidebarGroupLabel>Main</SidebarGroupLabel>
+ <SidebarGroupContent>
+  <SidebarMenu>
+<SidebarMenuItem>
+ <SidebarMenuButton Href="/">
+  <LucideIcon Name="home" Size="16" />
+  Home
+ </SidebarMenuButton>
+</SidebarMenuItem>
+<SidebarMenuItem>
+ <SidebarMenuButton Href="/settings">
+  <LucideIcon Name="settings" Size="16" />
+  Settings
+ </SidebarMenuButton>
+</SidebarMenuItem>
+  </SidebarMenu>
+ </SidebarGroupContent>
+</SidebarGroup>
+  </SidebarContent>
+
+  <SidebarFooter>
+<SidebarMenuItem>
+ <SidebarMenuButton>
+  <LucideIcon Name="user" Size="16" />
+  John Doe
+ </SidebarMenuButton>
+</SidebarMenuItem>
+  </SidebarFooter>
+ </Sidebar>
+
+ <SidebarInset>
+  <header class="flex h-16 items-center gap-2 border-b px-4">
+<SidebarTrigger />
+<Separator Orientation="SeparatorOrientation.Vertical" Class="h-4" />
+<Breadcrumb>...</Breadcrumb>
+  </header>
+  <main class="p-6">@Body</main>
+ </SidebarInset>
+</SidebarProvider>
+```
+
+---
+
+## Data Grid Patterns
+
+### Basic Grid
+
+```razor
+<DataGrid TItem="Order" Items="@_orders" Height="500px">
+ <DataGridColumn Field="Id" Header="#" Width="80px" />
+ <DataGridColumn Field="Customer" Header="Customer" Sortable="true" Filterable="true" />
+ <DataGridColumn Field="Amount" Header="Amount" DataFormatString="C" />
+ <DataGridColumn Field="Status" Header="Status">
+  <CellTemplate Context="order">
+   <Badge Variant="@(order.Status == "Paid" ? BadgeVariant.Default : BadgeVariant.Secondary)">
+    @order.Status
+   </Badge>
+  </CellTemplate>
+ </DataGridColumn>
+</DataGrid>
+```
+
+### Server-Side Grid
+
+```razor
+<DataGrid TItem="Product"
+ RowModelType="DataGridRowModelType.BlazorServerSide"
+ OnServerDataRequest="FetchPage"
+ Height="600px">
+ <DataGridColumn Field="Name" Header="Name" Sortable="true" Filterable="true" />
+ <DataGridColumn Field="Price" Header="Price" DataFormatString="C" Sortable="true" />
+</DataGrid>
+
+@code {
+ private async Task<DataGridDataResponse<Product>> FetchPage(DataGridDataRequest<Product> req)
+ {
+  var (items, total) = await _api.GetProductsAsync(
+   page: req.StartRow / req.PageSize,
+   pageSize: req.PageSize,
+   sortField: req.SortModel.FirstOrDefault()?.ColId,
+   sortDir: req.SortModel.FirstOrDefault()?.Sort,
+   filter: req.FilterModel.GetValueOrDefault("Name")?.Filter);
+
+  return new DataGridDataResponse<Product> { Items = items, TotalCount = total };
+ }
+}
+```
+
+---
+
+## Render Mode Gotchas
+
+### Interactive Components Need Interactive Render Mode
+
+Tabs, NavigationMenu, Combobox, DataGrid -- all require interactive rendering.
+
+```razor
+@* App.razor -- set global interactive render mode *@
+<Routes @rendermode="@InteractiveAuto" />
+```
+
+```razor
+@* Or per-component in a Static SSR page *@
+<Tabs @rendermode="@InteractiveServer" DefaultValue="tab1">
+ ...
+</Tabs>
+```
+
+### InteractiveAuto Requires Registration in Both Projects
+
+```csharp
+// Server project Program.cs
+builder.Services.AddRazorComponents()
+ .AddInteractiveServerComponents()
+ .AddInteractiveWebAssemblyComponents();
+
+// Both Server AND WASM Client Program.cs
+builder.Services.AddNeoUIPrimitives();
+builder.Services.AddNeoUIComponents();
+builder.Services.AddScoped<IPortalService, PortalService>();
+```
+
+### SidebarProvider with Static Rendering
+
+```razor
+@* Set StaticRendering="true" when parent renders statically *@
+<SidebarProvider StaticRendering="true">
+ ...
+</SidebarProvider>
+```
+
+---
+
+## Keyboard Shortcuts
+
+```razor
+@inject IKeyboardShortcutService KeyboardShortcuts
+
+@code {
+ protected override async Task OnAfterRenderAsync(bool firstRender)
+ {
+  if (firstRender)
+  {
+await KeyboardShortcuts.RegisterAsync("Ctrl+K", OpenCommandPalette);
+await KeyboardShortcuts.RegisterAsync("Escape", CloseAll);
+  }
+ }
+
+ private void OpenCommandPalette() { /* ... */ }
+ private void CloseAll() { /* ... */ }
+}
+```
+
+---
+
+## Loading States Pattern
+
+```razor
+@if (_loading)
+{
+ <div class="space-y-3">
+  <Skeleton Class="h-8 w-48" />
+  <Skeleton Class="h-4 w-full" />
+  <Skeleton Class="h-4 w-3/4" />
+  <Skeleton Class="h-32 w-full" />
+ </div>
+}
+else if (_error is not null)
+{
+ <Empty>
+  <EmptyIcon><LucideIcon Name="alert-circle" Size="48" Class="text-destructive" /></EmptyIcon>
+  <EmptyTitle>Failed to load</EmptyTitle>
+  <EmptyDescription>@_error</EmptyDescription>
+  <EmptyActions><Button OnClick="Reload">Retry</Button></EmptyActions>
+ </Empty>
+}
+else if (!_items.Any())
+{
+ <Empty>
+  <EmptyIcon><LucideIcon Name="inbox" Size="48" /></EmptyIcon>
+  <EmptyTitle>No items yet</EmptyTitle>
+  <EmptyDescription>Create your first item to get started.</EmptyDescription>
+  <EmptyActions><Button>Create Item</Button></EmptyActions>
+ </Empty>
+}
+else
+{
+ @foreach (var item in _items)
+ {
+  <ItemCard @key="item.Id" Item="item" />
+ }
+}
+```

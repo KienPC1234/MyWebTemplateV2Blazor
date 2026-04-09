@@ -1,0 +1,127 @@
+# NeoUI -- Installation Reference
+
+## Packages
+
+| Package | Description | Version |
+|---------|-------------|---------|
+| NeoUI.Blazor | Styled components (includes Primitives + all icons transitively) | 4.0.0 |
+| NeoUI.Blazor.Primitives | Headless accessibility layer only | 4.0.0 |
+| NeoUI.Icons.Lucide | 1,640 stroke-based icons | 3.0.0 |
+| NeoUI.Icons.Heroicons | 1,288 icons, 4 variants (outline/solid/mini/micro) | 3.0.0 |
+| NeoUI.Icons.Feather | 286 minimalist icons | 3.0.0 |
+
+## Install Commands
+
+```bash
+# Styled components -- everything included
+dotnet add package NeoUI.Blazor --version 4.0.0
+
+# Headless primitives only (custom design system)
+dotnet add package NeoUI.Blazor.Primitives --version 4.0.0
+
+# Icons (included transitively with NeoUI.Blazor)
+dotnet add package NeoUI.Icons.Lucide --version 3.0.0
+dotnet add package NeoUI.Icons.Heroicons --version 3.0.0
+dotnet add package NeoUI.Icons.Feather --version 3.0.0
+```
+
+## Service Registration (Program.cs)
+
+Required in both Server host and WASM client for InteractiveAuto:
+
+```csharp
+builder.Services.AddNeoUIPrimitives();
+builder.Services.AddNeoUIComponents();
+```
+
+**AppProvider:** After registering services, wrap `MainLayout.razor` in `<AppProvider>` to initialize ThemeService and enable Theme v2 (StyleVariant, RadiusPreset, etc.). See the Getting Started guide for the full pattern.
+
+## _Imports.razor
+
+```razor
+@using NeoUI.Blazor
+@using NeoUI.Blazor.Services
+@using NeoUI.Icons.Lucide
+```
+
+For chart components:
+```razor
+@using NeoUI.Blazor.Charts
+```
+
+For headless primitives:
+```razor
+@using NeoUI.Blazor.Primitives
+@using NeoUI.Blazor.Primitives.Services
+```
+
+## Theme CSS (App.razor)
+
+Place before `</head>` in this order:
+
+```html
+<!-- 1. Component styles (required) -->
+<link rel="stylesheet" href="_content/NeoUI.Blazor/components.css" />
+
+<!-- 2. Base color (choose one) -->
+<!-- zinc | slate | gray | neutral | stone | luma | mist | mauve | taupe | olive -->
+<link rel="stylesheet" href="_content/NeoUI.Blazor/css/themes/base/zinc.css" />
+
+<!-- 3. Primary accent (choose one) -->
+<!-- blue | green | red | rose | orange | amber | yellow | lime | teal | cyan |
+     sky | indigo | violet | purple | fuchsia | pink | slate -->
+<link rel="stylesheet" href="_content/NeoUI.Blazor/css/themes/primary/blue.css" />
+
+<!-- 4. Style variant (optional) -->
+<!-- vega | nova | maia | lyra | mira | luma   (Default = no file) -->
+<!-- <link rel="stylesheet" href="_content/NeoUI.Blazor/css/themes/styles/vega.css" /> -->
+
+<!-- 5. Radius preset (optional) -->
+<!-- none | small | large   (medium = default, no file needed) -->
+<!-- <link rel="stylesheet" href="_content/NeoUI.Blazor/css/themes/radius/small.css" /> -->
+
+<!-- 6. Font preset (optional -- sets CSS variables only; load font faces separately) -->
+<!-- inter | geist | calsans | dmsans | plusjakarta   (system = default, no file) -->
+<!-- <link rel="stylesheet" href="_content/NeoUI.Blazor/css/themes/fonts/inter.css" /> -->
+
+<!-- 7. Theme init script (must be before Blazor to prevent FOUC) -->
+<script src="_content/NeoUI.Blazor/js/theme.js"></script>
+```
+
+This gives 10 base x 17 primary = **170** ready-made color combinations, plus style variant, radius, and font customization.
+
+## Icon Usage
+
+```razor
+@* Lucide -- kebab-case name, Size, Class, StrokeWidth *@
+<LucideIcon Name="circle-check" Size="20" Class="text-green-500" />
+
+@* Heroicons -- Name, Variant (Outline|Solid|Mini|Micro), Size *@
+<HeroIcon Name="check-circle" Variant="HeroIconVariant.Solid" Size="20" />
+
+@* Feather *@
+<FeatherIcon Name="check-circle" Size="20" />
+```
+
+## Tailwind CSS v4 (Optional -- for custom styles)
+
+NeoUI ships pre-built CSS. Tailwind is only needed when customizing styles.
+
+```bash
+npm install
+npm run build:css  # one-time build
+npm run watch:css  # dev watch mode
+```
+
+Add to .csproj to auto-build during dotnet build:
+```xml
+<Target Name="BuildTailwindCss" BeforeTargets="Build">
+  <Exec Command="npm run build:css" WorkingDirectory="$(ProjectDir)" />
+</Target>
+```
+
+## Compatibility
+
+- .NET 10+ (also compatible with .NET 8 and .NET 9)
+- All Blazor hosting models: Server, WebAssembly, Auto
+- Dark mode: automatic via CSS variables

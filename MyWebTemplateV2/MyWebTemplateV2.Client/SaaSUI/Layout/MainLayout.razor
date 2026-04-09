@@ -5,59 +5,88 @@
 @using NeoUI.Icons.Lucide
 
 <AppProvider>
-    <div class="min-h-screen flex flex-col bg-background">
+    <div class="min-h-screen flex flex-col bg-white">
         
-        <!-- Floating Navbar -->
-        <div class="nav-floating">
-            <div class="nav-floating-inner">
-                <!-- Logo -->
-                <div class="flex items-center gap-3">
-                    <div class="nav-brand-icon">
-                        <LucideIcon Name="flame" class="h-4 w-4" />
+        <!-- FPT Official Header -->
+        <header class="fpt-header">
+            <div class="fpt-nav-container">
+                <!-- Brand -->
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1 group">
+                        <!-- Simulated FPT Logo Blocks -->
+                        <div class="w-4 h-8 bg-fpt-orange -skew-x-[13deg] transition-transform group-hover:scale-110"></div>
+                        <div class="w-4 h-8 bg-fpt-green -skew-x-[13deg] transition-transform group-hover:scale-110"></div>
+                        <div class="w-4 h-8 bg-fpt-blue -skew-x-[13deg] transition-transform group-hover:scale-110"></div>
                     </div>
-                    <span class="font-extrabold text-lg tracking-tight hidden sm:block" style="font-family: 'Plus Jakarta Sans', sans-serif;">
-                        Nexus
-                    </span>
+                    <div class="flex flex-col leading-none">
+                        <span class="text-2xl font-black tracking-tighter text-fpt-blue italic">FPT</span>
+                        <span class="text-[10px] font-bold tracking-widest text-fpt-orange uppercase">Nexus Enterprise</span>
+                    </div>
                 </div>
                 
-                <!-- Nav Links -->
-                <div class="nav-links">
-                    <NavLink href="/" Match="NavLinkMatch.All">Trang chủ</NavLink>
-                    <NavLink href="/features">Tính năng</NavLink>
-                    <NavLink href="/pricing">Bảng giá</NavLink>
-                    <NavLink href="/docs">Tài liệu</NavLink>
-                </div>
+                <!-- Links -->
+                <nav class="hidden md:flex items-center gap-10">
+                    <NavLink href="/" Match="NavLinkMatch.All" class="nav-link" ActiveClass="nav-active">Trang chủ</NavLink>
+                    <NavLink href="/features" class="nav-link" ActiveClass="nav-active">Tính năng</NavLink>
+                    <NavLink href="/solutions" class="nav-link" ActiveClass="nav-active">Giải pháp</NavLink>
+                    <NavLink href="/docs" class="nav-link" ActiveClass="nav-active">Tài liệu</NavLink>
+                </nav>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-2">
-                    <DarkModeToggle />
-                    <Button Variant="ButtonVariant.Default" Size="ButtonSize.Default" class="rounded-full px-5 hidden sm:flex">
-                        Bắt đầu
-                    </Button>
+                <div class="flex items-center gap-4">
+                    <button class="btn-fpt">Liên hệ</button>
                 </div>
             </div>
-        </div>
+        </header>
 
         <!-- Main Content -->
         <main class="flex-1">
             @Body
         </main>
         
-        <!-- Footer -->
-        <footer class="site-footer">
-            <div class="site-footer-inner">
-                <div class="flex items-center gap-3">
-                    <div class="nav-brand-icon" style="width:1.75rem;height:1.75rem;border-radius:0.5rem;">
-                        <LucideIcon Name="flame" class="h-3.5 w-3.5" />
+        <!-- FPT Official Footer -->
+        <footer class="fpt-footer bg-white border-t border-border">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                    <div class="col-span-2">
+                        <div class="flex items-center gap-2 mb-6">
+                            <div class="w-3 h-6 bg-fpt-orange -skew-x-[13deg]"></div>
+                            <div class="w-3 h-6 bg-fpt-green -skew-x-[13deg]"></div>
+                            <div class="w-3 h-6 bg-fpt-blue -skew-x-[13deg]"></div>
+                            <span class="text-xl font-black italic text-fpt-blue">FPT Nexus</span>
+                        </div>
+                        <p class="text-sm text-zinc-500 max-w-sm leading-relaxed">
+                            Thành viên của Tập đoàn FPT. Tiên phong chuyển đổi số và cung cấp giải pháp công nghệ hiện đại cho doanh nghiệp toàn cầu.
+                        </p>
                     </div>
-                    <span class="font-bold tracking-tight text-sm" style="font-family:'Plus Jakarta Sans',sans-serif;">Nexus Enterprise</span>
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-fpt-blue mb-6">Sản phẩm</h4>
+                        <ul class="space-y-4 text-sm text-zinc-600">
+                            <li><a href="#" class="hover:text-fpt-orange">Phân tích dữ liệu</a></li>
+                            <li><a href="#" class="hover:text-fpt-orange">Hệ thống ERP</a></li>
+                            <li><a href="#" class="hover:text-fpt-orange">Cloud Computing</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold uppercase tracking-widest text-fpt-blue mb-6">Tài liệu</h4>
+                        <ul class="space-y-4 text-sm text-zinc-600">
+                            <li><a href="#" class="hover:text-fpt-orange">Brand Manual</a></li>
+                            <li><a href="#" class="hover:text-fpt-orange">API Reference</a></li>
+                            <li><a href="#" class="hover:text-fpt-orange">Chính sách bảo mật</a></li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="flex flex-wrap justify-center gap-6 text-sm">
-                    <a href="#" class="hover:text-primary transition-colors">Điều khoản</a>
-                    <a href="#" class="hover:text-primary transition-colors">Bảo mật</a>
-                    <a href="#" class="hover:text-primary transition-colors">Liên hệ</a>
+                
+                <div class="footer-copyright">
+                    <div class="flex items-center gap-8">
+                        <span>Mã hiệu tài liệu: 01-QD/TH/HDCV/FPT</span>
+                        <span>Version 3.1</span>
+                        <span>Ngày hiệu lực: 01/03/2020</span>
+                    </div>
+                    <div>
+                        &copy; 2026 FPT Corporation. Bảo lưu mọi quyền.
+                    </div>
                 </div>
-                <span>&copy; 2026 Nexus Inc. Bảo lưu mọi quyền.</span>
             </div>
         </footer>
     </div>

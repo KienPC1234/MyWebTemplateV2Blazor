@@ -1,0 +1,115 @@
+# NeoUI -- Project Templates
+
+NeoUI ships a `dotnet new` template that scaffolds a complete, production-ready Blazor app
+with sidebar layout, theme switcher, dark mode, Spotlight command palette, and Tailwind CSS v4.
+
+## Install the Template
+
+```bash
+dotnet new install NeoUI.Blazor.Templates
+```
+
+## Create a New App
+
+```bash
+dotnet new neoui -n MyApp  # Auto mode (default)
+dotnet new neoui -n MyApp -in Server# Blazor Server
+dotnet new neoui -n MyApp -in WebAssembly # Blazor WebAssembly
+dotnet new neoui -n MyApp -in Auto  # InteractiveAuto
+dotnet new neoui -n MyApp --empty# Minimal layout, no demo pages
+dotnet new neoui -n MyApp -in Auto --empty# Auto + minimal
+```
+
+## Template Options
+
+| Option | Short | Values | Default | Description |
+|--------|-------|--------|---------|-------------|
+| `--interactivity` | `-in` | Server, WebAssembly, Auto | Auto | Blazor render mode |
+| `--empty` | | flag | false | Skip demo pages, minimal layout |
+| `--style` | | Default/Vega/Nova/Maia/Lyra/Mira/Luma | Default | Theme v2 style variant -- spacing/radius/density |
+| `--font` | | System/Inter/Geist/CalSans/DmSans/PlusJakarta | System | Font preset (sets --font-sans/--font-heading CSS vars) |
+| `--radius` | | None/Small/Medium/Large | Medium | Border radius preset |
+| `--menuColor` | | Default/Inverted/DefaultTranslucent/InvertedTranslucent | Default | Menu/popover surface style |
+| `--menuAccent` | | Subtle/Bold | Subtle | Menu item hover intensity |
+
+## Project Structures
+
+### Server Mode (`-in Server`) -- Single Project
+```
+MyApp/
++-- MyApp.csproj
++-- Program.cs
++-- App.razor
++-- Layout/
+|+-- MainLayout.razor # NeoUI Sidebar + ThemeSwitcher + DarkModeToggle
+|\-- NavMenu.razor
++-- Components/
+|+-- Common/
+||+-- AppLoader.razor
+||\-- SpotlightCommandPalette.razor
+|\-- Pages/
++-- Home.razor
++-- Counter.razor
++-- Weather.razor
+\-- NotFound.razor
++-- styles/  # Tailwind CSS source
++-- wwwroot/ # Compiled CSS + static assets
++-- package.json
+\-- tailwind.config.js
+```
+
+### Auto / WebAssembly Mode -- Two-Project Solution
+```
+MyApp.sln
+MyApp/ # Web host project
+\-- MyApp.csproj
+
+MyApp.Client/# WebAssembly client
++-- MyApp.Client.csproj
++-- Program.cs
++-- Layout/
+|+-- MainLayout.razor
+|\-- NavMenu.razor
++-- Components/
+|+-- Common/
+||+-- AppLoader.razor
+||+-- ReconnectModal.razor # Auto mode only
+||\-- SpotlightCommandPalette.razor
+|\-- Pages/
++-- Home.razor
++-- Counter.razor
++-- Weather.razor
+\-- NotFound.razor
++-- styles/
++-- wwwroot/
++-- package.json
+\-- tailwind.config.js
+```
+
+## What the Template Includes
+
+- **Sidebar layout** -- collapsible navigation, breadcrumbs, responsive mobile support
+- **ThemeSwitcher** -- 170-combination theme picker (10 base x 17 primary) with style variant selector
+- **DarkModeToggle** -- OS-aware dark mode
+- **Spotlight Command Palette** -- Ctrl+K fuzzy search for components and pages
+- **Tailwind CSS v4** -- pre-configured with NeoUI design tokens
+- **Pre-wired services** -- `AddNeoUIPrimitives()`, `AddNeoUIComponents()`
+- **_Imports.razor** -- all NeoUI namespaces ready to use
+- **Sample pages** -- Home, Counter, Weather (can be removed with `--empty`)
+
+## Post-Create Steps
+
+The Tailwind CSS build and `npm install` run automatically on `dotnet build`.
+Node.js must be on your PATH.
+
+```bash
+cd MyApp
+dotnet run --project MyApp# Start the app
+```
+
+## Updating the Template
+
+```bash
+dotnet new update # Update all installed templates
+dotnet new install NeoUI.Blazor.Templates::4.0.0# Pin a version
+```

@@ -1,0 +1,197 @@
+# NeoUI -- Icon Libraries
+
+NeoUI ships three icon libraries, all included transitively with `NeoUI.Blazor`.
+No additional install step is required.
+
+## Packages & Counts
+
+| Package | Icons | Style | Import |
+|---------|-------|-------|--------|
+| NeoUI.Icons.Lucide | 1,640 | Stroke (outline) | `@using NeoUI.Icons.Lucide` |
+| NeoUI.Icons.Heroicons | 1,288 | 4 variants | `@using NeoUI.Icons.Heroicons` |
+| NeoUI.Icons.Feather | 286 | Thin stroke | `@using NeoUI.Icons.Feather` |
+
+---
+
+## Lucide Icons (1,640 icons)
+
+**Recommended default.** Clean, consistent stroke-weight icons covering almost every UI need.
+
+### Component
+
+```razor
+<LucideIcon Name="circle-check" Size="20" Class="text-green-500" StrokeWidth="1.5" />
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `Name` | `string` | required | Kebab-case icon name (e.g. `"chevron-down"`, `"loader-circle"`) |
+| `Size` | `int` | `24` | Width and height in pixels |
+| `Class` | `string?` | `null` | Additional CSS classes |
+| `StrokeWidth` | `double` | `2` | SVG stroke-width attribute |
+| `Color` | `string?` | `null` | Inline color override (prefer Tailwind classes) |
+| `AriaLabel` | `string?` | `null` | Accessible label; set for meaningful icons |
+| `AriaHidden` | `bool` | `true` | Set false for semantic icons |
+
+### Icon Categories
+
+**Actions:** check, x, plus, minus, edit-2, trash-2, copy, download, upload, share, refresh-cw, search, filter, sort-asc, sort-desc, more-horizontal, more-vertical
+
+**Arrows & Navigation:** arrow-left, arrow-right, arrow-up, arrow-down, chevron-left, chevron-right, chevron-up, chevron-down, chevrons-left, chevrons-right, move, external-link, corner-up-left
+
+**Files & Data:** file, file-text, folder, folder-open, database, table-2, server, cloud, cloud-upload, cloud-download, hard-drive, archive, package
+
+**Communication:** mail, message-circle, message-square, phone, video, bell, bell-off, rss, send, inbox, at-sign
+
+**UI & Layout:** layout, layout-dashboard, panel-left, panel-right, sidebar, menu, grid, list, columns, rows, maximize, minimize, expand, shrink, align-left, align-center, align-right
+
+**Media:** play, pause, stop-circle, skip-back, skip-forward, volume-2, volume-x, image, camera, mic, headphones, music
+
+**Users & Security:** user, users, user-plus, user-minus, lock, unlock, shield, shield-check, key, eye, eye-off, fingerprint
+
+**Status & Feedback:** check, check-circle, circle-check, alert-circle, alert-triangle, info, help-circle, loader, loader-circle, zap, star, heart, thumbs-up, thumbs-down
+
+**Time & Calendar:** calendar, calendar-days, clock, timer, history, hourglass
+
+**Charts & Analytics:** bar-chart, bar-chart-2, bar-chart-4, line-chart, pie-chart, area-chart, activity, trending-up, trending-down
+
+**Settings & Tools:** settings, settings-2, sliders-horizontal, tool, wrench, terminal, code, code-2, brackets, bug
+
+**E-Commerce:** shopping-cart, shopping-bag, credit-card, tag, tags, percent, dollar-sign, receipt, package
+
+**Misc:** globe, map-pin, home, building, bookmark, link, link-2, paperclip, flag, award, gift, lightbulb, moon, sun, contrast
+
+### Usage Examples
+
+```razor
+@* Button with icon *@
+<Button>
+ <LucideIcon Name="download" Size="16" />
+ Download
+</Button>
+
+@* Icon-only button *@
+<Button Size="ButtonSize.Icon" Variant="ButtonVariant.Ghost" AriaLabel="Settings">
+ <LucideIcon Name="settings" Size="18" />
+</Button>
+
+@* Status indicator *@
+<div class="flex items-center gap-2">
+ <LucideIcon Name="circle-check" Size="16" Class="text-green-500" />
+ <span>Saved successfully</span>
+</div>
+
+@* Sidebar menu item *@
+<SidebarMenuButton Href="/dashboard">
+ <LucideIcon Name="layout-dashboard" Size="16" />
+ Dashboard
+</SidebarMenuButton>
+
+@* Spinner alternative *@
+<LucideIcon Name="loader-circle" Size="20" Class="animate-spin text-primary" />
+```
+
+---
+
+## Heroicons (1,288 icons)
+
+Icons from Tailwind's design team, available in four visual weight variants.
+
+### Component
+
+```razor
+<HeroIcon Name="check-circle" Variant="HeroIconVariant.Solid" Size="20" Class="text-green-500" />
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `Name` | `string` | required | Kebab-case icon name |
+| `Variant` | `HeroIconVariant` | `Outline` | `Outline` \| `Solid` \| `Mini` \| `Micro` |
+| `Size` | `int` | `24` | Width and height in pixels (Mini defaults to 20, Micro to 16) |
+| `Class` | `string?` | `null` | CSS classes |
+| `AriaLabel` | `string?` | `null` | Accessible label |
+| `AriaHidden` | `bool` | `true` | Decorative by default |
+
+### Variants
+
+- **Outline** (24px default) -- 1.5px stroke, for primary UI
+- **Solid** (24px default) -- Filled, for emphasis and active states
+- **Mini** (20px default) -- Compact filled icons
+- **Micro** (16px default) -- Smallest, inline-text scale
+
+```razor
+<HeroIcon Name="bell" Variant="HeroIconVariant.Outline" />
+<HeroIcon Name="bell" Variant="HeroIconVariant.Solid" />
+<HeroIcon Name="bell" Variant="HeroIconVariant.Mini" />
+<HeroIcon Name="bell" Variant="HeroIconVariant.Micro" />
+```
+
+---
+
+## Feather Icons (286 icons)
+
+Minimalist, thin-stroke icon set -- great for clean, modern interfaces.
+
+### Component
+
+```razor
+<FeatherIcon Name="check-circle" Size="20" Class="text-green-500" />
+```
+
+### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `Name` | `string` | required | Kebab-case icon name |
+| `Size` | `int` | `24` | Width and height in pixels |
+| `Class` | `string?` | `null` | CSS classes |
+| `StrokeWidth` | `double` | `2` | SVG stroke-width |
+| `AriaLabel` | `string?` | `null` | Accessible label |
+
+---
+
+## Choosing an Icon Library
+
+| Scenario | Recommendation |
+|----------|---------------|
+| General app UI | **Lucide** -- largest catalog, best coverage |
+| Tailwind CSS projects | **Heroicons** -- designed to complement Tailwind |
+| Minimal/editorial design | **Feather** -- clean, thin strokes |
+| Mixed | Use Lucide as default; mix Heroicons for specific icons |
+
+## Accessibility
+
+```razor
+@* Decorative icon -- hidden from screen readers (default) *@
+<LucideIcon Name="star" Size="16" />
+
+@* Meaningful icon with label *@
+<LucideIcon Name="warning" Size="16" AriaLabel="Warning" AriaHidden="false" />
+
+@* Icon inside labeled button -- icon is decorative *@
+<Button AriaLabel="Delete item">
+ <LucideIcon Name="trash-2" Size="16" />
+</Button>
+```
+
+## Finding Icons
+
+- Lucide: https://lucide.dev/icons/ -- search by keyword, browse by category
+- Heroicons: https://heroicons.com -- search and copy name
+- Feather: https://feathericons.com -- browse full catalog
+
+## Custom SVG Icons
+
+```razor
+@* Inline SVG when a named icon isn't available *@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+  fill="none" stroke="currentColor" stroke-width="2"
+  stroke-linecap="round" stroke-linejoin="round">
+ <path d="M12 2L2 7l10 5 10-5-10-5z" />
+ <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+</svg>
+```

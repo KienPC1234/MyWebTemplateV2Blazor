@@ -1,0 +1,220 @@
+# NeoUI -- Primitives Reference
+
+NeoUI.Blazor.Primitives provides 15 headless, unstyled components with full WCAG 2.1 AA
+accessibility, keyboard navigation, and ARIA attributes. Use them to build a fully custom
+design system without any opinionated styling.
+
+## Installation
+
+```bash
+dotnet add package NeoUI.Blazor.Primitives --version 3.8.3
+```
+
+Note: Already included transitively when using `NeoUI.Blazor`.
+
+## Import
+
+```razor
+@using NeoUI.Blazor.Primitives
+@using NeoUI.Blazor.Primitives.Services
+```
+
+## Service Registration
+
+```csharp
+builder.Services.AddNeoUIPrimitives();
+```
+
+---
+
+## Available Primitives
+
+### Accordion (Inputs & Forms)
+Headless collapsible content with keyboard navigation.
+```razor
+@using NeoUI.Blazor.Primitives.Accordion
+<Accordion ...>...</Accordion>
+```
+
+### Checkbox (Inputs & Forms)
+Unstyled checkbox with indeterminate state.
+```razor
+@using NeoUI.Blazor.Primitives.Checkbox
+<Checkbox ...>...</Checkbox>
+```
+
+### Label (Inputs & Forms)
+Accessible label with associated control support.
+```razor
+@using NeoUI.Blazor.Primitives.Label
+<Label For="id">Label text</Label>
+```
+
+### RadioGroup (Inputs & Forms)
+Headless radio group with keyboard navigation.
+```razor
+@using NeoUI.Blazor.Primitives.RadioGroup
+<RadioGroup ...>...</RadioGroup>
+```
+
+### Select (Inputs & Forms)
+Headless select with search and keyboard navigation.
+```razor
+@using NeoUI.Blazor.Primitives.Select
+<Select ...>...</Select>
+```
+
+### Switch (Inputs & Forms)
+Headless toggle switch with ARIA checked state.
+```razor
+@using NeoUI.Blazor.Primitives.Switch
+<Switch ...>...</Switch>
+```
+
+### Table (Data Display)
+Unstyled accessible data table with semantic markup.
+```razor
+@using NeoUI.Blazor.Primitives.Table
+<Table ...>...</Table>
+```
+
+### Tabs (Navigation)
+Headless tabs with keyboard navigation (arrow keys, Home, End).
+```razor
+@using NeoUI.Blazor.Primitives.Tabs
+<Tabs ...>...</Tabs>
+```
+
+### Accordion (Layout)
+Headless accordion with keyboard navigation.
+```razor
+@using NeoUI.Blazor.Primitives.Accordion
+<Accordion ...>...</Accordion>
+```
+
+### Collapsible (Layout)
+Unstyled collapsible content with trigger.
+```razor
+@using NeoUI.Blazor.Primitives.Collapsible
+<Collapsible ...>...</Collapsible>
+```
+
+### Dialog (Overlays)
+Headless modal dialog with focus trap, scroll lock, and ARIA.
+```razor
+@using NeoUI.Blazor.Primitives.Dialog
+<Dialog ...>...</Dialog>
+```
+
+### DropdownMenu (Overlays)
+Unstyled floating menu with keyboard navigation.
+```razor
+@using NeoUI.Blazor.Primitives.DropdownMenu
+<DropdownMenu ...>...</DropdownMenu>
+```
+
+### HoverCard (Overlays)
+Unstyled hover card with delay and pointer event handling.
+```razor
+@using NeoUI.Blazor.Primitives.HoverCard
+<HoverCard ...>...</HoverCard>
+```
+
+### Popover (Overlays)
+Unstyled floating panel with positioning.
+```razor
+@using NeoUI.Blazor.Primitives.Popover
+<Popover ...>...</Popover>
+```
+
+### Sheet (Overlays)
+Unstyled side panel with animation support.
+```razor
+@using NeoUI.Blazor.Primitives.Sheet
+<Sheet ...>...</Sheet>
+```
+
+### Tooltip (Overlays)
+Unstyled tooltip with delay, positioning, and keyboard focus support.
+```razor
+@using NeoUI.Blazor.Primitives.Tooltip
+<Tooltip ...>...</Tooltip>
+```
+
+---
+
+## Building on Primitives
+
+Example: custom-styled Dialog using the headless primitive:
+
+```razor
+@using NeoUI.Blazor.Primitives.Dialog
+
+<Dialog @bind-Open="isOpen">
+ <DialogTrigger>
+  <button class="my-custom-button">Open</button>
+ </DialogTrigger>
+ <DialogPortal>
+  <DialogOverlay class="my-overlay" />
+  <DialogContent class="my-dialog-content">
+<h2>My Custom Dialog</h2>
+<p>All behavior, focus management, and ARIA handled automatically.</p>
+<DialogClose>
+ <button class="my-close-button">×</button>
+</DialogClose>
+  </DialogContent>
+ </DialogPortal>
+</Dialog>
+```
+
+## Services
+
+### IKeyboardShortcutService
+Register global keyboard shortcuts.
+```csharp
+@inject IKeyboardShortcutService KeyboardShortcuts
+
+await KeyboardShortcuts.RegisterAsync("Ctrl+K", OpenPalette);
+await KeyboardShortcuts.UnregisterAsync("Ctrl+K");
+```
+
+---
+
+## Sortable Primitives (v3.8.0+)
+
+Headless drag-and-drop sortable components with the same behavior as the styled `Sortable<TItem>` family but with no opinionated CSS. Use these to build fully custom sortable UI.
+
+### SortablePrimitive (Layout)
+
+```razor
+@using NeoUI.Blazor.Primitives.Sortable
+
+<SortablePrimitive TItem="MyItem"
+                   Items="@items"
+                   GetItemId="i => i.Id"
+                   OnItemsReordered="@(list => items = (List<MyItem>)list)"
+                   Context="scope">
+ <SortableContentPrimitive>
+  @foreach (var item in items)
+  {
+   <SortableItemPrimitive Value="@item.Id" @key="item.Id">
+    <SortableItemHandlePrimitive />
+    @item.Name
+   </SortableItemPrimitive>
+  }
+ </SortableContentPrimitive>
+ <SortableOverlayPrimitive Context="activeId">
+  <div>Dragging @activeId</div>
+ </SortableOverlayPrimitive>
+</SortablePrimitive>
+```
+
+**Sub-components:**
+
+| Component | Key Parameters | Notes |
+|-----------|---------------|-------|
+| `SortablePrimitive<TItem>` | Same as styled `Sortable<TItem>` (Items, GetItemId, Orientation, OnItemsReordered, OnDragStart, OnDragEnd, OnDragCancel, Context, Group, OnItemTransferredIn, OnItemTransferredOut, OnCanDrop) | Headless container |
+| `SortableContentPrimitive` | `Class`, `ChildContent` | Container div; gets `data-state="over"` on cross-list hover |
+| `SortableItemPrimitive` | `Value` (required), `AsHandle`, `Class`, `ChildContent` | Item wrapper |
+| `SortableItemHandlePrimitive` | `Class`, `ChildContent` | Grip handle button |
+| `SortableOverlayPrimitive` | `Class`, `ChildContent` (`RenderFragment<string>?`) | Drag ghost portal |
