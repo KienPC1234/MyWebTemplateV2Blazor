@@ -3,12 +3,12 @@ module.exports = {
   darkMode: 'class',
   content: [
     "./Components/**/*.{razor,html,cshtml}",
-    "../MyWebTemplateV2.Client/**/*.{razor,html,cshtml}"
+    "../MyWebTemplateV2.Client/**/*.{razor,html,cshtml}",
+    "./Styles/**/*.css"
   ],
   theme: {
     extend: {
       colors: {
-        // Zinc-based Monochrome Palette
         surface: {
           50: '#fafafa',
           100: '#f4f4f5',
@@ -32,7 +32,7 @@ module.exports = {
           600: '#52525b',
           700: '#3f3f46',
           800: '#27272a',
-          900: '#18181b', // SaaS Primary is typically Black
+          900: '#18181b',
           950: '#09090b',
         }
       },

@@ -1,0 +1,44 @@
+:root {
+    /* Forced Light Mode Surfaces */
+    --background: oklch(1 0 0) !important;
+    --foreground: oklch(0.15 0.02 240) !important;
+    --card: oklch(1 0 0) !important;
+    --card-foreground: oklch(0.15 0.02 240) !important;
+    --popover: oklch(1 0 0) !important;
+    --popover-foreground: oklch(0.15 0.02 240) !important;
+    
+    /* Soft Orange (Amber) - Premium OKLCH */
+    --primary: oklch(0.72 0.16 45) !important; /* Soft Amber */
+    --primary-foreground: oklch(0.99 0.01 45) !important;
+    
+    --secondary: oklch(0.97 0.02 45) !important; /* Very soft peach/cream */
+    --secondary-foreground: oklch(0.3 0.1 45) !important;
+    
+    --muted: oklch(0.97 0.01 240) !important;
+    --muted-foreground: oklch(0.5 0.02 240) !important;
+    
+    --accent: oklch(0.96 0.04 45) !important;
+    --accent-foreground: oklch(0.3 0.1 45) !important;
+    
+    --border: oklch(0.92 0.01 240) !important;
+    --ring: oklch(0.72 0.16 45) !important;
+    
+    --sidebar: oklch(0.99 0.01 45) !important;
+    --sidebar-foreground: oklch(0.3 0.1 45) !important;
+    --sidebar-primary: oklch(0.72 0.16 45) !important;
+    --sidebar-accent: oklch(0.96 0.04 45) !important;
+    --sidebar-border: oklch(0.92 0.01 240) !important;
+}
+
+/* Ensure no dark mode classes can override these */
+.dark, [data-theme="dark"] {
+    --background: oklch(1 0 0) !important;
+    --foreground: oklch(0.15 0.02 240) !important;
+    /* ... repeat or just ensure they are locked ... */
+}
+
+/* Smooth Transitions */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-image: radial-gradient(circle at 2px 2px, oklch(0.72 0.16 45 / 0.05) 1px, transparent 0) !important;
+}

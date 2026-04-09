@@ -7,11 +7,12 @@
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
   </PropertyGroup>
 
-  <Target Name="BuildTailwind" BeforeTargets="BeforeBuild">
-    <Exec Command="npm run build" />
-  </Target>
+
 
   <ItemGroup>
+    <PackageReference Include="NeoUI.Blazor" Version="4.0.0" />
+    <PackageReference Include="NeoUI.Blazor.Primitives" Version="4.0.0" />
+    <PackageReference Include="NeoUI.Icons.Lucide" Version="3.0.0" />
     <ProjectReference Include="..\MyWebTemplateV2.Client\MyWebTemplateV2.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.5" />
   </ItemGroup>

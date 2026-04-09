@@ -6,11 +6,28 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Nexus — Nền tảng phân tích dữ liệu thông minh dành cho doanh nghiệp hiện đại." />
     <base href="/" />
     <ResourcePreloader />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- NeoUI: đúng thứ tự theo docs -->
+    <link href="@Assets["_content/NeoUI.Blazor/components.css"]" rel="stylesheet" />
+    <!-- Base: stone (ấm, hơi ngà, phù hợp với cam) -->
+    <link href="@Assets["_content/NeoUI.Blazor/css/themes/base/stone.css"]" rel="stylesheet" />
+    <!-- Primary: orange (cam dịu) -->
+    <link href="@Assets["_content/NeoUI.Blazor/css/themes/primary/orange.css"]" rel="stylesheet" />
+    <!-- Style: Maia (spacious, consumer-friendly - phù hợp với cam/trắng) -->
+    <link href="@Assets["_content/NeoUI.Blazor/css/themes/styles/maia.css"]" rel="stylesheet" />
+    <!-- Radius: Large (bo tròn nhiều = mềm mại, phù hợp cam dịu) -->
+    <link href="@Assets["_content/NeoUI.Blazor/css/themes/radius/large.css"]" rel="stylesheet" />
+    <!-- Font: PlusJakarta (Maia preset font) -->
+    <link href="@Assets["_content/NeoUI.Blazor/css/themes/fonts/plusjakarta.css"]" rel="stylesheet" />
+    <!-- Theme init script - phải trước Blazor để tránh FOUC -->
+    <script src="@Assets["_content/NeoUI.Blazor/js/theme.js"]"></script>
+    <!-- App CSS (Tailwind compiled) - sau NeoUI -->
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <link rel="stylesheet" href="@Assets["MyWebTemplateV2.styles.css"]" />
     <ImportMap />
@@ -20,7 +37,6 @@
 
 <body>
     <Routes @rendermode="InteractiveWebAssembly" />
-    <script src="theme-helper.js"></script>
     <script src="_framework/blazor.web.js"></script>
 </body>
 

@@ -1,63 +1,71 @@
 @inherits LayoutComponentBase
-@using MyWebTemplateV2.Client.Components.UI
-@using MyWebTemplateV2.Client.Components.UI.Group1_Layout
-@using MyWebTemplateV2.Client.Components.UI.Group7_Specialized
-@inject ThemeService ThemeService
+@using NeoUI.Blazor
+@using NeoUI.Blazor.Primitives
+@using NeoUI.Blazor.Primitives.Services
+@using NeoUI.Icons.Lucide
 
-<SaaSMainShell>
-    <!-- Navigation -->
-    <GlassNavbar BrandTitle="ANTIGRAVITY">
-        <ChildContent>
-            <NavLink class="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-100 transition-all focus:outline-none" 
-                     href="/" Match="NavLinkMatch.All">
-                Dashboard
-            </NavLink>
-            <NavLink class="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-100 transition-all focus:outline-none" 
-                     href="ui-kit">
-                UI Kit
-            </NavLink>
-        </ChildContent>
-        <Actions>
-            <div class="flex items-center gap-4">
-                <div class="h-8 w-[1px] bg-zinc-200 dark:bg-zinc-800 mx-2"></div>
-                <UserSnippet Name="Kien Phan" Email="dev@antigravity.io" />
+<AppProvider>
+    <div class="min-h-screen flex flex-col bg-background">
+        
+        <!-- Floating Navbar -->
+        <div class="nav-floating">
+            <div class="nav-floating-inner">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="nav-brand-icon">
+                        <LucideIcon Name="flame" class="h-4 w-4" />
+                    </div>
+                    <span class="font-extrabold text-lg tracking-tight hidden sm:block" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+                        Nexus
+                    </span>
+                </div>
+                
+                <!-- Nav Links -->
+                <div class="nav-links">
+                    <NavLink href="/" Match="NavLinkMatch.All">Trang chủ</NavLink>
+                    <NavLink href="/features">Tính năng</NavLink>
+                    <NavLink href="/pricing">Bảng giá</NavLink>
+                    <NavLink href="/docs">Tài liệu</NavLink>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-2">
+                    <DarkModeToggle />
+                    <Button Variant="ButtonVariant.Default" Size="ButtonSize.Default" class="rounded-full px-5 hidden sm:flex">
+                        Bắt đầu
+                    </Button>
+                </div>
             </div>
-        </Actions>
-    </GlassNavbar>
+        </div>
 
-    <!-- Main Content Area -->
-    <main class="saas-content">
-        <div class="mx-auto max-w-7xl">
+        <!-- Main Content -->
+        <main class="flex-1">
             @Body
-        </div>
-    </main>
-
-    <!-- Global Footer -->
-    <footer class="border-t border-zinc-200 dark:border-zinc-800 py-12 mt-20 bg-zinc-50/30 dark:bg-zinc-950/30 backdrop-blur-sm">
-        <div class="mx-auto max-w-7xl px-8 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="flex items-center gap-2">
-                <div class="h-6 w-6 rounded bg-zinc-900 dark:bg-white"></div>
-                <span class="text-sm font-bold tracking-tighter uppercase tracking-widest text-zinc-900 dark:text-white">Antigravity</span>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="site-footer-inner">
+                <div class="flex items-center gap-3">
+                    <div class="nav-brand-icon" style="width:1.75rem;height:1.75rem;border-radius:0.5rem;">
+                        <LucideIcon Name="flame" class="h-3.5 w-3.5" />
+                    </div>
+                    <span class="font-bold tracking-tight text-sm" style="font-family:'Plus Jakarta Sans',sans-serif;">Nexus Enterprise</span>
+                </div>
+                <div class="flex flex-wrap justify-center gap-6 text-sm">
+                    <a href="#" class="hover:text-primary transition-colors">Điều khoản</a>
+                    <a href="#" class="hover:text-primary transition-colors">Bảo mật</a>
+                    <a href="#" class="hover:text-primary transition-colors">Liên hệ</a>
+                </div>
+                <span>&copy; 2026 Nexus Inc. Bảo lưu mọi quyền.</span>
             </div>
-            <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.3em]">
-                &copy; 2026 FORGE PROTOCOL. ALL RIGHTS RESERVED.
-            </p>
-            <div class="flex gap-6">
-                <a href="#" class="text-[10px] font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 uppercase tracking-widest transition-colors">Privacy</a>
-                <a href="#" class="text-[10px] font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 uppercase tracking-widest transition-colors">Terms</a>
-            </div>
-        </div>
-    </footer>
-</SaaSMainShell>
+        </footer>
+    </div>
 
-@code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            await ThemeService.InitializeAsync();
-            ThemeService.OnThemeChanged += StateHasChanged;
-            StateHasChanged();
-        }
-    }
-}
+    <!-- NeoUI Portal Hosts -->
+    <ToastViewport />
+    <DialogHost />
+    <CategoryPortalHost Category="PortalCategory.Overlay" />
+    <CategoryPortalHost Category="PortalCategory.Container" />
+    <OverlayPortalHost />
+</AppProvider>

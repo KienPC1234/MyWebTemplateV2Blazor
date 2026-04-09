@@ -1,284 +1,764 @@
 @page "/"
-@using MyWebTemplateV2.Components.UI.Group1_Layout
-@using MyWebTemplateV2.Components.UI.Group2_Actions
-@using MyWebTemplateV2.Components.UI.Group3_DataDisplay
-@using MyWebTemplateV2.Components.UI.Group4_Forms
-@using MyWebTemplateV2.Components.UI.Group5_Overlays
-@using MyWebTemplateV2.Components.UI.Group6_Navigation
-@using MyWebTemplateV2.Components.UI.Group7_Specialized
-@using MyWebTemplateV2.Components.UI.Group8_Immersive
-@using MyWebTemplateV2.Components.UI.Group9_AI
-@using MyWebTemplateV2.Components.UI.Group10_Advanced
-@using MyWebTemplateV2.Components.UI.Group11_FutureData
-@using MyWebTemplateV2.Components.UI.Group12_Interactions
-@using MyWebTemplateV2.Components.UI.Group13_Entry
+@using NeoUI.Blazor
+@using NeoUI.Blazor.Charts
+@using NeoUI.Icons.Lucide
+@inject IToastService ToastService
 
-<PageTitle>Zinc Monochrome Lab | Full 13-Group Suite</PageTitle>
+<PageTitle>Nexus — Nền tảng phân tích thông minh</PageTitle>
 
-<InitialLoader @bind-Visible="showLoader" />
-<MeshGradientCanvas />
-<EdgeBlur />
-<ConfettiGlass @bind-Active="showConfetti" />
-
-<div class="space-y-16 py-12 px-4 lg:px-8 max-w-7xl mx-auto relative z-10">
-    <!-- Hero Section -->
-    <header class="text-center space-y-4 mb-16 lg:mb-20 animate-fade-in">
-        <div class="flex justify-center gap-2">
-            <StatusBadge Status="active">v2.5 Full Suite</StatusBadge>
-            <StatusBadge Status="inactive">Zinc Monochrome</StatusBadge>
-        </div>
-        <h1 class="text-6xl lg:text-8xl font-extrabold italic tracking-tight uppercase text-zinc-900 dark:text-white drop-shadow-md">
-            UI Engine
-        </h1>
-        <p class="max-w-2xl mx-auto text-lg text-zinc-600 dark:text-zinc-300 font-medium">
-            A precision-engineered UI library for luxury SaaS. 13 categorized groups for complete interface control.
-        </p>
-    </header>
-
-    <!-- Interactive Lab Tabs -->
-    <div class="flex justify-center sticky top-20 z-40 bg-zinc-50/50 dark:bg-zinc-950/50 backdrop-blur-md py-4 rounded-3xl max-w-5xl mx-auto border border-zinc-200 dark:border-zinc-700">
-        <SaaSTabs Tabs="@groups" @bind-ActiveTab="activeGroup" />
+<!-- ==========================================
+     HERO SECTION
+  ========================================== -->
+<section class="hero-section">
+    <!-- Status badge -->
+    <div class="hero-badge-pill">
+        <span class="hero-badge-dot"></span>
+        Phiên bản mới v4.0 đã ra mắt — Xem ngay
+        <LucideIcon Name="arrow-right" Class="h-3 w-3" />
     </div>
 
-    <!-- Group Showcase Content -->
-    <div class="min-h-[800px] transition-all duration-700">
-        @if (activeGroup == "Core")
-        {
-            <div class="space-y-12 animate-fade-in">
-                <SectionHeader Title="Group 1: Layout & Scaffolding" Description="The structural foundation of your interface." />
-                <BentoGrid>
-                    <BentoItem Span="4x2" Class="glass-card flex flex-col justify-end bg-white/20 dark:bg-zinc-900/20">
-                         <div class="absolute top-8 right-8">
-                             <SaaSButton Variant="secondary" OnClick="() => showSidebar = !showSidebar">Toggle Sidebar</SaaSButton>
-                         </div>
-                         <h2 class="text-4xl m-0">SaaS Shell</h2>
-                         <p>Responsive containers with integrated noise overlays and mouse tracking.</p>
-                    </BentoItem>
-                    <BentoItem Span="2x2" Class="flex items-center justify-center bg-zinc-950 text-white">
-                         <div class="text-center">
-                             <div class="h-20 w-20 rounded-full border-4 border-zinc-500/20 mb-4 animate-pulse mx-auto"></div>
-                             <span class="text-xl font-black italic uppercase tracking-widest">Active Node</span>
-                         </div>
-                    </BentoItem>
-                </BentoGrid>
-                @if (showSidebar) { <AcrylicSidebar /> }
-            </div>
-        }
-        else if (activeGroup == "Interactions")
-        {
-            <div class="space-y-16 animate-fade-in">
-                <SectionHeader Title="Group 2: Actions & Triggers" Description="High-fidelity tactile response elements." />
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <Card Class="glass-card">
-                        <Header><h4 class="text-[10px] m-0">Tactile Triggers</h4></Header>
-                        <ChildContent>
-                            <div class="flex flex-wrap gap-4 items-center">
-                                <SaaSButton Variant="primary">Execute Command</SaaSButton>
-                                <SaaSButton Variant="secondary">Secondary</SaaSButton>
-                                <GlassIconButton><svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg></GlassIconButton>
-                                <CopyButton Text="https://zinc.antigravity.io" />
-                            </div>
-                        </ChildContent>
-                    </Card>
-                    <Card>
-                        <Header><h4 class="text-[10px] m-0">Contextual Flow</h4></Header>
-                        <ChildContent>
-                            <div class="flex flex-col gap-6">
-                                <BackLink Url="#">Return to Origin</BackLink>
-                                <DoubleAction ConfirmLabel="SYNC CLUSTER" CancelLabel="ABORT" />
-                                <SaaSButton Variant="secondary" OnClick="() => showPalette = true">Launch Command Palette (⌘K)</SaaSButton>
-                            </div>
-                        </ChildContent>
-                    </Card>
-                </div>
-                <CommandPalette @bind-Visible="showPalette" />
-            </div>
-        }
-        else if (activeGroup == "Data")
-        {
-            <div class="space-y-16 animate-fade-in">
-                <SectionHeader Title="Group 3: Data & Group 11: Future Data" Description="Information architecture & predictive telemetry displays." />
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <StatsCard Label="TOTAL AGENTS" Value="1,421" Trend="+12.4%" />
-                    <StatsCard Label="SYNC STATUS" Value="OPTIMAL" />
-                    <StatsCard Label="LATENCY" Value="0.4ms" Trend="-0.1ms" />
-                    <div class="glass p-6 rounded-3xl flex flex-col items-center justify-center">
-                         <GlassGlobe Value="99.4%" Label="UPTIME" />
-                    </div>
-                </div>
+    <!-- Headline -->
+    <h1 class="hero-title">
+        Khai phá sức mạnh<br />
+        <span class="hero-title-accent">dữ liệu thông minh.</span>
+    </h1>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-                    <div class="space-y-8">
-                        <Card>
-                            <Header><h4 class="text-[10px] m-0">Real-time Activity</h4></Header>
-                            <ChildContent><ActivityFeed Items="@sampleActivity" /></ChildContent>
-                        </Card>
-                        <table>
-                            <thead>
-                                <tr><th>Node Name</th><th class="text-right">Commit Hash</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td><UserSnippet Name="Alpha Cloud" Email="core@node.io" /></td><td class="text-right"><span class="font-mono text-zinc-400">#42A9B</span></td></tr>
-                                <tr><td><UserSnippet Name="Beta Cluster" Email="sync@node.io" /></td><td class="text-right"><AvatarStack Avatars="@sampleAvatars" /></td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="space-y-8">
-                        <Card>
-                            <Header><h4 class="text-[10px] m-0">Holographic Telemetry</h4></Header>
-                            <ChildContent><HolographicBarChart Data="@(new List<int> { 20, 80, 45, 90, 60, 30, 85 })" /></ChildContent>
-                        </Card>
-                        <Card>
-                            <Header><h4 class="text-[10px] m-0">Global Heatmap</h4></Header>
-                            <ChildContent>
-                                <HeatmapGlass Data="@(Enumerable.Range(0, 48).Select(_ => Random.Shared.Next(0, 100)).ToList())" />
-                            </ChildContent>
-                        </Card>
-                    </div>
-                </div>
-            </div>
-        }
-        else if (activeGroup == "Forms")
-        {
-            <div class="space-y-16 animate-fade-in">
-                <SectionHeader Title="Group 4: Forms & Group 12: Precision" Description="Data entry and granular control systems." />
-                <div class="glass-card max-w-4xl mx-auto space-y-12">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div><FieldLabel>Environment Mapping</FieldLabel><MinimalInput Placeholder="Staging Node 04" /></div>
-                        <div><FieldLabel>Compute Region</FieldLabel><SaaSSelect Value="US-EAST-1"><option>US-EAST-1</option><option>EU-WEST-4</option></SaaSSelect></div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                         <div class="space-y-6">
-                            <FieldLabel>Liquid Progress Bar (74%)</FieldLabel>
-                            <ProgressGlassBar Value="74" />
-                            <FieldLabel>Interactive Intensity</FieldLabel>
-                            <GlassSlider Value="42" />
-                         </div>
-                         <div class="space-y-6">
-                            <div class="flex items-center justify-between p-6 glass rounded-2xl">
-                                <div class="flex flex-col"><span class="text-xs font-bold text-zinc-900 uppercase">Encryption</span><span class="text-[10px] text-zinc-400 mt-1">AES-256 for cluster traffic.</span></div>
-                                <SoftToggle @bind-Value="isSwitchOn" />
-                            </div>
-                            <div class="flex gap-4">
-                                <CheckboxCustom @bind-Value="check1">Enable Monitoring</CheckboxCustom>
-                                <CheckboxCustom @bind-Value="check2">Persistence Active</CheckboxCustom>
-                            </div>
-                         </div>
-                    </div>
-                    <div><FieldLabel>Manifest Summary</FieldLabel><GlassTextArea Placeholder="Enter node configuration manifest..." /></div>
-                </div>
-            </div>
-        }
-        else if (activeGroup == "Intelligence")
-        {
-            <div class="space-y-16 animate-fade-in">
-                <SectionHeader Title="Group 9: AI Agents & Group 10: Advanced" Description="Intelligent processing and hardware-accelerated UI." />
-                
-                <FloatingIsland Status="NODE SYNC ACTIVE" Label="VERIFYING MANIFEST 4022">
-                     <Icon><div class="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div></Icon>
-                     <Actions><KbdShortcutHint Keys="@(new List<string> { "⌘", "I" })" /></Actions>
-                </FloatingIsland>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2 space-y-8">
-                        <div class="p-1 glass rounded-[40px]">
-                            <AIPromptConsole Placeholder="Analyze cluster stability..." />
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <ThoughtBubble>Stability is at 99.42%. No critical overflows detected in the last 24h.</ThoughtBubble>
-                            <ThoughtBubble Orientation="right">Confirming node alignment. Synchronization complete.</ThoughtBubble>
-                        </div>
-                    </div>
-                    <div class="space-y-8">
-                        <MagicActionPill Label="AI SMART REPAIR" OnClick="() => showCommandBar = true" />
-                        <TheCommandBar @bind-Visible="showCommandBar" />
-                        <GlassCodeSnippet FileName="config.json" Code="@("{\n  \"env\": \"forge-mono\",\n  \"auth\": \"OIDC\"\n}")" />
-                        <MagneticButton Class="w-full">
-                            <div class="px-8 py-4 glass rounded-2xl w-full text-center font-bold text-xs">MAGNETIC SUBMIT</div>
-                        </MagneticButton>
-                    </div>
-                </div>
-            </div>
-        }
-        else if (activeGroup == "Feedback")
-        {
-            <div class="space-y-16 animate-fade-in">
-                <SectionHeader Title="Group 5: Overlays & Group 13: Entry" Description="Presence and validation feedback systems." />
-                <div class="flex flex-wrap gap-8 justify-center py-20 bg-zinc-100 dark:bg-zinc-900/40 rounded-[3rem] border border-zinc-200 dark:border-zinc-800">
-                    <SaaSButton Variant="primary" OnClick="() => showModal = true">Open Glass Modal</SaaSButton>
-                    <SaaSButton Variant="secondary" OnClick="() => showToast = true">Trigger Toast</SaaSButton>
-                    <SaaSButton Variant="ghost" OnClick="async () => { showLoader = true; await Task.Delay(2500); showLoader = false; }">Show Loader</SaaSButton>
-                    
-                    <MinimalTooltip Text="Hardware Key: Secure (⌘K)">
-                         <div class="px-8 py-3 glass rounded-xl border border-zinc-200/50 font-bold text-[10px] tracking-widest cursor-help">HOVER FOR TOOLTIP</div>
-                    </MinimalTooltip>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                     <SkeletonPulse />
-                     <SkeletonGlass Class="h-24"><div class="p-8 text-[10px] font-bold text-zinc-400">SHIMMER WRAPPER MODE</div></SkeletonGlass>
-                     <div class="glass p-8 rounded-3xl text-center"><h3 class="m-0">Verification State</h3><p class="text-xs mb-0 mt-2">Checking cluster status...</p></div>
-                </div>
+    <p class="hero-description">
+        Nexus là nền tảng phân tích hiện đại dành cho doanh nghiệp. 
+        Tự động hóa quy trình, trực quan hóa dữ liệu và đưa ra quyết định chính xác hơn — ngay từ hôm nay.
+    </p>
 
-                <SaaSToast @bind-Visible="showToast" Title="Synchronization Complete" Message="All nodes are now aligned to version 2.5." />
-                <GlassModal @bind-IsOpen="showModal">
-                     <Header><h2>DANGER ZONE</h2></Header>
-                     <ChildContent><p>Warning: You are about to purge the staging cluster. This action is irreversible.</p></ChildContent>
-                     <Footer><DoubleAction ConfirmLabel="PURGE CLUSTER" CancelLabel="ABORT" OnCancel="() => showModal = false" /></Footer>
-                </GlassModal>
-            </div>
-        }
+    <!-- CTAs -->
+    <div class="hero-actions">
+        <Button Size="ButtonSize.Default" class="rounded-full px-8 py-5 font-bold" OnClick="@ShowWelcomeToast">
+            <LucideIcon Name="rocket" Class="mr-2 h-4 w-4" />
+            Dùng thử miễn phí
+        </Button>
+        <Dialog>
+            <DialogTrigger AsChild>
+                <Button Variant="ButtonVariant.Outline" Size="ButtonSize.Default" class="rounded-full px-8 py-5 font-bold">
+                    <LucideIcon Name="play-circle" Class="mr-2 h-4 w-4" />
+                    Xem demo
+                </Button>
+            </DialogTrigger>
+            <DialogContent class="sm:max-w-xl">
+                <DialogHeader>
+                    <DialogTitle>Demo nền tảng Nexus</DialogTitle>
+                    <DialogDescription>
+                        Khám phá các tính năng nổi bật của Nexus qua video demo tương tác dưới đây.
+                    </DialogDescription>
+                </DialogHeader>
+                <div class="grid grid-cols-2 gap-4 py-4">
+                    <Card class="cursor-pointer hover:border-primary transition-colors">
+                        <CardContent class="pt-5 flex flex-col items-center gap-2 text-center">
+                            <LucideIcon Name="bar-chart-3" Class="h-8 w-8 text-primary" />
+                            <CardTitle class="text-sm">Analytics</CardTitle>
+                            <CardDescription>Dashboard thời gian thực</CardDescription>
+                        </CardContent>
+                    </Card>
+                    <Card class="cursor-pointer hover:border-primary transition-colors">
+                        <CardContent class="pt-5 flex flex-col items-center gap-2 text-center">
+                            <LucideIcon Name="cpu" Class="h-8 w-8 text-primary" />
+                            <CardTitle class="text-sm">AI Engine</CardTitle>
+                            <CardDescription>Dự báo thông minh</CardDescription>
+                        </CardContent>
+                    </Card>
+                    <Card class="cursor-pointer hover:border-primary transition-colors">
+                        <CardContent class="pt-5 flex flex-col items-center gap-2 text-center">
+                            <LucideIcon Name="workflow" Class="h-8 w-8 text-primary" />
+                            <CardTitle class="text-sm">Pipelines</CardTitle>
+                            <CardDescription>Tự động hóa luồng dữ liệu</CardDescription>
+                        </CardContent>
+                    </Card>
+                    <Card class="cursor-pointer hover:border-primary transition-colors">
+                        <CardContent class="pt-5 flex flex-col items-center gap-2 text-center">
+                            <LucideIcon Name="shield-check" Class="h-8 w-8 text-primary" />
+                            <CardTitle class="text-sm">Bảo mật</CardTitle>
+                            <CardDescription>Mã hóa end-to-end</CardDescription>
+                        </CardContent>
+                    </Card>
+                </div>
+                <DialogFooter>
+                    <Button Variant="ButtonVariant.Default" class="rounded-full px-6">Đặt lịch tư vấn</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </div>
 
-    <!-- Group 8: Immersive Footer -->
-    <footer class="mt-32 pt-20 border-t border-zinc-200 dark:border-zinc-800 text-center space-y-10">
-        <h2 class="text-5xl italic opacity-20">Immersive Experience</h2>
-        <div class="flex justify-center h-40 items-center">
-             <GlassParallaxStack>
-                <div class="p-10 glass rounded-3xl border-zinc-900/20 bg-white/20">PARALLAX LAYER 1</div>
-                <div class="p-10 glass rounded-3xl border-white/20 bg-zinc-900/20">PARALLAX LAYER 2</div>
-             </GlassParallaxStack>
+    <!-- Stats Row -->
+    <div class="flex flex-wrap justify-center gap-8 md:gap-16 mt-4">
+        <div class="stat-box">
+            <div class="stat-box-num">10,000+</div>
+            <div class="stat-box-label">Doanh nghiệp</div>
         </div>
-        <div class="max-w-xs mx-auto">
-             <Stepper Steps="@(new List<string> { "INIT", "REPLICATE", "SYNC", "FINAL" })" CurrentStep="2" />
+        <Separator Orientation="SeparatorOrientation.Vertical" Class="h-12 hidden md:block" />
+        <div class="stat-box">
+            <div class="stat-box-num">99.9%</div>
+            <div class="stat-box-label">Uptime SLA</div>
         </div>
-    </footer>
-</div>
+        <Separator Orientation="SeparatorOrientation.Vertical" Class="h-12 hidden md:block" />
+        <div class="stat-box">
+            <div class="stat-box-num">50M+</div>
+            <div class="stat-box-label">Sự kiện / giây</div>
+        </div>
+        <Separator Orientation="SeparatorOrientation.Vertical" Class="h-12 hidden md:block" />
+        <div class="stat-box">
+            <div class="stat-box-num">12ms</div>
+            <div class="stat-box-label">Độ trễ trung bình</div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================
+     DASHBOARD SHOWCASE
+  ========================================== -->
+<section class="showcase-container">
+    <div class="showcase-shadow"></div>
+    <div class="showcase-frame">
+        <div class="showcase-topline"></div>
+        <img src="/images/dashboard_mockup.png" alt="Nexus Analytics Dashboard" />
+    </div>
+</section>
+
+<!-- ==========================================
+     ALERTS / NOTIFICATIONS DEMO
+  ========================================== -->
+<section class="container mx-auto px-4 mb-20">
+    <div class="section-header">
+        <div class="section-label">
+            <LucideIcon Name="bell" Class="h-3 w-3" />
+            Hệ thống thông báo
+        </div>
+        <h2 class="section-title">Thông tin luôn rõ ràng</h2>
+        <p class="section-subtitle">NeoUI Alert component giúp người dùng không bỏ lỡ thông tin quan trọng nào.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        <Alert Variant="AlertVariant.Info" class="rounded-2xl">
+            <Icon><LucideIcon Name="info" Size="16" /></Icon>
+            <ChildContent>
+                <AlertTitle>Đã cập nhật dữ liệu</AlertTitle>
+                <AlertDescription>Pipeline đã xử lý xong 1,243 bản ghi mới.</AlertDescription>
+            </ChildContent>
+        </Alert>
+        <Alert Variant="AlertVariant.Success" class="rounded-2xl">
+            <Icon><LucideIcon Name="check-circle" Size="16" /></Icon>
+            <ChildContent>
+                <AlertTitle>Đồng bộ thành công</AlertTitle>
+                <AlertDescription>Toàn bộ dữ liệu đã được chuẩn hóa và lưu trữ.</AlertDescription>
+            </ChildContent>
+        </Alert>
+        <Alert Variant="AlertVariant.Warning" class="rounded-2xl">
+            <Icon><LucideIcon Name="triangle-alert" Size="16" /></Icon>
+            <ChildContent>
+                <AlertTitle>Cảnh báo dung lượng</AlertTitle>
+                <AlertDescription>Kho dữ liệu đang dùng 85% dung lượng cho phép.</AlertDescription>
+            </ChildContent>
+        </Alert>
+        <Alert Variant="AlertVariant.Destructive" class="rounded-2xl">
+            <Icon><LucideIcon Name="x-circle" Size="16" /></Icon>
+            <ChildContent>
+                <AlertTitle>Kết nối bị gián đoạn</AlertTitle>
+                <AlertDescription>Nguồn dữ liệu API-07 không phản hồi. Đang thử lại…</AlertDescription>
+            </ChildContent>
+        </Alert>
+    </div>
+</section>
+
+<!-- ==========================================
+     FEATURES TABS
+  ========================================== -->
+<section class="container mx-auto px-4 mb-20">
+    <div class="section-header">
+        <div class="section-label">
+            <LucideIcon Name="layers" Class="h-3 w-3" />
+            Tính năng nổi bật
+        </div>
+        <h2 class="section-title">Mọi thứ bạn cần</h2>
+        <p class="section-subtitle">Nexus tích hợp đầy đủ công cụ để vận hành dữ liệu mượt mà từ đầu đến cuối.</p>
+    </div>
+
+    <Tabs DefaultValue="analytics" class="max-w-4xl mx-auto">
+        <TabsList class="grid w-full grid-cols-3 rounded-full">
+            <TabsTrigger Value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger Value="pipelines">Pipelines</TabsTrigger>
+            <TabsTrigger Value="security">Bảo mật</TabsTrigger>
+        </TabsList>
+        <TabsContent Value="analytics" class="mt-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card>
+                    <CardHeader>
+                        <div class="feature-icon-wrap">
+                            <LucideIcon Name="bar-chart-3" Class="h-6 w-6" />
+                        </div>
+                        <CardTitle>Dashboard thời gian thực</CardTitle>
+                        <CardDescription>Dữ liệu cập nhật liên tục, không cần tải lại trang.</CardDescription>
+                    </CardHeader>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <div class="feature-icon-wrap">
+                            <LucideIcon Name="filter" Class="h-6 w-6" />
+                        </div>
+                        <CardTitle>Bộ lọc thông minh</CardTitle>
+                        <CardDescription>Phân tích sâu từng chiều dữ liệu với drag-and-drop.</CardDescription>
+                    </CardHeader>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <div class="feature-icon-wrap">
+                            <LucideIcon Name="download" Class="h-6 w-6" />
+                        </div>
+                        <CardTitle>Xuất báo cáo</CardTitle>
+                        <CardDescription>Tự động gửi báo cáo PDF, Excel theo lịch định sẵn.</CardDescription>
+                    </CardHeader>
+                </Card>
+            </div>
+        </TabsContent>
+        <TabsContent Value="pipelines" class="mt-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card>
+                    <CardHeader>
+                        <div class="feature-icon-wrap">
+                            <LucideIcon Name="workflow" Class="h-6 w-6" />
+                        </div>
+                        <CardTitle>Visual Builder</CardTitle>
+                        <CardDescription>Kéo thả để xây dựng pipeline phức tạp trong vài phút.</CardDescription>
+                    </CardHeader>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <div class="feature-icon-wrap">
+                            <LucideIcon Name="plug" Class="h-6 w-6" />
+                        </div>
+                        <CardTitle>200+ Connectors</CardTitle>
+                        <CardDescription>Kết nối với mọi nguồn dữ liệu phổ biến ngay lập tức.</CardDescription>
+                    </CardHeader>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <div class="feature-icon-wrap">
+                            <LucideIcon Name="timer" Class="h-6 w-6" />
+                        </div>
+                        <CardTitle>Lập lịch tự động</CardTitle>
+                        <CardDescription>Chạy pipeline theo lịch cron hoặc sự kiện trigger.</CardDescription>
+                    </CardHeader>
+                </Card>
+            </div>
+        </TabsContent>
+        <TabsContent Value="security" class="mt-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card>
+                    <CardHeader>
+                        <div class="feature-icon-wrap">
+                            <LucideIcon Name="lock" Class="h-6 w-6" />
+                        </div>
+                        <CardTitle>Mã hóa AES-256</CardTitle>
+                        <CardDescription>Dữ liệu được mã hóa hoàn toàn khi truyền và lưu trữ.</CardDescription>
+                    </CardHeader>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <div class="feature-icon-wrap">
+                            <LucideIcon Name="users" Class="h-6 w-6" />
+                        </div>
+                        <CardTitle>Phân quyền chi tiết</CardTitle>
+                        <CardDescription>RBAC đến từng trường dữ liệu, audit log đầy đủ.</CardDescription>
+                    </CardHeader>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <div class="feature-icon-wrap">
+                            <LucideIcon Name="shield-check" Class="h-6 w-6" />
+                        </div>
+                        <CardTitle>SOC 2 Type II</CardTitle>
+                        <CardDescription>Tuân thủ đầy đủ tiêu chuẩn bảo mật quốc tế.</CardDescription>
+                    </CardHeader>
+                </Card>
+            </div>
+        </TabsContent>
+    </Tabs>
+</section>
+
+<!-- ==========================================
+     ACCORDION FAQ
+  ========================================== -->
+<section class="container mx-auto px-4 mb-20">
+    <div class="section-header">
+        <div class="section-label">
+            <LucideIcon Name="help-circle" Class="h-3 w-3" />
+            Câu hỏi thường gặp
+        </div>
+        <h2 class="section-title">Giải đáp thắc mắc</h2>
+    </div>
+
+    <div class="max-w-2xl mx-auto">
+        <Accordion Type="AccordionType.Single" Collapsible="true">
+            <AccordionItem Value="q1">
+                <AccordionTrigger>Nexus có phù hợp cho doanh nghiệp vừa và nhỏ không?</AccordionTrigger>
+                <AccordionContent>
+                    Hoàn toàn phù hợp! Nexus được thiết kế linh hoạt, từ startup đến tập đoàn lớn đều có thể sử dụng hiệu quả. Gói Starter chỉ từ $29/tháng.
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem Value="q2">
+                <AccordionTrigger>Tôi có thể tích hợp Nexus với hệ thống sẵn có không?</AccordionTrigger>
+                <AccordionContent>
+                    Có. Nexus cung cấp REST API, webhooks và 200+ connector có sẵn cho các hệ thống phổ biến như Salesforce, Google Sheets, PostgreSQL, MySQL, BigQuery và nhiều hơn nữa.
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem Value="q3">
+                <AccordionTrigger>Dữ liệu của tôi có được bảo mật không?</AccordionTrigger>
+                <AccordionContent>
+                    Bảo mật là ưu tiên hàng đầu. Mọi dữ liệu được mã hóa AES-256, hạ tầng đạt chuẩn SOC 2 Type II, và bạn có toàn quyền kiểm soát phân quyền truy cập.
+                </AccordionContent>
+            </AccordionItem>
+            <AccordionItem Value="q4">
+                <AccordionTrigger>Có hỗ trợ tiếng Việt không?</AccordionTrigger>
+                <AccordionContent>
+                    Có! Nexus hỗ trợ đa ngôn ngữ bao gồm tiếng Việt. Đội ngũ hỗ trợ khách hàng tiếng Việt hoạt động 24/7.
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
+    </div>
+</section>
+
+<!-- ==========================================
+     PROGRESS / ONBOARDING
+  ========================================== -->
+<section class="container mx-auto px-4 mb-20">
+    <div class="section-header">
+        <div class="section-label">
+            <LucideIcon Name="trending-up" Class="h-3 w-3" />
+            Hiệu suất hệ thống
+        </div>
+        <h2 class="section-title">Trạng thái thời gian thực</h2>
+    </div>
+
+    <Card class="max-w-2xl mx-auto">
+        <CardHeader>
+            <CardTitle>System Health</CardTitle>
+            <CardDescription>Các chỉ số hiệu suất đang được theo dõi liên tục.</CardDescription>
+        </CardHeader>
+        <CardContent class="space-y-5">
+            <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                    <span class="font-medium">CPU Usage</span>
+                    <span class="text-muted-foreground">42%</span>
+                </div>
+                <Progress Value="42" Max="100" Class="h-2" />
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                    <span class="font-medium">RAM Usage</span>
+                    <span class="text-muted-foreground">67%</span>
+                </div>
+                <Progress Value="67" Max="100" Class="h-2" />
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                    <span class="font-medium">Storage</span>
+                    <span class="text-muted-foreground">85%</span>
+                </div>
+                <Progress Value="85" Max="100" Class="h-2" />
+            </div>
+            <div>
+                <div class="flex justify-between text-sm mb-1.5">
+                    <span class="font-medium">Network Throughput</span>
+                    <span class="text-muted-foreground">23%</span>
+                </div>
+                <Progress Value="23" Max="100" Class="h-2" />
+            </div>
+        </CardContent>
+    </Card>
+</section>
+
+<!-- ==========================================
+     TESTIMONIALS
+  ========================================== -->
+<section class="container mx-auto px-4 mb-20">
+    <div class="section-header">
+        <div class="section-label">
+            <LucideIcon Name="star" Class="h-3 w-3" />
+            Phản hồi khách hàng
+        </div>
+        <h2 class="section-title">Được tin dùng bởi hàng nghìn công ty</h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div class="testimonial-card">
+            <div class="testimonial-quote">"</div>
+            <div class="flex items-center gap-1 mb-4">
+                @for (int i = 0; i < 5; i++)
+                {
+                    <LucideIcon Name="star" Class="h-4 w-4 text-primary fill-current" />
+                }
+            </div>
+            <p class="text-sm leading-relaxed text-muted-foreground mb-5">
+                Nexus thay đổi hoàn toàn cách chúng tôi theo dõi doanh thu. Dashboard real-time giúp team ra quyết định nhanh gấp 3 lần.
+            </p>
+            <div class="flex items-center gap-3">
+                <Avatar>
+                    <AvatarFallback>AT</AvatarFallback>
+                </Avatar>
+                <div>
+                    <div class="font-semibold text-sm">Anh Tuấn</div>
+                    <div class="text-xs text-muted-foreground">CTO, VinaCommerce</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonial-card" style="border-color: oklch(var(--primary)); box-shadow: 0 8px 32px oklch(var(--primary) / 0.15);">
+            <div class="testimonial-quote">"</div>
+            <Badge Variant="BadgeVariant.Default" class="mb-4">Nổi bật</Badge>
+            <div class="flex items-center gap-1 mb-4">
+                @for (int i = 0; i < 5; i++)
+                {
+                    <LucideIcon Name="star" Class="h-4 w-4 text-primary fill-current" />
+                }
+            </div>
+            <p class="text-sm leading-relaxed text-muted-foreground mb-5">
+                Tích hợp với hệ thống ERP cũ của chúng tôi chỉ mất 2 ngày. Đội ngũ support của Nexus cực kỳ chuyên nghiệp và nhanh nhạy.
+            </p>
+            <div class="flex items-center gap-3">
+                <Avatar>
+                    <AvatarFallback>ML</AvatarFallback>
+                </Avatar>
+                <div>
+                    <div class="font-semibold text-sm">Mai Linh</div>
+                    <div class="text-xs text-muted-foreground">Head of Data, TechViet Corp</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="testimonial-card">
+            <div class="testimonial-quote">"</div>
+            <div class="flex items-center gap-1 mb-4">
+                @for (int i = 0; i < 5; i++)
+                {
+                    <LucideIcon Name="star" Class="h-4 w-4 text-primary fill-current" />
+                }
+            </div>
+            <p class="text-sm leading-relaxed text-muted-foreground mb-5">
+                Chi phí phân tích dữ liệu giảm 60% sau khi chuyển sang Nexus. Tự động hóa hoàn toàn thay thế 3 nhân sự làm báo cáo thủ công.
+            </p>
+            <div class="flex items-center gap-3">
+                <Avatar>
+                    <AvatarFallback>HD</AvatarFallback>
+                </Avatar>
+                <div>
+                    <div class="font-semibold text-sm">Hoàng Dũng</div>
+                    <div class="text-xs text-muted-foreground">CEO, SmartRetail VN</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================
+     PRICING CARDS
+  ========================================== -->
+<section class="container mx-auto px-4 mb-20">
+    <div class="section-header">
+        <div class="section-label">
+            <LucideIcon Name="tag" Class="h-3 w-3" />
+            Bảng giá
+        </div>
+        <h2 class="section-title">Minh bạch, không phí ẩn</h2>
+        <p class="section-subtitle">Chọn gói phù hợp với nhu cầu doanh nghiệp của bạn.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <!-- Starter -->
+        <div class="pricing-card">
+            <Badge Variant="BadgeVariant.Secondary" class="mb-4">Starter</Badge>
+            <div class="pricing-price mb-2">$29<span class="text-lg font-normal text-muted-foreground">/tháng</span></div>
+            <p class="text-sm text-muted-foreground mb-6">Phù hợp cho đội nhỏ bắt đầu với dữ liệu.</p>
+            <Separator class="mb-6" />
+            <ul class="space-y-3 text-sm text-muted-foreground mb-8">
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> 5 người dùng</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> 10 pipelines</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> 50GB lưu trữ</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> Email support</li>
+            </ul>
+            <Button Variant="ButtonVariant.Outline" class="w-full rounded-full">Bắt đầu miễn phí</Button>
+        </div>
+
+        <!-- Pro (Popular) -->
+        <div class="pricing-card pricing-card-popular">
+            <div class="flex items-center gap-2 mb-4">
+                <Badge Variant="BadgeVariant.Default">Pro</Badge>
+                <Badge Variant="BadgeVariant.Secondary">Phổ biến nhất</Badge>
+            </div>
+            <div class="pricing-price mb-2">$99<span class="text-lg font-normal text-muted-foreground">/tháng</span></div>
+            <p class="text-sm text-muted-foreground mb-6">Cho đội growing với nhu cầu phân tích nghiêm túc.</p>
+            <Separator class="mb-6" />
+            <ul class="space-y-3 text-sm text-muted-foreground mb-8">
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> 25 người dùng</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> Unlimited pipelines</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> 500GB lưu trữ</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> Priority support 24/7</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> AI Predictions</li>
+            </ul>
+            <Button class="w-full rounded-full" OnClick="@ShowProToast">Nâng cấp lên Pro</Button>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="pricing-card">
+            <Badge Variant="BadgeVariant.Outline" class="mb-4">Enterprise</Badge>
+            <div class="pricing-price mb-2">Custom<span class="text-lg font-normal text-muted-foreground"></span></div>
+            <p class="text-sm text-muted-foreground mb-6">Giải pháp tùy chỉnh cho tập đoàn lớn.</p>
+            <Separator class="mb-6" />
+            <ul class="space-y-3 text-sm text-muted-foreground mb-8">
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> Unlimited users</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> On-premise / Private Cloud</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> SSO / LDAP integration</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> SLA 99.99%</li>
+                <li class="flex items-center gap-2"><LucideIcon Name="check" Class="h-4 w-4 text-primary shrink-0" /> Dedicated CSM</li>
+            </ul>
+            <Button Variant="ButtonVariant.Outline" class="w-full rounded-full">Liên hệ tư vấn</Button>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================
+     INTERACTIVE COMPONENTS DEMO
+  ========================================== -->
+<section class="container mx-auto px-4 mb-20">
+    <div class="section-header">
+        <div class="section-label">
+            <LucideIcon Name="sparkles" Class="h-3 w-3" />
+            Component Demo
+        </div>
+        <h2 class="section-title">Tương tác phong phú</h2>
+        <p class="section-subtitle">Khám phá một số component NeoUI được dùng trong Nexus.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <!-- Left col: form components -->
+        <Card>
+            <CardHeader>
+                <CardTitle>Cài đặt thông báo</CardTitle>
+                <CardDescription>Tùy chỉnh cách bạn nhận thông báo từ hệ thống.</CardDescription>
+            </CardHeader>
+            <CardContent class="space-y-5">
+<div class="space-y-1.5">
+                        <label class="text-sm font-medium">Địa chỉ email nhận báo cáo</label>
+                        <Input Id="email-report" Placeholder="you@company.com" />
+                    </div>
+                <div class="flex items-center justify-between py-2">
+                    <div>
+                        <div class="font-medium text-sm">Thông báo qua email</div>
+                        <div class="text-xs text-muted-foreground">Nhận báo cáo hàng ngày qua mail</div>
+                    </div>
+                    <Switch @bind-Checked="_emailNotifs" />
+                </div>
+                <div class="flex items-center justify-between py-2">
+                    <div>
+                        <div class="font-medium text-sm">Cảnh báo sự cố</div>
+                        <div class="text-xs text-muted-foreground">Nhận ngay khi có lỗi hệ thống</div>
+                    </div>
+                    <Switch @bind-Checked="_alertNotifs" />
+                </div>
+                <div class="flex items-center justify-between py-2">
+                    <div>
+                        <div class="font-medium text-sm">Cập nhật tính năng</div>
+                        <div class="text-xs text-muted-foreground">Thông báo khi có phiên bản mới</div>
+                    </div>
+                    <Switch @bind-Checked="_updateNotifs" />
+                </div>
+            </CardContent>
+            <CardFooter>
+                <Button class="w-full rounded-full" OnClick="@SaveSettings">Lưu cài đặt</Button>
+            </CardFooter>
+        </Card>
+
+        <!-- Right col: misc components -->
+        <div class="space-y-6">
+            <!-- Slider + Rating -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Ngưỡng cảnh báo</CardTitle>
+                    <CardDescription>Đặt mức độ sử dụng tài nguyên để kích hoạt cảnh báo.</CardDescription>
+                </CardHeader>
+                <CardContent class="space-y-4">
+                    <div>
+                        <div class="flex justify-between text-sm mb-3">
+                            <Label>CPU Warning Level</Label>
+                            <span class="font-bold text-primary">@_cpuThreshold%</span>
+                        </div>
+                        <Slider @bind-Value="_cpuThreshold" Min="10" Max="95" Step="5" />
+                    </div>
+                    <Separator />
+                    <div>
+                        <Label class="text-sm mb-2 block">Mức độ ưu tiên cảnh báo</Label>
+                        <Rating Value="_priorityDouble" MaxRating="5" ReadOnly="false" />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <!-- Dropdown + Popover + Tooltip -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Thao tác nhanh</CardTitle>
+                    <CardDescription>Các tùy chọn nhanh cho pipeline đang chọn.</CardDescription>
+                </CardHeader>
+                <CardContent class="flex flex-wrap gap-3">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger AsChild>
+                            <Button Variant="ButtonVariant.Outline" class="rounded-full">
+                                <LucideIcon Name="more-horizontal" Class="mr-2 h-4 w-4" />
+                                Tùy chọn
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                            <DropdownMenuLabel>Pipeline Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem OnClick="@(() => ToastService.Show("Đã chạy pipeline!"))"> 
+                                <LucideIcon Name="play" Class="mr-2 h-4 w-4" />
+                                Chạy ngay
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <LucideIcon Name="pencil" Class="mr-2 h-4 w-4" />
+                                Chỉnh sửa
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <LucideIcon Name="copy" Class="mr-2 h-4 w-4" />
+                                Nhân bản
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem Class="text-destructive">
+                                <LucideIcon Name="trash-2" Class="mr-2 h-4 w-4" />
+                                Xóa pipeline
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger AsChild>
+                                <Button Variant="ButtonVariant.Outline" Size="ButtonSize.Icon" class="rounded-full">
+                                    <LucideIcon Name="info" Class="h-4 w-4" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Xem tài liệu hướng dẫn pipeline</TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <Sheet @bind-Open="_sheetOpen" Side="SheetSide.Right" >
+                        <SheetTrigger AsChild>
+                            <Button Variant="ButtonVariant.Secondary" class="rounded-full">
+                                <LucideIcon Name="settings" Class="mr-2 h-4 w-4" />
+                                Cấu hình
+                            </Button>
+                        </SheetTrigger>
+                        <SheetContent>
+                            <SheetHeader>
+                                <SheetTitle>Cấu hình Pipeline</SheetTitle>
+                                <SheetDescription>Cập nhật các thông số kỹ thuật cho pipeline của bạn.</SheetDescription>
+                            </SheetHeader>
+                            <div class="py-6 space-y-5">
+<div class="space-y-1.5">
+                                        <Label For="pipe-name">Tên Pipeline</Label>
+                                        <Input Id="pipe-name" Placeholder="VD: Daily Revenue Sync" />
+                                    </div>
+                                    <div class="space-y-1.5">
+                                        <Label For="pipe-schedule">Lịch chạy</Label>
+                                        <Input Id="pipe-schedule" Placeholder="VD: 0 6 * * *" />
+                                    </div>
+                                <div class="flex items-center justify-between">
+                                    <Label>Kích hoạt pipeline</Label>
+                                    <Switch @bind-Checked="_pipelineEnabled" />
+                                </div>
+                            </div>
+                            <SheetFooter>
+                                <Button class="rounded-full" OnClick="@CloseSheet">Lưu thay đổi</Button>
+                            </SheetFooter>
+                        </SheetContent>
+                    </Sheet>
+                </CardContent>
+            </Card>
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================
+     DATA TABLE DEMO
+  ========================================== -->
+<section class="container mx-auto px-4 mb-20">
+    <div class="section-header">
+        <div class="section-label">
+            <LucideIcon Name="table" Class="h-3 w-3" />
+            Quản lý dữ liệu
+        </div>
+        <h2 class="section-title">Bảng dữ liệu mạnh mẽ</h2>
+        <p class="section-subtitle">DataTable với tìm kiếm, sắp xếp và phân trang tích hợp sẵn.</p>
+    </div>
+
+    <div class="max-w-5xl mx-auto">
+        <DataGrid TItem="PipelineRecord" Items="@_pipelines" PageSize="5" PagingMode="DataGridPagingMode.Client">
+            <DataGridColumn Field="@nameof(PipelineRecord.Name)" Header="Tên Pipeline" Sortable="true" Filterable="true" />
+            <DataGridColumn Field="@nameof(PipelineRecord.Status)" Header="Trạng thái" Sortable="true" Filterable="true" />
+            <DataGridColumn Field="@nameof(PipelineRecord.Records)" Header="Số bản ghi" Sortable="true" Filterable="true" />
+            <DataGridColumn Field="@nameof(PipelineRecord.LastRun)" Header="Lần chạy cuối" Sortable="true" Filterable="true" />
+        </DataGrid>
+    </div>
+</section>
+
+<!-- ==========================================
+     CTA BANNER
+  ========================================== -->
+<section class="container mx-auto px-4 mb-20">
+    <div class="cta-banner">
+        <div class="cta-banner-noise"></div>
+        <div class="relative z-10">
+            <Badge Variant="BadgeVariant.Secondary" class="mb-6">Bắt đầu hôm nay</Badge>
+            <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-4" style="font-family:'Plus Jakarta Sans',sans-serif;">
+                Sẵn sàng để tăng trưởng?
+            </h2>
+            <p class="text-lg text-white/80 max-w-xl mx-auto mb-10">
+                Tham gia cùng hơn 10,000 doanh nghiệp đang sử dụng Nexus để khai phá tiềm năng dữ liệu của họ.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <Button Variant="ButtonVariant.Secondary" class="rounded-full px-8 font-bold" OnClick="@ShowWelcomeToast">
+                    <LucideIcon Name="rocket" Class="mr-2 h-4 w-4" />
+                    Dùng thử 14 ngày miễn phí
+                </Button>
+                <Button Variant="ButtonVariant.Ghost" class="rounded-full px-8 text-white hover:text-white hover:bg-white/10 font-bold">
+                    Liên hệ đội ngũ
+                </Button>
+            </div>
+        </div>
+    </div>
+</section>
 
 @code {
-    private List<string> groups = new() { "Core", "Interactions", "Data", "Forms", "Intelligence", "Feedback" };
-    private string activeGroup = "Core";
-    
-    private bool showLoader = true;
-    [Parameter] public string AppTitle { get; set; } = "ANTIGRAVITY";
-    [Parameter] public string SubTitle { get; set; } = "Forge Protocol Initializing...";
-    [Parameter] public bool Visible { get; set; } = true;
-    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
-    private bool showSidebar = false;
-    private bool showPalette = false;
-    private bool isSwitchOn = true;
-    private bool check1 = true;
-    private bool check2 = false;
-    private bool showModal = false;
-    private bool showToast = false;
-    private bool showConfetti = false;
-    [Parameter] public EventCallback<bool> ActiveChanged { get; set; }
-    private bool showCommandBar = false;
+    // Switches
+    bool _emailNotifs = true;
+    bool _alertNotifs = true;
+    bool _updateNotifs = false;
+    bool _sheetOpen = false;
+    bool _pipelineEnabled = true;
 
-    private List<string> sampleAvatars = new() {
-        "https://i.pravatar.cc/150?u=1",
-        "https://i.pravatar.cc/150?u=2",
-        "https://i.pravatar.cc/150?u=3"
-    };
+    // Slider / Rating
+    double _cpuThreshold = 75;
+    double _priorityDouble = 4;
 
-    private List<ActivityFeed.ActivityItem> sampleActivity = new() {
-        new() { Timestamp = "2M AGO", Title = "NODE SYNCED", Description = "Node-042 correctly aligned." },
-        new() { Timestamp = "1H AGO", Title = "BACKUP FINISHED", Description = "Global persistence map snapshot." }
-    };
+    // DataTable data
+    record PipelineRecord(string Name, string Status, int Records, string LastRun);
 
-    protected override async Task OnInitializedAsync()
+    List<PipelineRecord> _pipelines = new()
     {
-        await Task.Delay(2000);
-        showLoader = false;
-    }
+        new("Daily Revenue Sync", "✅ Thành công", 12_430, "09/04/2026 06:00"),
+        new("Customer 360 View", "✅ Thành công", 5_821, "09/04/2026 05:30"),
+        new("Inventory Update", "⏳ Đang chạy", 3_102, "09/04/2026 06:15"),
+        new("Marketing Attribution", "⚠️ Cảnh báo", 8_750, "08/04/2026 23:00"),
+        new("Product Analytics", "✅ Thành công", 21_900, "09/04/2026 04:00"),
+        new("Churn Prediction ML", "❌ Lỗi", 0, "08/04/2026 18:00"),
+        new("Email Engagement", "✅ Thành công", 6_310, "09/04/2026 03:00"),
+    };
+
+    void ShowWelcomeToast() => ToastService.Show("Chào mừng bạn đến với Nexus! 🎉");
+    void ShowProToast() => ToastService.Show("Đang chuyển bạn đến trang thanh toán…");
+    void SaveSettings() => ToastService.Show("Đã lưu cài đặt thông báo thành công!");
+    void CloseSheet() { _sheetOpen = false; ToastService.Show("Đã lưu cấu hình!"); }
 }
