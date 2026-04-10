@@ -13,6 +13,7 @@
     <PackageReference Include="NeoUI.Blazor" Version="4.0.0" />
     <PackageReference Include="NeoUI.Blazor.Primitives" Version="4.0.0" />
     <PackageReference Include="NeoUI.Icons.Lucide" Version="3.0.0" />
+    <PackageReference Include="OllamaSharp" Version="5.0.1" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
     <ProjectReference Include="..\MyWebTemplateV2.Client\MyWebTemplateV2.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.5" />

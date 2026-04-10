@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MyWebTemplateV2.Client.Models;
 
 namespace MyWebTemplateV2.Data
 {
@@ -8,7 +9,9 @@ namespace MyWebTemplateV2.Data
         {
         }
 
-        // Add your DbSets here, for example:
-        // public DbSet<YourModel> YourModels { get; set; }
+        public DbSet<Submission> Submissions { get; set; }
+        public DbSet<Publication> Publications { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Vote> Votes { get; set; }
     }
 }

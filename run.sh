@@ -6,6 +6,7 @@ PROJECT_DIR="$ROOT_DIR/MyWebTemplateV2/MyWebTemplateV2"
 PORT=3002
 
 export ASPNETCORE_ENVIRONMENT=Development
+export DOTNET_USE_POLLING_FILE_WATCHER=1
 
 # Kill process using the port
 echo "==> Checking if port $PORT is occupied..."

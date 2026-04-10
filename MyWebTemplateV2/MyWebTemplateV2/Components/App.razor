@@ -32,11 +32,18 @@
     <link rel="stylesheet" href="@Assets["MyWebTemplateV2.styles.css"]" />
     <ImportMap />
     <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet @rendermode="InteractiveWebAssembly" />
+    
+    <!-- KaTeX for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script src="js/chat_helper.js"></script>
+
+    <HeadOutlet @rendermode="InteractiveAuto" />
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveWebAssembly" />
+    <Routes @rendermode="InteractiveAuto" />
     <script src="_framework/blazor.web.js"></script>
 </body>
 

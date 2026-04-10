@@ -1,0 +1,52 @@
+@page "/lien-he"
+@using NeoUI.Blazor
+@using NeoUI.Blazor.Primitives
+@using NeoUI.Icons.Lucide
+
+<PageTitle>Liên hệ | Ngoại khóa nhịp đập</PageTitle>
+
+<section class="py-32 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+            <div>
+                <h1 class="hero-title">Kết nối <br/> <span class="hero-highlight italic">Với chúng tôi</span></h1>
+                <p class="text-sm text-zinc-500 mb-12 max-w-sm">
+                    Mọi thắc mắc về hoạt động ngoại khóa, ấn phẩm Nhái Bén hoặc kỹ thuật website, vui lòng liên hệ Ban truyền thông.
+                </p>
+                
+                <div class="space-y-8">
+                    <div class="flex gap-6">
+                        <div class="w-12 h-12 bg-fpt-orange flex items-center justify-center -skew-x-[13deg]">
+                            <LucideIcon Name="mail" class="w-6 h-6 text-white skew-x-[13deg]" />
+                        </div>
+                        <div>
+                            <div class="text-[10px] font-black uppercase  text-zinc-400">Email</div>
+                            <div class="text-sm font-bold text-fpt-blue">contact@fpt.edu.vn</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-6">
+                        <div class="w-12 h-12 bg-fpt-green flex items-center justify-center -skew-x-[13deg]">
+                            <LucideIcon Name="phone" class="w-6 h-6 text-white skew-x-[13deg]" />
+                        </div>
+                        <div>
+                            <div class="text-[10px] font-black uppercase  text-zinc-400">Hotline</div>
+                            <div class="text-sm font-bold text-fpt-blue">1900 1234</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-10 bg-zinc-50 border border-zinc-100">
+                <form class="space-y-6">
+                    <div class="grid grid-cols-2 gap-6">
+                        <input class="bg-white border-none p-4 text-xs outline-none focus:ring-1 focus:ring-fpt-orange" placeholder="Họ và tên" />
+                        <input class="bg-white border-none p-4 text-xs outline-none focus:ring-1 focus:ring-fpt-orange" placeholder="Lớp" />
+                    </div>
+                    <input class="w-full bg-white border-none p-4 text-xs outline-none focus:ring-1 focus:ring-fpt-orange" placeholder="Tiêu đề" />
+                    <textarea class="w-full bg-white border-none p-4 text-xs outline-none focus:ring-1 focus:ring-fpt-orange h-32" placeholder="Nội dung tin nhắn..."></textarea>
+                    <button class="btn-fpt w-full">Gửi tin nhắn</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

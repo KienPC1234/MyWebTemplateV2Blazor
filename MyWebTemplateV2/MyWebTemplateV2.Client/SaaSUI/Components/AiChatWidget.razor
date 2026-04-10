@@ -1,0 +1,211 @@
+@using System.Text
+@using Markdig
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+<div class="fixed bottom-8 right-8 z-[100]">
+    @if (!_isOpen)
+    {
+        <div class="relative group animate-fpt-zoom-in">
+            <div class="absolute inset-0 bg-fpt-orange rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity animate-fpt-pulse"></div>
+            <button @onclick="ToggleChat" class="w-20 h-20 bg-fpt-orange text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all relative z-10 border-4 border-white/20 backdrop-blur-sm">
+                <LucideIcon Name="message-square" Class="w-10 h-10" />
+                <div class="absolute -top-3 -right-3 bg-fpt-green text-[9px] font-black px-3 py-1 rounded-full border-2 border-white shadow-lg animate-bounce">AI LIVE</div>
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="w-[450px] h-[700px] bg-white/90 backdrop-blur-3xl border border-white/40 shadow-3xl flex flex-col rounded-[2.5rem] overflow-hidden animate-fpt-zoom-in">
+            <!-- Header -->
+            <div class="bg-fpt-blue p-6 flex justify-between items-center text-white relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-fpt-blue via-fpt-blue/80 to-fpt-blue z-0"></div>
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
+                
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur-md">
+                         <LucideIcon Name="bot" Class="w-7 h-7 text-fpt-orange" />
+                    </div>
+                    <div>
+                        <div class="text-[10px] font-black uppercase text-white/50">FPT Assistant</div>
+                        <div class="text-lg font-black uppercase italic">Nhịp đập AI</div>
+                    </div>
+                </div>
+                <button @onclick="ToggleChat" class="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-all relative z-10">
+                    <LucideIcon Name="x" Class="w-6 h-6" />
+                </button>
+            </div>
+
+            <!-- Messages -->
+            <div id="chat-messages-container" class="flex-1 overflow-y-auto p-8 space-y-8 bg-zinc-50/50 min-h-0 scroll-smooth">
+                @foreach (var msg in _messages)
+                {
+                    <div class="flex @(msg.IsUser ? "justify-end" : "justify-start") animate-fpt-fade-in">
+                         <div class="flex flex-col gap-2 max-w-[85%] @(msg.IsUser ? "items-end" : "items-start")">
+                            <div class="p-5 text-sm leading-relaxed @(msg.IsUser ? "bg-fpt-orange text-white rounded-3xl rounded-tr-none shadow-xl shadow-fpt-orange/20" : "bg-white border border-zinc-100 text-zinc-800 rounded-3xl rounded-tl-none shadow-sm") markdown-content">
+                                @((MarkupString)RenderMarkdown(msg.Text))
+                            </div>
+                            <div class="flex items-center gap-2 px-2">
+                                @if (!msg.IsUser) { <div class="w-1.5 h-1.5 rounded-full bg-fpt-green"></div> }
+                                <span class="text-[8px] font-black uppercase text-zinc-400 ">@(msg.IsUser ? "You" : "Gemma AI")</span>
+                                @if (msg.IsUser) { <div class="w-1.5 h-1.5 rounded-full bg-fpt-orange"></div> }
+                            </div>
+                         </div>
+                    </div>
+                }
+                
+                @if (_isThinking)
+                {
+                    <div class="flex justify-start animate-fpt-fade-in">
+                        <div class="flex flex-col gap-2 items-start">
+                            <div class="bg-white border border-zinc-100 p-5 rounded-3xl rounded-tl-none shadow-sm flex items-center gap-3">
+                                <div class="flex gap-1.5">
+                                    <div class="w-2 h-2 rounded-full bg-fpt-orange animate-bounce"></div>
+                                    <div class="w-2 h-2 rounded-full bg-fpt-green animate-bounce" style="animation-delay: 0.2s"></div>
+                                    <div class="w-2 h-2 rounded-full bg-fpt-blue animate-bounce" style="animation-delay: 0.4s"></div>
+                                </div>
+                                <span class="text-xs font-bold text-zinc-400 italic">Thinking...</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- Input Area -->
+            <div class="p-8 bg-white border-t border-zinc-100">
+                <div class="flex items-end gap-3 bg-zinc-50 rounded-[2rem] p-3 border border-zinc-200 transition-all focus-within:bg-white focus-within:ring-4 focus-within:ring-fpt-orange/10 focus-within:border-fpt-orange/30">
+                    <textarea @bind="_userInput" @bind:event="oninput" @onkeyup="HandleKeyUp" 
+                              class="flex-1 bg-transparent border-none text-sm outline-none px-4 py-2 resize-none max-h-32 overflow-y-auto" 
+                              placeholder="Hỏi AI về hoạt động ngoại khóa..."
+                              rows="1"></textarea>
+                    <button @onclick="SendMessage" disabled="@(_isTyping || string.IsNullOrWhiteSpace(_userInput))" 
+                            class="w-12 h-12 bg-fpt-orange text-white rounded-2xl shadow-xl shadow-fpt-orange/20 flex items-center justify-center hover:scale-110 active:scale-95 transition-all disabled:opacity-30 flex-shrink-0">
+                        @if (_isTyping) { <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> }
+                        else { <LucideIcon Name="send" Class="w-6 h-6" /> }
+                    </button>
+                </div>
+                <div class="mt-4 flex justify-center">
+                    <p class="text-[8px] font-black uppercase text-zinc-300">Powered by FPT Education AI</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private bool _isOpen = false;
+    private bool _isTyping = false;
+    private bool _isThinking = false;
+    private string _userInput = "";
+    private List<ChatMessage> _messages = new() 
+    { 
+        new ChatMessage { Text = "Chào bạn! Tôi là trợ lý AI của website **Ngoại khóa nhịp đập**. Tôi có thể giúp bạn tìm hiểu về các cuộc thi, ấn phẩm Nhái Bén hoặc hỗ trợ gửi bài sáng tác. Bạn cần giúp gì?", IsUser = false } 
+    };
+
+    private void ToggleChat() => _isOpen = !_isOpen;
+
+    private async Task HandleKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey && !string.IsNullOrWhiteSpace(_userInput))
+        {
+            await SendMessage();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await ScrollToBottom();
+        if (_messages.Any())
+        {
+            try { await JS.InvokeVoidAsync("chatHelper.renderMath", "chat-messages-container"); }
+            catch { }
+        }
+    }
+
+    private async Task ScrollToBottom()
+    {
+        try { await JS.InvokeVoidAsync("chatHelper.scrollToBottom", "chat-messages-container"); }
+        catch { }
+    }
+
+    private string RenderMarkdown(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return "";
+        var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseSoftlineBreakAsHardlineBreak().Build();
+        return Markdown.ToHtml(value, pipeline);
+    }
+
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(_userInput) || _isTyping) return;
+
+        var prompt = _userInput;
+        _messages.Add(new ChatMessage { Text = prompt, IsUser = true });
+        _userInput = "";
+        _isTyping = true;
+        _isThinking = true;
+        StateHasChanged();
+        await ScrollToBottom();
+
+        try
+        {
+            var chatRequest = new { Prompt = prompt };
+            var response = await Http.PostAsJsonAsync("/api/chat", chatRequest, cancellationToken: default);
+            
+            if (response.IsSuccessStatusCode)
+            {
+                _isThinking = false;
+                var aiMessage = new ChatMessage { Text = "", IsUser = false };
+                _messages.Add(aiMessage);
+                
+                var content = await response.Content.ReadAsStringAsync();
+                aiMessage.Text = content;
+                StateHasChanged();
+                await ScrollToBottom();
+            }
+            else
+            {
+                _isThinking = false;
+                _messages.Add(new ChatMessage { Text = "Xin lỗi, đã có lỗi xảy ra khi kết nối với AI.", IsUser = false });
+            }
+        }
+        catch (Exception ex)
+        {
+            _isThinking = false;
+            _messages.Add(new ChatMessage { Text = $"Lỗi hệ thống: {ex.Message}", IsUser = false });
+        }
+        finally
+        {
+            _isTyping = false;
+            _isThinking = false;
+            StateHasChanged();
+            await ScrollToBottom();
+        }
+    }
+
+    public class ChatMessage
+    {
+        public string Text { get; set; } = "";
+        public bool IsUser { get; set; }
+    }
+}
+
+<style>
+    .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+        @@apply font-black text-fpt-blue mt-4 mb-2;
+    }
+    .markdown-content p {
+        @@apply mb-2 last:mb-0;
+    }
+    .markdown-content code {
+        @@apply px-1.5 py-0.5 bg-zinc-100 text-fpt-orange font-mono text-[10px] rounded;
+    }
+    .markdown-content strong {
+        @@apply font-black text-inherit;
+    }
+    .markdown-content ul, .markdown-content ol {
+        @@apply pl-4 mb-2 space-y-1;
+    }
+    .markdown-content ul { @@apply list-disc; }
+    .markdown-content ol { @@apply list-decimal; }
+</style>

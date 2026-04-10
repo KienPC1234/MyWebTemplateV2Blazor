@@ -2,266 +2,339 @@
 @using NeoUI.Blazor
 @using NeoUI.Blazor.Primitives
 @using NeoUI.Icons.Lucide
+@using MyWebTemplateV2.Client.Models
+@inject HttpClient Http
+@inject NavigationManager Nav
 
-<PageTitle>Nexus FPT | Hệ thống quản lý doanh nghiệp thông minh</PageTitle>
+<PageTitle>Ngoại khóa Nhịp đập | FPT Education</PageTitle>
 
+<!-- HERO ENGINE: HIGH-END VISUALS -->
+<section class="relative min-h-[95vh] flex items-center overflow-hidden bg-white pt-24 pb-32">
+    <!-- Advanced Mesh Background -->
+    <div class="absolute inset-0 z-0 pointer-events-none">
+        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-fpt-orange/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 animate-fpt-pulse"></div>
+        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-fpt-blue/5 rounded-full blur-[100px] translate-y-1/4 -translate-x-1/4"></div>
+        <div class="absolute inset-0 opacity-[0.4]" style="background-image: radial-gradient(circle at 2px 2px, #f1f1f1 1px, transparent 0); background-size: 40px 40px;"></div>
+    </div>
 
-<!-- FPT Hero Section -->
-<section class="fpt-hero">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        <div class="relative z-10">
-            <div class="flex items-center gap-2 mb-8 animate-fade-in">
-                <div class="w-8 h-[2px] bg-fpt-orange"></div>
-                <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-fpt-orange">FPT Corporation | Branding v3.1</span>
+    <div class="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center relative z-10">
+        <!-- Content Column -->
+        <div class="lg:col-span-7 flex flex-col items-start animate-fpt-fade-in">
+            <div class="group inline-flex items-center gap-4 px-6 py-2 bg-white border border-zinc-200 rounded-full shadow-xl shadow-zinc-200/50 mb-12 hover:border-fpt-orange transition-all duration-500">
+                <div class="w-2 h-2 rounded-full bg-fpt-orange animate-pulse"></div>
+                <span class="text-[10px] font-black uppercase  text-zinc-500 group-hover:text-fpt-orange transition-colors">FPT Extracurricular 2026</span>
             </div>
             
-            <h1 class="hero-title animate-slide-up">
-                Công nghệ <br />
-                <span class="hero-highlight italic">Kiến tạo Hạnh phúc</span>
+            <h1 class="text-7xl md:text-8xl lg:text-[110px] font-black text-fpt-blue uppercase  leading-[0.85] mb-10">
+                Nhịp đập <br />
+                <span class="text-fpt-orange italic relative inline-block">
+                    Sáng tạo
+                    <svg class="absolute -bottom-6 left-0 w-full h-8 text-fpt-green/20 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                        <path d="M0 5 Q 25 0 50 5 T 100 5" stroke="currentColor" stroke-width="12" fill="none" />
+                    </svg>
+                </span>
             </h1>
             
-            <p class="text-base text-zinc-500 mb-10 max-w-xl leading-relaxed animate-slide-up" style="animation-delay: 0.1s">
-                FPT Nexus là nền tảng quản trị thông minh, kế thừa tinh hoa hơn 30 năm phát triển của Tập đoàn. 
-                Chúng tôi mang đến giải pháp công nghệ hiện đại, ổn định và bảo mật tối đa cho lộ trình chuyển đổi số của mọi doanh nghiệp.
+            <p class="text-xl md:text-2xl text-zinc-400 mb-14 max-w-xl leading-relaxed font-medium">
+                Nền tảng kết nối <span class="text-fpt-blue font-bold italic">đam mê</span>, khơi nguồn <span class="text-fpt-green font-bold">tri thức</span>. Nơi mỗi học sinh FPT đều là một nghệ sĩ, một nhà kiến tạo tương lai.
             </p>
             
-            <div class="flex flex-wrap gap-4 animate-slide-up" style="animation-delay: 0.2s">
-                <button class="btn-fpt flex items-center gap-3">
-                    Bắt đầu ngay <LucideIcon Name="arrow-right" class="w-4 h-4" />
+            <div class="flex flex-wrap gap-8">
+                <button @onclick='() => Nav.NavigateTo("/ngoai-khoa")' class="fpt-btn-main">
+                    <span>Khám phá ngay</span>
+                    <LucideIcon Name="arrow-up-right" class="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                 </button>
-                <button class="btn-fpt-outline">Giải pháp doanh nghiệp</button>
-            </div>
-        </div>
-
-        <!-- FPT Graphical Support Element (skewed orange block) -->
-        <div class="relative hidden lg:flex items-center justify-center animate-fade-in" style="animation-delay: 0.3s">
-            <div class="relative w-full max-w-lg aspect-square">
-                <!-- Background Support Sign (skewed orange) -->
-                <div class="absolute top-0 right-0 w-[80%] h-full bg-fpt-orange/5 -skew-x-[13deg] border-r-4 border-fpt-orange/20"></div>
-                
-                <!-- Floating Official Blocks -->
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="flex items-end gap-6">
-                        <div class="w-16 h-48 bg-fpt-orange -skew-x-[13deg] shadow-lg animate-pulse-slow"></div>
-                        <div class="w-16 h-64 bg-fpt-green -skew-x-[13deg] shadow-lg translate-y-8"></div>
-                        <div class="w-16 h-56 bg-fpt-blue -skew-x-[13deg] shadow-lg translate-y-16"></div>
-                    </div>
-                </div>
-                
-                <!-- Decorative Elements -->
-                <div class="absolute bottom-10 left-10 w-24 h-24 border border-zinc-200 -skew-x-[13deg]"></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- FPT Mission & Vision (New Section) -->
-<section class="py-24 bg-white overflow-hidden relative border-t border-border">
-    <!-- Large skewed text background "FPT" -->
-    <div class="absolute -top-20 -right-20 text-[20rem] font-black italic text-zinc-50 opacity-[0.03] select-none pointer-events-none -skew-x-[13deg]">
-        FPT
-    </div>
-
-    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-        <div class="grid grid-cols-2 gap-4">
-            <div class="p-8 bg-zinc-50 border-l-4 border-fpt-orange">
-                <div class="text-3xl font-black text-fpt-blue mb-2 italic">01</div>
-                <div class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Sứ mệnh</div>
-                <p class="text-xs text-zinc-500 leading-relaxed">
-                    Xây dựng hệ sinh thái công nghệ giúp doanh nghiệp vận hành linh hoạt và hiệu quả hơn.
-                </p>
-            </div>
-            <div class="p-8 bg-zinc-50 border-l-4 border-fpt-green translate-y-8">
-                <div class="text-3xl font-black text-fpt-blue mb-2 italic">02</div>
-                <div class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Tầm nhìn</div>
-                <p class="text-xs text-zinc-500 leading-relaxed">
-                    Trở thành đối tác chiến lược hàng đầu trong kỷ nguyên kinh tế số toàn cầu.
-                </p>
-            </div>
-            <div class="p-8 bg-zinc-50 border-l-4 border-fpt-blue">
-                <div class="text-3xl font-black text-fpt-blue mb-2 italic">03</div>
-                <div class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Giá trị</div>
-                <p class="text-xs text-zinc-500 leading-relaxed">
-                    Chất lượng quốc tế, am hiểu nội địa, sáng tạo không ngừng.
-                </p>
-            </div>
-            <div class="p-8 bg-zinc-50 border-l-4 border-zinc-300 translate-y-8">
-                <div class="text-3xl font-black text-fpt-blue mb-2 italic">04</div>
-                <div class="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Kết nối</div>
-                <p class="text-xs text-zinc-500 leading-relaxed">
-                    Hợp tác để cùng kiến tạo những giá trị mới cho cộng đồng.
-                </p>
-            </div>
-        </div>
-        
-        <div>
-            <h2 class="text-3xl font-black text-fpt-blue mb-8 uppercase tracking-wide leading-tight">
-                Tiêu chuẩn công nghệ <br /> <span class="text-fpt-orange italic">Vươn tầm quốc tế</span>
-            </h2>
-            <div class="space-y-6">
-                <div class="flex gap-6">
-                    <div class="flex-shrink-0 w-12 h-12 bg-fpt-orange text-white flex items-center justify-center -skew-x-[13deg]">
-                        <LucideIcon Name="globe" class="w-6 h-6 skew-x-[13deg]" />
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-bold uppercase text-fpt-blue mb-2">Mạng lưới toàn cầu</h4>
-                        <p class="text-xs text-zinc-500">Mạng lưới chi nhánh trải rộng trên 28 quốc gia và vùng lãnh thổ.</p>
-                    </div>
-                </div>
-                <div class="flex gap-6">
-                    <div class="flex-shrink-0 w-12 h-12 bg-fpt-green text-white flex items-center justify-center -skew-x-[13deg]">
-                        <LucideIcon Name="check-circle" class="w-6 h-6 skew-x-[13deg]" />
-                    </div>
-                    <div>
-                        <h4 class="text-sm font-bold uppercase text-fpt-blue mb-2">Chất lượng tin cậy</h4>
-                        <p class="text-xs text-zinc-500">Quy trình sản xuất phần mềm theo tiêu chuẩn CMMI Level 5.</p>
-                    </div>
-                </div>
-            </div>
-            <button class="mt-12 btn-fpt-outline">Tìm hiểu thêm về FPT</button>
-        </div>
-    </div>
-</section>
-
-<!-- FPT Pillars Section -->
-<section class="py-24 bg-zinc-50 border-y border-border">
-    <div class="max-w-7xl mx-auto px-6">
-        <h2 class="fpt-section-title">Giá trị cốt lõi</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="fpt-card">
-                <div class="w-12 h-12 flex items-center justify-center text-fpt-orange mb-6 bg-fpt-orange/5">
-                    <LucideIcon Name="zap" class="w-6 h-6" />
-                </div>
-                <h3 class="text-lg font-bold mb-4 uppercase tracking-tight text-fpt-blue">Năng động & Sáng tạo</h3>
-                <p class="text-sm text-zinc-600 leading-relaxed">
-                    Màu cam đại diện cho sự ấm áp, sinh lực và nhiệt huyết sáng tạo. Nexus mang lại tốc độ xử lý vượt trội cho mọi nghiệp vụ.
-                </p>
-            </div>
-
-            <div class="fpt-card fpt-card-green">
-                <div class="w-12 h-12 flex items-center justify-center text-fpt-green mb-6 bg-fpt-green/5">
-                    <LucideIcon Name="trending-up" class="w-6 h-6" />
-                </div>
-                <h3 class="text-lg font-bold mb-4 uppercase tracking-tight text-fpt-blue">Phát triển bền vững</h3>
-                <p class="text-sm text-zinc-600 leading-relaxed">
-                    Màu xanh lá đại diện cho sức sống mãnh liệt và sự hòa hợp. Nexus đồng hành cùng lộ trình tăng trưởng dài hạn của doanh nghiệp.
-                </p>
-            </div>
-
-            <div class="fpt-card fpt-card-blue">
-                <div class="w-12 h-12 flex items-center justify-center text-fpt-blue mb-6 bg-fpt-blue/5">
-                    <LucideIcon Name="shield" class="w-6 h-6" />
-                </div>
-                <h3 class="text-lg font-bold mb-4 uppercase tracking-tight text-fpt-blue">Trí tuệ & Thống nhất</h3>
-                <p class="text-sm text-zinc-600 leading-relaxed">
-                    Màu xanh dương đậm đại diện cho năng lượng vũ trụ và tính bền vững. Hệ thống bảo mật đa lớp chuẩn quốc tế.
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Data Management Section (Nexus Table) -->
-<section class="py-24 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-            <div class="max-w-2xl">
-                <h2 class="text-3xl font-bold text-fpt-blue mb-4 uppercase tracking-tight">Vận hành theo thời gian thực</h2>
-                <p class="text-zinc-600 text-sm">Quản lý hiệu quả danh mục dự án, nhân sự và các chỉ số kinh doanh then chốt thông qua giao diện DataGrid hiện đại.</p>
-            </div>
-            <div class="flex gap-3">
-                <button class="btn-fpt-outline px-4 py-2 flex items-center gap-2">
-                    <LucideIcon Name="download" class="w-4 h-4" /> Xuất báo cáo
+                <button @onclick="() => _showSubmitModal = true" class="fpt-btn-secondary">
+                    <span>Gửi bài sáng tác</span>
                 </button>
-                <button class="btn-fpt px-4 py-2 flex items-center gap-2">
-                    <LucideIcon Name="plus" class="w-4 h-4" /> Thêm bản ghi
-                </button>
-            </div>
-        </div>
-
-        <div class="fpt-table-wrap mt-12">
-            <div class="fpt-table-header">
-                <div class="flex items-center gap-4">
-                    <span class="text-xs font-bold uppercase text-zinc-400">Dữ liệu hệ thống</span>
-                    <Badge Variant="BadgeVariant.Outline" class="border-fpt-orange text-fpt-orange rounded-none text-[10px] px-2">LIVE DATA</Badge>
-                </div>
-                <div class="flex items-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-fpt-green animate-pulse"></div>
-                    <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Sẵn sàng</span>
-                </div>
             </div>
             
-            <DataGrid TItem="PipelineRecord" Items="@_pipelineRecords" class="border-none">
-                <Columns>
-                    <DataGridColumn TItem="PipelineRecord" Field="ProjectName" Header="Tên dự án" Sortable="true" Filterable="true" />
-                    <DataGridColumn TItem="PipelineRecord" Header="Trạng thái" Sortable="true">
-                        <CellTemplate Context="record">
-                            <div class="flex items-center gap-2">
-                                <div class="w-1.5 h-1.5 rounded-full" style="background-color: @(record.Status == "Hoàn thành" ? "oklch(var(--fpt-green))" : record.Status == "Đang thực hiện" ? "oklch(var(--fpt-orange))" : "oklch(var(--fpt-blue))")"></div>
-                                <span class="text-xs font-medium">@record.Status</span>
+            <!-- Trust Indicators -->
+            <div class="mt-20 flex items-center gap-10">
+                <div class="flex -space-x-4">
+                    @for (int i = 1; i <= 4; i++)
+                    {
+                        <div class="w-12 h-12 rounded-2xl border-4 border-white bg-zinc-100 flex items-center justify-center text-zinc-400 overflow-hidden shadow-md">
+                            <LucideIcon Name="user" class="w-5 h-5" />
+                        </div>
+                    }
+                </div>
+                <div>
+                    <div class="text-xl font-black text-fpt-blue leading-none">1,200+</div>
+                    <div class="text-[9px] font-black uppercase text-zinc-400  mt-1">Học sinh tham gia</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visual Column -->
+        <div class="lg:col-span-5 relative animate-fpt-zoom-in" style="animation-delay: 0.3s">
+            <div class="relative aspect-[4/5] w-full">
+                <!-- Abstract Stack -->
+                <div class="absolute top-10 right-0 w-[90%] h-full bg-zinc-50 rounded-[3rem] border border-zinc-200 -rotate-3 transition-transform hover:rotate-0 duration-700"></div>
+                <div class="absolute top-5 right-5 w-[90%] h-full bg-white rounded-[3rem] shadow-2xl shadow-zinc-200 border border-zinc-100 p-4 rotate-3 transition-transform hover:rotate-0 duration-700 overflow-hidden group">
+                    <img src="images/dashboard_mockup.png" class="w-full h-full object-cover rounded-[2.5rem] group-hover:scale-105 transition-transform duration-1000" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-fpt-blue/40 to-transparent"></div>
+                    
+                    <!-- Floating Insight -->
+                    <div class="absolute bottom-10 left-10 right-10 p-8 bg-white/90 backdrop-blur-xl rounded-[2rem] border border-white/50 shadow-2xl">
+                        <div class="flex items-center gap-4 mb-3">
+                            <div class="w-10 h-10 rounded-xl bg-fpt-orange/10 flex items-center justify-center text-fpt-orange">
+                                <LucideIcon Name="sparkles" class="w-5 h-5" />
                             </div>
-                        </CellTemplate>
-                    </DataGridColumn>
-                    <DataGridColumn TItem="PipelineRecord" Field="ProjectValue" Header="Giá trị (USD)" Sortable="true" Filterable="true" />
-                    <DataGridColumn TItem="PipelineRecord" Header="Tiến độ" HeaderClass="w-48">
-                        <CellTemplate Context="record">
-                            <div class="flex flex-col gap-1 w-full max-w-[120px]">
-                                <div class="flex justify-between text-[10px] font-bold text-zinc-400">
-                                    <span>@record.Progress%</span>
-                                </div>
-                                <div class="h-1 w-full bg-zinc-100 overflow-hidden">
-                                    <div class="h-full bg-fpt-orange" style="width: @record.Progress%"></div>
-                                </div>
-                            </div>
-                        </CellTemplate>
-                    </DataGridColumn>
-                </Columns>
-            </DataGrid>
+                            <span class="text-[10px] font-black uppercase  text-fpt-blue">Latest Insight</span>
+                        </div>
+                        <p class="text-sm font-bold text-zinc-500 leading-snug">
+                            "Sáng tạo là hành trình tự do nhất của tâm hồn học sinh FPT."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Dynamic Badges -->
+                <div class="absolute -top-10 -left-10 w-32 h-32 bg-fpt-green rounded-[2.5rem] flex flex-col items-center justify-center text-white shadow-2xl shadow-fpt-green/30 -rotate-12 animate-fpt-pulse">
+                    <div class="text-3xl font-black leading-none">01</div>
+                    <div class="text-[8px] font-black uppercase  mt-1">Ranking</div>
+                </div>
+
+                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-fpt-orange rounded-full flex flex-col items-center justify-center text-white shadow-2xl shadow-fpt-orange/30 rotate-12">
+                    <div class="text-4xl font-black italic  leading-none">HOT</div>
+                    <div class="text-[8px] font-black uppercase  mt-1">Sáng tác 2026</div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- FPT Trust Section -->
-<section class="py-20 bg-fpt-blue text-white overflow-hidden relative">
-    <div class="fpt-bg-13 absolute top-0 left-0 w-full h-full opacity-5 bg-white"></div>
-    <div class="max-w-7xl mx-auto px-6 relative z-10">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
-            <div>
-                <div class="text-4xl font-black mb-2 italic">20+</div>
-                <div class="text-[10px] font-bold uppercase tracking-widest text-white/60">Năm kinh nghiệm</div>
+<!-- CONTENT SECTIONS (REFINED) -->
+<section class="py-32 bg-zinc-50/50 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-24 gap-10">
+            <div class="max-w-xl">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-8 h-1 bg-fpt-orange rounded-full"></div>
+                    <span class="text-[10px] font-black uppercase  text-fpt-orange">Editorial Selection</span>
+                </div>
+                <h2 class="text-5xl md:text-6xl font-black text-fpt-blue uppercase italic ">Ấn phẩm <span class="text-fpt-orange">Nhái Bén</span></h2>
+                <p class="text-zinc-400 mt-6 text-lg font-medium">Khám phá thế giới quan đa chiều qua những trang viết đầy cảm hứng.</p>
             </div>
-            <div>
-                <div class="text-4xl font-black mb-2 italic">500+</div>
-                <div class="text-[10px] font-bold uppercase tracking-widest text-white/60">Đối tác toàn cầu</div>
-            </div>
-            <div>
-                <div class="text-4xl font-black mb-2 italic">10K+</div>
-                <div class="text-[10px] font-bold uppercase tracking-widest text-white/60">Nhân sự tài năng</div>
-            </div>
-            <div>
-                <div class="text-4xl font-black mb-2 italic">Top 10</div>
-                <div class="text-[10px] font-bold uppercase tracking-widest text-white/60">DN Công nghệ VN</div>
+            <button @onclick='() => Nav.NavigateTo("/mon-hoc/van")' class="group flex items-center gap-4 text-xs font-black uppercase  text-fpt-blue hover:text-fpt-orange transition-all">
+                Xem tất cả ấn phẩm <LucideIcon Name="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+            @if (_latestPublications == null)
+            {
+                @for (int i = 0; i < 3; i++)
+                {
+                    <div class="h-[500px] bg-white rounded-[3rem] animate-pulse"></div>
+                }
+            }
+            else
+            {
+                @foreach (var pub in _latestPublications)
+                {
+                    <div class="group relative bg-white rounded-[3rem] p-4 border border-zinc-100 hover:border-fpt-orange/20 hover:shadow-3xl transition-all duration-700 hover:-translate-y-4 overflow-hidden">
+                        <div class="aspect-[4/5] bg-zinc-50 rounded-[2.5rem] relative overflow-hidden mb-8">
+                            <img src="@pub.CoverImagePath" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                            <div class="absolute inset-0 bg-fpt-blue/80 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-6">
+                                <button @onclick="() => OpenPdf(pub.PdfPath)" class="w-16 h-16 bg-fpt-orange text-white rounded-full flex items-center justify-center hover:scale-110 shadow-2xl"><LucideIcon Name="eye" /></button>
+                                <a href="@pub.PdfPath" download class="w-16 h-16 bg-white text-fpt-blue rounded-full flex items-center justify-center hover:scale-110 shadow-2xl"><LucideIcon Name="download" /></a>
+                            </div>
+                        </div>
+                        <div class="px-6 pb-6 text-center">
+                            <span class="text-[10px] font-black text-fpt-green uppercase  mb-2 block">Issue #@pub.Id</span>
+                            <h4 class="text-2xl font-black text-fpt-blue uppercase leading-tight group-hover:text-fpt-orange transition-colors">@pub.Title</h4>
+                            <div class="mt-4 flex items-center justify-center gap-2 text-[10px] font-bold text-zinc-400">
+                                <LucideIcon Name="calendar" class="w-3 h-3" />
+                                <span>@pub.CreatedAt.ToString("MMMM, yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<!-- SUBMISSION BOARD (REFINED) -->
+<section class="py-32 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="bg-fpt-blue rounded-[4rem] p-12 lg:p-20 relative overflow-hidden">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 w-1/2 h-full bg-white/5 skew-x-[15deg] translate-x-1/4"></div>
+            
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-5xl lg:text-7xl font-black text-white uppercase italic  mb-8 leading-none">
+                        Bảng tin <br /><span class="text-fpt-orange">Sáng tác</span>
+                    </h2>
+                    <p class="text-white/60 text-lg font-medium max-w-md leading-relaxed mb-12">
+                        Theo dõi nhịp đập sáng tạo của học sinh FPT qua bảng tin cập nhật thời gian thực.
+                    </p>
+                    <button @onclick="() => _showSubmitModal = true" class="fpt-btn-main !bg-white !text-fpt-blue hover:!bg-fpt-orange hover:!text-white">
+                        <span>Gửi tác phẩm mới</span>
+                    </button>
+                </div>
+                
+                <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-[3rem] p-8 lg:p-12">
+                    <div class="space-y-8">
+                        @if (_submissions == null)
+                        {
+                            <div class="flex justify-center p-10"><Spinner /></div>
+                        }
+                        else
+                        {
+                            @foreach (var sub in _submissions.Take(4))
+                            {
+                                <div class="flex items-center justify-between border-b border-white/10 pb-6 last:border-0 last:pb-0 group">
+                                    <div class="flex items-center gap-5">
+                                        <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-fpt-orange group-hover:bg-fpt-orange group-hover:text-white transition-all">
+                                            <LucideIcon Name="feather" class="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <div class="text-white font-black uppercase text-sm group-hover:text-fpt-orange transition-colors">@sub.Title</div>
+                                            <div class="text-white/40 text-[10px] font-bold mt-1 uppercase ">by @sub.Author</div>
+                                        </div>
+                                    </div>
+                                    <button @onclick='() => Nav.NavigateTo($"/mon-hoc/van?id={sub.Id}")' class="text-[10px] font-black uppercase text-white hover:text-fpt-orange transition-colors ">Details</button>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- MODAL: GỬI BÀI (REFINED) -->
+@if (_showSubmitModal)
+{
+    <div class="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-fpt-blue/80 backdrop-blur-xl animate-fpt-fade-in">
+        <div class="bg-white w-full max-w-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] rounded-[3rem] overflow-hidden">
+            <div class="bg-zinc-50 p-10 border-b border-zinc-100 flex justify-between items-center">
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 bg-fpt-blue text-white rounded-2xl flex items-center justify-center shadow-xl shadow-fpt-blue/20">
+                        <LucideIcon Name="send" class="w-7 h-7" />
+                    </div>
+                    <div>
+                        <h3 class="text-3xl font-black uppercase italic text-fpt-blue ">Submit Your <span class="text-fpt-orange">Art</span></h3>
+                        <p class="text-[10px] font-black uppercase  text-zinc-400 mt-1">Hệ thống gửi bài sáng tác FPT</p>
+                    </div>
+                </div>
+                <button @onclick="() => _showSubmitModal = false" class="w-12 h-12 rounded-full hover:bg-zinc-200 flex items-center justify-center transition-all group">
+                    <LucideIcon Name="x" class="w-6 h-6 text-zinc-400 group-hover:text-fpt-blue" />
+                </button>
+            </div>
+            
+            <div class="p-12 space-y-10">
+                @if (_isSuccess)
+                {
+                    <div class="text-center py-12 space-y-8 animate-fpt-zoom-in">
+                        <div class="w-24 h-24 bg-fpt-green text-white rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-fpt-green/40">
+                            <LucideIcon Name="check-circle" class="w-12 h-12" />
+                        </div>
+                        <div>
+                            <h4 class="text-3xl font-black text-fpt-blue uppercase italic">Gửi bài thành công!</h4>
+                            <p class="text-zinc-500 mt-3 font-medium text-lg">Cảm ơn bạn đã đóng góp cho cộng đồng sáng tạo FPT Education.</p>
+                        </div>
+                        <button @onclick="() => { _showSubmitModal = false; _isSuccess = false; }" class="fpt-btn-main">Đóng cửa sổ</button>
+                    </div>
+                }
+                else
+                {
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black uppercase text-zinc-400  ml-4">Full Name</label>
+                            <input @bind="_newSubmission.Author" class="fpt-premium-input w-full" placeholder="Nguyễn Văn A..." />
+                        </div>
+                        <div class="space-y-3">
+                            <label class="text-[10px] font-black uppercase text-zinc-400  ml-4">Title</label>
+                            <input @bind="_newSubmission.Title" class="fpt-premium-input w-full" placeholder="Tác phẩm của tôi..." />
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="text-[10px] font-black uppercase text-zinc-400  ml-4">Content</label>
+                        <textarea @bind="_newSubmission.Content" class="fpt-premium-input w-full h-48 resize-none" placeholder="Viết nội dung tại đây..."></textarea>
+                    </div>
+                    
+                    <div class="flex items-center gap-6 p-8 bg-fpt-orange/5 rounded-[2rem] border border-fpt-orange/10 border-dashed">
+                        <LucideIcon Name="info" class="w-10 h-10 text-fpt-orange" />
+                        <p class="text-[10px] font-bold text-zinc-500 uppercase leading-relaxed ">
+                            Bài viết sẽ được duyệt bởi Ban biên tập trước khi đăng tải chính thức.
+                        </p>
+                    </div>
+
+                    <button @onclick="SubmitEntry" disabled="@_isSubmitting" class="fpt-btn-main w-full py-6 flex items-center justify-center gap-4">
+                        @if (_isSubmitting) { <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> }
+                        <span>Confirm Submission</span>
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+}
 
 @code {
-    private List<PipelineRecord> _pipelineRecords = new()
-    {
-        new PipelineRecord { ProjectName = "Chuyển đổi số Ngân hàng A", Status = "Hoàn thành", ProjectValue = "$1,200,000", Progress = 100 },
-        new PipelineRecord { ProjectName = "Hệ thống ERP Tập đoàn B", Status = "Đang thực hiện", ProjectValue = "$850,000", Progress = 65 },
-        new PipelineRecord { ProjectName = "Cloud Migration Logistics C", Status = "Lập kế hoạch", ProjectValue = "$450,000", Progress = 15 },
-        new PipelineRecord { ProjectName = "Smart Factory Solution D", Status = "Đang thực hiện", ProjectValue = "$2,100,000", Progress = 40 },
-        new PipelineRecord { ProjectName = "Data Analytics Retail E", Status = "Hoàn thành", ProjectValue = "$320,000", Progress = 100 }
-    };
+    private List<Publication>? _latestPublications;
+    private List<Submission>? _submissions;
+    private bool _showSubmitModal = false;
+    private bool _isSubmitting = false;
+    private bool _isSuccess = false;
+    private Submission _newSubmission = new() { Author = "Học sinh FPT" };
 
-    public class PipelineRecord
+    protected override async Task OnInitializedAsync()
     {
-        public string ProjectName { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
-        public string ProjectValue { get; set; } = string.Empty;
-        public int Progress { get; set; }
+        await LoadData();
     }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            _latestPublications = await Http.GetFromJsonAsync<List<Publication>>("/api/publications");
+            _submissions = await Http.GetFromJsonAsync<List<Submission>>("/api/submissions");
+        }
+        catch
+        {
+            _latestPublications ??= new();
+            _submissions ??= new();
+        }
+    }
+
+    private async Task SubmitEntry()
+    {
+        if (string.IsNullOrWhiteSpace(_newSubmission.Title) || string.IsNullOrWhiteSpace(_newSubmission.Content)) return;
+        
+        _isSubmitting = true;
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/api/submissions", _newSubmission);
+            if (response.IsSuccessStatusCode)
+            {
+                _isSuccess = true;
+                _newSubmission = new() { Author = "Học sinh FPT" };
+                await LoadData();
+            }
+        }
+        catch { }
+        finally { _isSubmitting = false; }
+    }
+
+    private void OpenPdf(string path) => Nav.NavigateTo(path, true);
 }
+
+<style>
+    .fpt-btn-main {
+        @@apply flex items-center gap-4 px-12 py-6 bg-fpt-blue text-white rounded-[2rem] font-black uppercase  text-xs shadow-2xl shadow-fpt-blue/20 hover:bg-fpt-orange hover:shadow-fpt-orange/40 hover:-translate-y-2 active:translate-y-0 transition-all duration-500 group;
+    }
+    .fpt-btn-secondary {
+        @@apply flex items-center gap-4 px-12 py-6 border-2 border-fpt-blue text-fpt-blue rounded-[2rem] font-black uppercase  text-xs hover:bg-fpt-blue hover:text-white hover:shadow-2xl hover:shadow-fpt-blue/30 hover:-translate-y-2 active:translate-y-0 transition-all duration-500;
+    }
+    .fpt-premium-input {
+        @@apply bg-zinc-50 border-2 border-transparent px-8 py-5 rounded-[2rem] text-sm font-bold text-zinc-800 outline-none transition-all duration-300;
+    }
+    .fpt-premium-input:focus {
+        @@apply border-fpt-orange bg-white shadow-xl shadow-fpt-orange/5;
+    }
+</style>

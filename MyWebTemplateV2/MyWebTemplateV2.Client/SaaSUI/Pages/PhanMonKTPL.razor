@@ -1,0 +1,135 @@
+@page "/mon-hoc/ktpl"
+@using NeoUI.Blazor
+@using NeoUI.Blazor.Primitives
+@using NeoUI.Icons.Lucide
+@using MyWebTemplateV2.Client.Models
+
+<PageTitle>Phân môn KTPL | Sản phẩm & Pháp luật</PageTitle>
+
+<section class="py-20 bg-zinc-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Header -->
+        <Motion>
+            <Presets><SlideInFromBottom Duration="0.8" /></Presets>
+            <ChildContent>
+                <div class="flex items-center gap-6 mb-16">
+                    <div class="w-20 h-20 bg-fpt-blue -skew-x-[13deg] flex items-center justify-center shadow-xl">
+                         <LucideIcon Name="scale" class="w-10 h-10 text-white skew-x-[13deg]" />
+                    </div>
+                    <div>
+                        <h1 class="text-5xl font-black text-fpt-blue uppercase ">Phân môn <span class="text-fpt-orange italic">KTPL</span></h1>
+                        <div class="flex items-center gap-2 mt-2">
+                            <span class="text-[10px] font-black uppercase  text-zinc-400">Chủ đề:</span>
+                            <Badge Variant="BadgeVariant.Outline" class="border-fpt-blue text-fpt-blue rounded-none font-black text-[10px] px-3">KINH TẾ & PHÁP LUẬT 4.0</Badge>
+                        </div>
+                    </div>
+                </div>
+            </ChildContent>
+        </Motion>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            
+            <!-- Sidebar: Thể lệ & Thiết kế -->
+            <div class="lg:col-span-1 space-y-8">
+                <div class="p-8 bg-white border border-zinc-100">
+                    <h3 class="text-xs font-black uppercase  text-fpt-blue mb-6">Thể lệ cuộc thi</h3>
+                    <div class="space-y-4 text-[11px] font-bold text-zinc-500 uppercase leading-relaxed">
+                        <div class="flex gap-3">
+                            <span class="text-fpt-orange">01.</span>
+                            <span>Thiết kế infographic về quyền công dân.</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="text-fpt-orange">02.</span>
+                            <span>Sản phẩm phải có tính ứng dụng thực tế.</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <span class="text-fpt-orange">03.</span>
+                            <span>Nộp bài qua mã QR hoặc trực tiếp tại đây.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8 bg-fpt-green text-white -skew-x-[13deg]">
+                    <div class="skew-x-[13deg]">
+                        <h3 class="text-lg font-black uppercase mb-2">Gửi thiết kế</h3>
+                        <p class="text-[9px] font-bold text-white/70 uppercase  mb-6">Định dạng: JPG, PNG, PDF</p>
+                        <button class="w-full py-3 bg-white text-fpt-green font-black uppercase  text-[10px] hover:bg-fpt-blue hover:text-white transition-all">
+                            Chọn tệp tin...
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main: Sản phẩm Grid -->
+            <div class="lg:col-span-3">
+                <div class="bg-white border border-zinc-200 p-8 mb-8 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-xl font-black text-fpt-blue uppercase">Sản phẩm tiêu biểu</h2>
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase  mt-1">Sử dụng mã QR để truy cập thông tin chi tiết</p>
+                    </div>
+                    <LucideIcon Name="layout-grid" class="w-6 h-6 text-zinc-200" />
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    @foreach (var prod in _products)
+                    {
+                        <Motion>
+                            <Presets><FadeIn Duration="0.5" /></Presets>
+                            <ChildContent>
+                                <div class="bg-white group overflow-hidden border border-zinc-100 hover:border-fpt-orange transition-all duration-500">
+                                    <div class="flex h-56">
+                                        <div class="w-1/3 bg-zinc-50 flex flex-col items-center justify-center p-4 border-r border-zinc-50 group-hover:bg-fpt-orange/5 transition-colors">
+                                            <div class="w-20 h-20 bg-white border border-zinc-200 flex items-center justify-center relative">
+                                                <LucideIcon Name="qr-code" class="w-16 h-16 text-zinc-800" />
+                                                <div class="absolute inset-0 bg-fpt-orange/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            </div>
+                                            <div class="text-[8px] font-black uppercase text-zinc-400 mt-4 ">Quét mã sản phẩm</div>
+                                        </div>
+                                        <div class="w-2/3 p-8 flex flex-col justify-between">
+                                            <div>
+                                                <div class="text-[9px] font-black text-fpt-orange uppercase  mb-2">@prod.Type</div>
+                                                <h4 class="text-xl font-black text-fpt-blue uppercase leading-tight mb-4">@prod.Title</h4>
+                                                <p class="text-[11px] text-zinc-500 leading-relaxed line-clamp-2">@prod.Content</p>
+                                            </div>
+                                            <div class="flex items-center gap-4 pt-4 border-t border-zinc-50">
+                                                <div class="text-[10px] font-black text-zinc-400 uppercase">Tác giả: @prod.Author</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ChildContent>
+                        </Motion>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@code {
+    private List<Submission> _products = new()
+    {
+        new Submission 
+        { 
+            Title = "Cẩm nang Pháp luật học đường", 
+            Author = "Nhóm 1 - 12A1", 
+            Type = SubmissionType.ThietKe,
+            Content = "Bộ infographic sinh động về quyền và nghĩa vụ của học sinh trong môi trường học đường số."
+        },
+        new Submission 
+        { 
+            Title = "Kinh tế tuần hoàn trong trường học", 
+            Author = "Nguyễn Hoàng M", 
+            Type = SubmissionType.ThietKe,
+            Content = "Mô hình kinh doanh xanh ứng dụng tại canteen trường học nhằm giảm thiểu rác thải nhựa."
+        },
+        new Submission 
+        { 
+            Title = "App Luật cho người Việt", 
+            Author = "Phạm Gia H", 
+            Type = SubmissionType.ThietKe,
+            Content = "Ý tưởng thiết kế ứng dụng tra cứu luật nhanh chóng dành cho đối tượng thanh thiếu niên."
+        }
+    };
+}

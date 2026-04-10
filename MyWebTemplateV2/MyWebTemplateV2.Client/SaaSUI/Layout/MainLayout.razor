@@ -1,100 +1,226 @@
 @inherits LayoutComponentBase
 @using NeoUI.Blazor
 @using NeoUI.Blazor.Primitives
-@using NeoUI.Blazor.Primitives.Services
+@using NeoUI.Blazor.Services
 @using NeoUI.Icons.Lucide
+@using MyWebTemplateV2.Client.SaaSUI.Components
+@inject NavigationManager Nav
 
 <AppProvider>
-    <div class="min-h-screen flex flex-col bg-white">
+    <div class="min-h-screen flex flex-col bg-white font-sans">
         
-        <!-- FPT Official Header -->
-        <header class="fpt-header">
-            <div class="fpt-nav-container">
-                <!-- Brand -->
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-1 group">
-                        <!-- Simulated FPT Logo Blocks -->
-                        <div class="w-4 h-8 bg-fpt-orange -skew-x-[13deg] transition-transform group-hover:scale-110"></div>
-                        <div class="w-4 h-8 bg-fpt-green -skew-x-[13deg] transition-transform group-hover:scale-110"></div>
-                        <div class="w-4 h-8 bg-fpt-blue -skew-x-[13deg] transition-transform group-hover:scale-110"></div>
+        <!-- FPT High-End Glass Header -->
+        <header class="sticky top-0 z-[100] w-full transition-all duration-500">
+            <div class="absolute inset-0 bg-white/60 backdrop-blur-3xl border-b border-white/20 shadow-[0_2px_20px_-10px_rgba(0,0,0,0.05)]"></div>
+            
+            <!-- Top brand line -->
+            <div class="relative h-1 w-full flex">
+                <div class="h-full flex-1 bg-fpt-orange"></div>
+                <div class="h-full flex-1 bg-fpt-green"></div>
+                <div class="h-full flex-1 bg-fpt-blue"></div>
+            </div>
+
+            <div class="relative max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+                <!-- Brand Engine -->
+                <div class="flex items-center gap-6 cursor-pointer group" @onclick='() => Nav.NavigateTo("/")'>
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-fpt-orange rounded-full blur-md opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                        <div class="relative flex items-center gap-1.5 p-2.5 bg-white rounded-2xl shadow-sm border border-zinc-100 group-hover:scale-105 transition-transform duration-500">
+                            <div class="w-3 h-6 bg-fpt-orange -skew-x-[13deg] rounded-sm"></div>
+                            <div class="w-3 h-6 bg-fpt-green -skew-x-[13deg] rounded-sm"></div>
+                            <div class="w-3 h-6 bg-fpt-blue -skew-x-[13deg] rounded-sm"></div>
+                        </div>
                     </div>
-                    <div class="flex flex-col leading-none">
-                        <span class="text-2xl font-black tracking-tighter text-fpt-blue italic">FPT</span>
-                        <span class="text-[10px] font-bold tracking-widest text-fpt-orange uppercase">Nexus Enterprise</span>
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-black  text-fpt-blue italic uppercase leading-none group-hover:text-fpt-orange transition-colors">FPT Education</span>
+                        <span class="text-[8px] font-black uppercase mt-1">Ngoại khóa nhịp đập</span>
                     </div>
                 </div>
                 
-                <!-- Links -->
-                <nav class="hidden md:flex items-center gap-10">
-                    <NavLink href="/" Match="NavLinkMatch.All" class="nav-link" ActiveClass="nav-active">Trang chủ</NavLink>
-                    <NavLink href="/features" class="nav-link" ActiveClass="nav-active">Tính năng</NavLink>
-                    <NavLink href="/solutions" class="nav-link" ActiveClass="nav-active">Giải pháp</NavLink>
-                    <NavLink href="/docs" class="nav-link" ActiveClass="nav-active">Tài liệu</NavLink>
+                <!-- Advanced Navigation -->
+                <nav class="hidden lg:flex items-center gap-2 bg-zinc-50/50 p-1.5 rounded-2xl border border-zinc-200/30 backdrop-blur-sm">
+                    <NavLink href="/" Match="NavLinkMatch.All" class="fpt-nav-link-v2 group">
+                        <LucideIcon Name="home" class="w-3.5 h-3.5 mr-2 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <span>Trang chủ</span>
+                    </NavLink>
+                    <NavLink href="/ngoai-khoa" class="fpt-nav-link-v2 group">
+                        <LucideIcon Name="sparkles" class="w-3.5 h-3.5 mr-2 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <span>Hoạt động</span>
+                    </NavLink>
+                    <div class="w-px h-4 bg-zinc-200 mx-2"></div>
+                    <NavLink href="/mon-hoc/van" class="fpt-nav-link-v2 group">
+                        <LucideIcon Name="feather" class="w-3.5 h-3.5 mr-2 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <span>Môn Văn</span>
+                    </NavLink>
+                    <NavLink href="/mon-hoc/ktpl" class="fpt-nav-link-v2 group">
+                        <LucideIcon Name="landmark" class="w-3.5 h-3.5 mr-2 opacity-60 group-hover:opacity-100 transition-opacity" />
+                        <span>Môn KTPL</span>
+                    </NavLink>
                 </nav>
 
-                <!-- Actions -->
+                <!-- Action Hub -->
                 <div class="flex items-center gap-4">
-                    <button class="btn-fpt">Liên hệ</button>
+                    <div class="hidden sm:flex items-center gap-2 mr-2">
+                        <ThemeSwitcher TriggerClass="hover:bg-zinc-100 p-2.5 rounded-xl transition-colors text-zinc-500 hover:text-fpt-orange" />
+                    </div>
+                    <NavLink href="/admin/login" class="fpt-btn-portal">
+                        <LucideIcon Name="layout-dashboard" class="w-4 h-4" />
+                        <span class="hidden md:inline">Management</span>
+                    </NavLink>
+                    
+                    <!-- Mobile Menu Trigger -->
+                    <div class="lg:hidden flex items-center gap-3">
+                        <div class="w-px h-6 bg-zinc-200"></div>
+                        <Sheet>
+                            <SheetTrigger AsChild>
+                                <button class="p-2 text-zinc-600 hover:text-fpt-blue transition-colors">
+                                    <LucideIcon Name="menu" class="w-6 h-6" />
+                                </button>
+                            </SheetTrigger>
+                            <SheetContent Side="SheetSide.Right" Class="w-[300px] p-10">
+                                <SheetHeader>
+                                    <SheetTitle class="text-2xl font-black text-fpt-blue uppercase italic italic ">Menu</SheetTitle>
+                                </SheetHeader>
+                                <div class="mt-12 flex flex-col gap-6">
+                                    <NavLink href="/" Match="NavLinkMatch.All" class="fpt-mobile-link group">
+                                        <LucideIcon Name="home" class="w-5 h-5 group-hover:text-fpt-orange transition-colors" />
+                                        <span>Trang chủ</span>
+                                    </NavLink>
+                                    <NavLink href="/ngoai-khoa" class="fpt-mobile-link group">
+                                        <LucideIcon Name="sparkles" class="w-5 h-5 group-hover:text-fpt-orange transition-colors" />
+                                        <span>Hoạt động</span>
+                                    </NavLink>
+                                    <div class="h-px w-full bg-zinc-100 my-2"></div>
+                                    <NavLink href="/mon-hoc/van" class="fpt-mobile-link group">
+                                        <LucideIcon Name="feather" class="w-5 h-5 group-hover:text-fpt-orange transition-colors" />
+                                        <span>Môn Văn</span>
+                                    </NavLink>
+                                    <NavLink href="/mon-hoc/ktpl" class="fpt-mobile-link group">
+                                        <LucideIcon Name="landmark" class="w-5 h-5 group-hover:text-fpt-orange transition-colors" />
+                                        <span>Môn KTPL</span>
+                                    </NavLink>
+                                </div>
+                                <div class="mt-auto pt-10">
+                                    <ThemeSwitcher TriggerClass="flex items-center gap-3 w-full p-4 bg-zinc-50 rounded-2xl text-zinc-600 font-bold text-xs uppercase" />
+                                </div>
+                            </SheetContent>
+                        </Sheet>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- Main Content -->
+        <!-- Main Content Canvas -->
         <main class="flex-1">
             @Body
         </main>
+
+        <!-- AI Chat Ecosystem -->
+        <AiChatWidget />
         
-        <!-- FPT Official Footer -->
-        <footer class="fpt-footer bg-white border-t border-border">
+        <!-- FPT Signature Footer -->
+        <footer class="bg-zinc-50 border-t border-zinc-200/50 pt-32 pb-16">
             <div class="max-w-7xl mx-auto px-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-                    <div class="col-span-2">
-                        <div class="flex items-center gap-2 mb-6">
-                            <div class="w-3 h-6 bg-fpt-orange -skew-x-[13deg]"></div>
-                            <div class="w-3 h-6 bg-fpt-green -skew-x-[13deg]"></div>
-                            <div class="w-3 h-6 bg-fpt-blue -skew-x-[13deg]"></div>
-                            <span class="text-xl font-black italic text-fpt-blue">FPT Nexus</span>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-24">
+                    <div class="lg:col-span-5">
+                        <div class="flex items-center gap-3 mb-10">
+                            <div class="flex gap-1">
+                                <div class="w-2 h-5 bg-fpt-orange -skew-x-[13deg]"></div>
+                                <div class="w-2 h-5 bg-fpt-green -skew-x-[13deg]"></div>
+                                <div class="w-2 h-5 bg-fpt-blue -skew-x-[13deg]"></div>
+                            </div>
+                            <span class="text-xl font-black italic text-fpt-blue uppercase ">Nhịp đập FPT</span>
                         </div>
-                        <p class="text-sm text-zinc-500 max-w-sm leading-relaxed">
-                            Thành viên của Tập đoàn FPT. Tiên phong chuyển đổi số và cung cấp giải pháp công nghệ hiện đại cho doanh nghiệp toàn cầu.
+                        <p class="text-lg text-zinc-500 leading-relaxed font-medium mb-12">
+                            Kiến tạo không gian sáng tạo số, nơi tri thức và đam mê của học sinh FPT được kết nối, tôn vinh và lan tỏa.
                         </p>
+                        
+                        <div class="flex gap-4">
+                            @foreach (var icon in new[] { "facebook", "instagram", "youtube", "twitter" })
+                            {
+                                <button class="w-12 h-12 rounded-2xl bg-white border border-zinc-200 flex items-center justify-center text-zinc-400 hover:text-fpt-orange hover:border-fpt-orange/30 hover:shadow-lg hover:shadow-fpt-orange/10 transition-all duration-300">
+                                    <LucideIcon Name="@icon" class="w-5 h-5" />
+                                </button>
+                            }
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-widest text-fpt-blue mb-6">Sản phẩm</h4>
-                        <ul class="space-y-4 text-sm text-zinc-600">
-                            <li><a href="#" class="hover:text-fpt-orange">Phân tích dữ liệu</a></li>
-                            <li><a href="#" class="hover:text-fpt-orange">Hệ thống ERP</a></li>
-                            <li><a href="#" class="hover:text-fpt-orange">Cloud Computing</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-xs font-bold uppercase tracking-widest text-fpt-blue mb-6">Tài liệu</h4>
-                        <ul class="space-y-4 text-sm text-zinc-600">
-                            <li><a href="#" class="hover:text-fpt-orange">Brand Manual</a></li>
-                            <li><a href="#" class="hover:text-fpt-orange">API Reference</a></li>
-                            <li><a href="#" class="hover:text-fpt-orange">Chính sách bảo mật</a></li>
-                        </ul>
+                    
+                    <div class="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-16">
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase text-fpt-blue mb-8">Hệ sinh thái</h4>
+                            <ul class="space-y-4 text-sm font-bold text-zinc-400">
+                                <li><a href="/" class="hover:text-fpt-orange transition-colors">Trang chủ</a></li>
+                                <li><a href="/ngoai-khoa" class="hover:text-fpt-orange transition-colors">Hoạt động</a></li>
+                                <li><a href="/lien-he" class="hover:text-fpt-orange transition-colors">Liên hệ</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase text-fpt-blue mb-8">Nguồn lực</h4>
+                            <ul class="space-y-4 text-sm font-bold text-zinc-400">
+                                <li><a href="/mon-hoc/van" class="hover:text-fpt-orange transition-colors">Ấn phẩm Nhái Bén</a></li>
+                                <li><a href="/mon-hoc/ktpl" class="hover:text-fpt-orange transition-colors">Tài liệu KTPL</a></li>
+                                <li><a href="#" class="hover:text-fpt-orange transition-colors">Thư viện ảnh</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-[10px] font-black uppercase text-fpt-blue mb-8">Pháp lý</h4>
+                            <ul class="space-y-4 text-sm font-bold text-zinc-400">
+                                <li><a href="#" class="hover:text-fpt-orange transition-colors">Quy định gửi bài</a></li>
+                                <li><a href="#" class="hover:text-fpt-orange transition-colors">Bảo mật thông tin</a></li>
+                                <li><a href="#" class="hover:text-fpt-orange transition-colors">Bản quyền nội dung</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 
-                <div class="footer-copyright">
-                    <div class="flex items-center gap-8">
-                        <span>Mã hiệu tài liệu: 01-QD/TH/HDCV/FPT</span>
-                        <span>Version 3.1</span>
-                        <span>Ngày hiệu lực: 01/03/2020</span>
+                <div class="mt-32 pt-12 border-t border-zinc-200/50 flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div class="flex items-center gap-6 text-[9px] font-black uppercase text-zinc-400">
+                        <span class="text-fpt-blue">© 2026 FPT Education</span>
+                        <div class="w-1 h-1 bg-zinc-300 rounded-full"></div>
+                        <span>Designed for Excellence</span>
                     </div>
-                    <div>
-                        &copy; 2026 FPT Corporation. Bảo lưu mọi quyền.
+                    <div class="flex items-center gap-6 text-[9px] font-black uppercase text-zinc-400">
+                        <span>Version 4.0.0</span>
+                        <div class="w-1 h-1 bg-zinc-300 rounded-full"></div>
+                        <span>Status: Operational</span>
                     </div>
                 </div>
             </div>
         </footer>
     </div>
 
-    <!-- NeoUI Portal Hosts -->
+    <!-- NeoUI Core Portals -->
     <ToastViewport />
     <DialogHost />
-    <CategoryPortalHost Category="PortalCategory.Overlay" />
-    <CategoryPortalHost Category="PortalCategory.Container" />
+    <ContainerPortalHost />
     <OverlayPortalHost />
 </AppProvider>
+
+@code {
+}
+
+<style>
+    .fpt-nav-link-v2 {
+        @@apply flex items-center px-6 py-2.5 rounded-xl text-[11px] font-black uppercase  text-zinc-500 transition-all duration-300 relative overflow-hidden;
+    }
+    .fpt-nav-link-v2:hover {
+        @@apply text-fpt-blue bg-white shadow-sm;
+    }
+    .fpt-nav-link-v2.active {
+        @@apply text-fpt-orange bg-white shadow-md ring-1 ring-zinc-200/50;
+    }
+    .fpt-nav-link-v2.active::after {
+        content: '';
+        @@apply absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-1 bg-fpt-orange rounded-full;
+    }
+    
+    .fpt-btn-portal {
+        @@apply flex items-center gap-3 bg-fpt-blue text-white rounded-2xl font-black uppercase  text-[10px] px-6 py-3.5 shadow-2xl shadow-fpt-blue/20 hover:bg-fpt-orange hover:shadow-fpt-orange/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-500;
+    }
+    .fpt-mobile-link {
+        @@apply flex items-center gap-6 text-sm font-black text-zinc-400 uppercase  transition-all;
+    }
+    .fpt-mobile-link.active {
+        @@apply text-fpt-orange;
+    }
+</style>

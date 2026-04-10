@@ -1,0 +1,124 @@
+@page "/mon-hoc/van"
+@using NeoUI.Blazor
+@using NeoUI.Blazor.Primitives
+@using NeoUI.Icons.Lucide
+@using MyWebTemplateV2.Client.Models
+@using System.Net.Http.Json
+@inject HttpClient Http
+
+<PageTitle>Phân môn Ngữ Văn | Nhái Bén</PageTitle>
+
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Header -->
+        <div class="flex items-center gap-6 mb-16">
+            <div class="w-20 h-20 bg-fpt-orange -skew-x-[13deg] flex items-center justify-center shadow-xl">
+                 <LucideIcon Name="pen-tool" class="w-10 h-10 text-white skew-x-[13deg]" />
+            </div>
+            <div>
+                <h1 class="text-5xl font-black text-fpt-blue uppercase ">Phân môn <span class="text-fpt-orange italic">Ngữ Văn</span></h1>
+                <div class="flex items-center gap-2 mt-2">
+                    <span class="text-[10px] font-black uppercase  text-zinc-400">Ấn phẩm đồng hành:</span>
+                    <Badge Variant="BadgeVariant.Default" class="bg-fpt-green text-white rounded-none italic font-black text-[10px] px-3">NHÁI BÉN</Badge>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            <div class="lg:col-span-2 space-y-12">
+                <!-- Rules -->
+                <div class="p-10 border border-zinc-100 relative group overflow-hidden">
+                    <div class="absolute top-0 left-0 w-2 h-full bg-fpt-orange"></div>
+                    <div class="flex justify-between items-start mb-8">
+                        <h2 class="text-xs font-black uppercase  text-fpt-orange">Thể lệ cuộc thi sáng tác</h2>
+                    </div>
+                    <div class="prose prose-zinc max-w-none">
+                        <p class="text-sm text-zinc-600 leading-relaxed italic border-l-2 border-zinc-100 pl-4 py-2">
+                            "Mọi tác phẩm đều là tiếng vọng của tâm hồn."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Submissions -->
+                <div class="space-y-8">
+                    <h3 class="fpt-section-title">Bài thi đang bình chọn</h3>
+                    <div class="grid grid-cols-1 gap-6">
+                        @if (_submissions != null)
+                        {
+                            @foreach (var sub in _submissions)
+                            {
+                                <div class="p-8 border border-zinc-100 hover:border-fpt-orange transition-all">
+                                    <h4 class="text-xl font-black text-fpt-blue uppercase mb-2">@sub.Title</h4>
+                                    <p class="text-sm text-zinc-600">@sub.Content</p>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="space-y-8">
+                <div class="p-8 bg-fpt-blue text-white -skew-x-[13deg]">
+                    <div class="skew-x-[13deg]">
+                        <h3 class="text-xl font-black italic mb-2 uppercase">Gửi bài ngay</h3>
+                        <p class="text-[10px] font-bold text-white/60 mb-8 uppercase">Học sinh nộp bài tại đây</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery -->
+        <div class="mt-32">
+            <h2 class="fpt-section-title">Góc Ấn Phẩm <span class="italic text-fpt-orange">Nhái Bén</span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                @if (_publications != null && _publications.Any())
+                {
+                    @foreach (var pub in _publications)
+                    {
+                        <div class="aspect-[3/4] bg-fpt-blue -skew-x-[6deg] relative overflow-hidden group p-8">
+                           <div class="skew-x-[6deg] text-white">
+                                <h4 class="text-2xl font-black uppercase">@pub.Title</h4>
+                                <a href="@pub.PdfPath" target="_blank" class="text-[10px] font-bold underline mt-4 block">XEM PDF</a>
+                           </div>
+                        </div>
+                    }
+                }
+                else if (_publications == null)
+                {
+                    @for(int i=0; i<3; i++) {
+                        <div class="aspect-[3/4] bg-zinc-50 animate-pulse border border-zinc-100 p-8">
+                            <div class="h-8 bg-zinc-200 w-3/4 mb-4"></div>
+                            <div class="h-4 bg-zinc-100 w-1/2"></div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private List<Submission>? _submissions;
+    private List<Publication>? _publications;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try {
+            // Simulated delay for premium feel
+            await Task.Delay(500);
+            _submissions = await Http.GetFromJsonAsync<List<Submission>>("/api/submissions");
+            _publications = await Http.GetFromJsonAsync<List<Publication>>("/api/publications");
+        } catch {
+            // Fallback for demo when API is missing
+            _submissions = new() { 
+                new Submission { Title = "Tiếng vọng từ đá", Content = "Tác phẩm tản văn đạt giải nhất tháng 3.", Author = "An B." },
+                new Submission { Title = "Mưa trên phố", Content = "Thơ sáng tác buổi chiều vắng.", Author = "Linh K." }
+            };
+            _publications = new() {
+                new Publication { Title = "Nhái Bén Số 10", PdfPath = "#" },
+                new Publication { Title = "Nhái Bén Số 11", PdfPath = "#" }
+            };
+        }
+    }
+}

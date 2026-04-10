@@ -1,0 +1,275 @@
+@page "/admin/dashboard"
+@layout MyWebTemplateV2.Client.SaaSUI.Layout.MainLayout
+@inject MyWebTemplateV2.Client.Services.AuthService Auth
+@inject HttpClient Http
+@inject NavigationManager Nav
+@using MyWebTemplateV2.Client.Models
+@using NeoUI.Blazor
+@using NeoUI.Blazor.Primitives
+@using NeoUI.Icons.Lucide
+@using Microsoft.AspNetCore.Components.Forms
+
+<PageTitle>Admin Dashboard | Nhịp đập</PageTitle>
+
+<section class="py-20 bg-zinc-50 min-h-screen">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Header -->
+        <div class="flex justify-between items-end mb-16">
+            <div>
+                <h1 class="text-4xl font-black text-fpt-blue uppercase tracking-tighter">Hệ thống <span class="text-fpt-orange italic">Quản trị</span></h1>
+                <p class="text-[10px] font-bold text-zinc-400 uppercase mt-2">Ngoại khóa nhịp đập | Admin Control Panel</p>
+            </div>
+            <div class="flex gap-4">
+                <button @onclick="() => _showUploadModal = true" class="px-6 py-3 bg-fpt-green text-white rounded-xl font-black uppercase text-[10px] hover:shadow-lg hover:shadow-fpt-green/20 transition-all flex items-center gap-2">
+                    <LucideIcon Name="plus" class="w-4 h-4" />
+                    <span>Thêm ấn phẩm mới</span>
+                </button>
+                <button @onclick="Logout" class="flex items-center gap-2 px-6 py-3 bg-zinc-200 text-zinc-600 rounded-xl font-black uppercase text-[10px] hover:bg-red-50 hover:text-red-500 transition-all">
+                    <LucideIcon Name="log-out" class="w-4 h-4" />
+                    <span>Đăng xuất</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <!-- Left: Publications List -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white border border-zinc-200 p-6 flex justify-between items-center">
+                    <h2 class="text-xs font-black uppercase text-fpt-blue">Danh sách ấn phẩm PDF</h2>
+                    <span class="text-[10px] bg-zinc-100 px-2 py-1 font-bold">@(_publications?.Count ?? 0) ITEMS</span>
+                </div>
+
+                <div class="space-y-4">
+                    @if (_publications == null)
+                    {
+                        <div class="p-20 flex justify-center"><Spinner /></div>
+                    }
+                    else if (!_publications.Any())
+                    {
+                        <div class="p-20 text-center bg-white border border-dashed border-zinc-300">
+                            <LucideIcon Name="inbox" class="w-12 h-12 text-zinc-300 mx-auto mb-4" />
+                            <p class="text-[10px] font-black uppercase text-zinc-400">Chưa có ấn phẩm nào</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var pub in _publications)
+                        {
+                            <div class="bg-white border border-zinc-100 p-6 flex items-center justify-between group hover:border-fpt-orange transition-all">
+                                <div class="flex items-center gap-6">
+                                    <div class="w-16 h-20 bg-zinc-100 flex items-center justify-center text-zinc-400">
+                                        <LucideIcon Name="file-text" class="w-8 h-8" />
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-black text-fpt-blue uppercase">@pub.Title</h4>
+                                        <p class="text-[10px] text-zinc-400 font-bold uppercase mt-1">@pub.Author | @pub.CreatedAt.ToShortDateString()</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button @onclick="() => DeletePublication(pub.Id)" class="p-2 text-zinc-300 hover:text-red-500 transition-colors">
+                                        <LucideIcon Name="trash-2" class="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <!-- Right: Submissions Summary -->
+            <div class="space-y-8">
+                <div class="p-8 bg-fpt-blue text-white -skew-x-[13deg]">
+                    <div class="skew-x-[13deg]">
+                        <h3 class="text-xl font-black uppercase mb-4">Bài thi học sinh</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                                <span class="text-[10px] font-bold uppercase opacity-60">Tổng số:</span>
+                                <span class="text-2xl font-black">@(_submissions?.Count ?? 0)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-8 bg-white border border-zinc-200">
+                    <h3 class="text-xs font-black uppercase text-fpt-blue mb-6">Trạng thái hệ thống</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-2 h-2 rounded-full bg-fpt-green animate-pulse"></div>
+                            <span class="text-[10px] font-bold uppercase text-zinc-500">Service: Operational</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Knowledge Management -->
+                <div class="p-8 bg-zinc-900 text-white -skew-x-[13deg]">
+                    <div class="skew-x-[13deg]">
+                        <div class="flex items-center gap-3 mb-6">
+                            <LucideIcon Name="brain" class="w-5 h-5 text-fpt-orange" />
+                            <h3 class="text-xs font-black uppercase">Kiến thức Chatbot</h3>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <textarea @bind="_aiKnowledge.Context" class="w-full bg-white/5 border border-white/10 p-3 text-[10px] font-medium outline-none focus:border-fpt-orange h-32 resize-none" placeholder="Nhập chỉ dẫn cho AI..."></textarea>
+                            <button @onclick="SaveAiKnowledge" disabled="@_isSavingAi" class="w-full py-3 bg-fpt-orange text-white font-black uppercase text-[10px] hover:shadow-lg hover:shadow-fpt-orange/30 transition-all">
+                                @if (_isSavingAi) { <span>Đang lưu...</span> } else { <span>Cập nhật kiến thức</span> }
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submissions Table -->
+        <div class="mt-20">
+            <div class="bg-white border border-zinc-200 p-8">
+                <h2 class="text-xl font-black text-fpt-blue uppercase mb-8">Quản lý <span class="text-fpt-orange italic">Bài thi học sinh</span></h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-zinc-100">
+                                <th class="py-4 text-[10px] font-black uppercase text-zinc-400 px-4">Thông tin bài thi</th>
+                                <th class="py-4 text-[10px] font-black uppercase text-zinc-400 px-4">Tác giả</th>
+                                <th class="py-4 text-[10px] font-black uppercase text-zinc-400 px-4 text-right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (_submissions == null)
+                            {
+                                <tr><td colspan="3" class="py-10 text-center"><Spinner /></td></tr>
+                            }
+                            else if (!_submissions.Any())
+                            {
+                                <tr><td colspan="3" class="py-10 text-center text-[10px] font-bold text-zinc-300 uppercase">Chưa có bài thi nào</td></tr>
+                            }
+                            else
+                            {
+                                @foreach (var sub in _submissions)
+                                {
+                                    <tr class="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors">
+                                        <td class="py-6 px-4">
+                                            <div class="font-black text-fpt-blue uppercase text-sm mb-1">@sub.Title</div>
+                                            <div class="text-[10px] text-zinc-400 font-medium line-clamp-1">@sub.Content</div>
+                                        </td>
+                                        <td class="py-6 px-4">
+                                            <span class="text-[10px] font-bold text-fpt-green uppercase bg-fpt-green/5 px-3 py-1">@sub.Author</span>
+                                        </td>
+                                        <td class="py-6 px-4 text-right">
+                                            <button @onclick="() => DeleteSubmission(sub.Id)" class="p-2 text-zinc-300 hover:text-red-500 transition-all">
+                                                <LucideIcon Name="trash-2" class="w-4 h-4" />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Upload Modal -->
+@if (_showUploadModal)
+{
+    <div class="fixed inset-0 z-[110] flex items-center justify-center bg-fpt-blue/40 backdrop-blur-sm p-6">
+        <div class="bg-white w-full max-w-lg p-10 shadow-2xl skew-x-[3deg]">
+            <div class="-skew-x-[3deg]">
+                <div class="flex justify-between items-center mb-10">
+                    <h3 class="text-2xl font-black text-fpt-blue uppercase italic">Thêm ấn phẩm <span class="text-fpt-orange">PDF</span></h3>
+                    <button @onclick="() => _showUploadModal = false" class="text-zinc-400 hover:rotate-90 transition-all">
+                        <LucideIcon Name="x" class="w-6 h-6" />
+                    </button>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="text-[10px] font-black uppercase text-zinc-400 mb-2 block">Tiêu đề ấn phẩm</label>
+                        <input @bind="_newPub.Title" class="w-full bg-zinc-50 border-none p-4 text-xs outline-none focus:ring-1 focus:ring-fpt-orange" placeholder="Ví dụ: Nhái Bén Số 15..." />
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-zinc-400 uppercase italic">Lưu ý: Tính năng upload file yêu cầu tích hợp FileUploadService API.</p>
+                    </div>
+                    
+                    <button @onclick="SavePublication" disabled="@_isSaving" class="w-full mt-6 py-4 bg-fpt-orange text-white font-black uppercase text-[10px] flex items-center justify-center gap-3 rounded-full hover:shadow-xl hover:shadow-fpt-orange/20 transition-all">
+                        @if (_isSaving) { <Spinner /> }
+                        <span>Lưu ấn phẩm (Demo)</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private List<Publication>? _publications;
+    private List<Submission>? _submissions;
+    private bool _showUploadModal = false;
+    private bool _isSaving = false;
+    private bool _isSavingAi = false;
+    private Publication _newPub = new();
+    private AiKnowledge _aiKnowledge = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Auth.IsLoggedIn)
+        {
+            Nav.NavigateTo("/admin/login");
+            return;
+        }
+        await LoadData();
+    }
+
+    private void Logout()
+    {
+        Auth.Logout();
+        Nav.NavigateTo("/admin/login");
+    }
+
+    private async Task LoadData()
+    {
+        _publications = await Http.GetFromJsonAsync<List<Publication>>("/api/publications");
+        _submissions = await Http.GetFromJsonAsync<List<Submission>>("/api/submissions");
+        _aiKnowledge = await Http.GetFromJsonAsync<AiKnowledge>("/api/ai-knowledge") ?? new();
+    }
+
+    private async Task SaveAiKnowledge()
+    {
+        _isSavingAi = true;
+        try
+        {
+            await Http.PostAsJsonAsync("/api/ai-knowledge", _aiKnowledge);
+        }
+        catch {}
+        finally { _isSavingAi = false; }
+    }
+
+    private async Task SavePublication()
+    {
+        if (string.IsNullOrWhiteSpace(_newPub.Title)) return;
+        _isSaving = true;
+        try
+        {
+            _newPub.PdfPath = "#";
+            _newPub.Author = "Admin";
+            await Http.PostAsJsonAsync("/api/publications", _newPub);
+            _newPub = new();
+            _showUploadModal = false;
+            await LoadData();
+        }
+        catch {}
+        finally { _isSaving = false; }
+    }
+
+    private async Task DeletePublication(int id)
+    {
+        await Http.DeleteAsync($"/api/publications/{id}");
+        await LoadData();
+    }
+
+    private async Task DeleteSubmission(int id)
+    {
+        await Http.DeleteAsync($"/api/submissions/{id}");
+        await LoadData();
+    }
+}
