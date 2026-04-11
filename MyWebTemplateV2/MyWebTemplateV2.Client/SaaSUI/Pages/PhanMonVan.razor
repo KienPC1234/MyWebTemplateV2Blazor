@@ -1,25 +1,26 @@
 @page "/mon-hoc/van"
-@using NeoUI.Blazor
-@using NeoUI.Blazor.Primitives
-@using NeoUI.Icons.Lucide
 @using MyWebTemplateV2.Client.Models
+@using MyWebTemplateV2.Client.SaaSUI.Components
 @using System.Net.Http.Json
 @inject HttpClient Http
+@inject IJSRuntime JS
+@using Microsoft.AspNetCore.SignalR.Client
+@implements IAsyncDisposable
 
 <PageTitle>Phân môn Ngữ Văn | Nhái Bén</PageTitle>
 
-<section class="py-20 bg-white">
+<section class="py-20 bg-white min-h-screen">
     <div class="max-w-7xl mx-auto px-6">
         <!-- Header -->
-        <div class="flex items-center gap-6 mb-16">
+        <div class="flex items-center gap-6 mb-16" data-aos="fade-right">
             <div class="w-20 h-20 bg-fpt-orange -skew-x-[13deg] flex items-center justify-center shadow-xl">
-                 <LucideIcon Name="pen-tool" class="w-10 h-10 text-white skew-x-[13deg]" />
+                 <LucideIcon Name="PenTool" Size="40" StrokeWidth="3" Class="text-white skew-x-[13deg]" />
             </div>
             <div>
                 <h1 class="text-5xl font-black text-fpt-blue uppercase ">Phân môn <span class="text-fpt-orange italic">Ngữ Văn</span></h1>
                 <div class="flex items-center gap-2 mt-2">
                     <span class="text-[10px] font-black uppercase  text-zinc-400">Ấn phẩm đồng hành:</span>
-                    <Badge Variant="BadgeVariant.Default" class="bg-fpt-green text-white rounded-none italic font-black text-[10px] px-3">NHÁI BÉN</Badge>
+                    <span class="bg-fpt-green text-white rounded-none italic font-black text-[10px] px-3 py-1 inline-flex items-center">NHÁI BÉN</span>
                 </div>
             </div>
         </div>
@@ -27,30 +28,59 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div class="lg:col-span-2 space-y-12">
                 <!-- Rules -->
-                <div class="p-10 border border-zinc-100 relative group overflow-hidden">
+                <div class="p-10 border border-zinc-100 relative group overflow-hidden" data-aos="fade-up">
                     <div class="absolute top-0 left-0 w-2 h-full bg-fpt-orange"></div>
                     <div class="flex justify-between items-start mb-8">
                         <h2 class="text-xs font-black uppercase  text-fpt-orange">Thể lệ cuộc thi sáng tác</h2>
+                        @if (Auth.IsLoggedIn)
+                        {
+                            <button @onclick="() => _showRulesEditor = true" class="text-[9px] font-black uppercase text-zinc-400 hover:text-fpt-blue transition-colors flex items-center gap-1">
+                                <LucideIcon Name="Edit3" Size="16" />
+                                [Chỉnh sửa]
+                            </button>
+                        }
                     </div>
                     <div class="prose prose-zinc max-w-none">
                         <p class="text-sm text-zinc-600 leading-relaxed italic border-l-2 border-zinc-100 pl-4 py-2">
-                            "Mọi tác phẩm đều là tiếng vọng của tâm hồn."
+                            @(_rules?.Value ?? "Đang tải thể lệ...")
                         </p>
                     </div>
                 </div>
 
                 <!-- Submissions -->
-                <div class="space-y-8">
-                    <h3 class="fpt-section-title">Bài thi đang bình chọn</h3>
+                <div class="space-y-8" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex justify-between items-end">
+                        <h3 class="fpt-section-title !mb-0">Khu vực <span class="text-fpt-orange italic ml-2">Sáng tác</span></h3>
+                    </div>
                     <div class="grid grid-cols-1 gap-6">
-                        @if (_submissions != null)
+                        @if (_submissions == null)
+                        {
+                            <div class="flex justify-center p-8"><Spinner /></div>
+                        }
+                        else if (!_submissions.Any())
+                        {
+                            <p class="text-zinc-500 italic text-sm">Chưa có bài thi nào trong môn Ngữ Văn.</p>
+                        }
+                        else
                         {
                             @foreach (var sub in _submissions)
                             {
-                                <div class="p-8 border border-zinc-100 hover:border-fpt-orange transition-all">
+                                <FptCard Variant="default" Color="orange" Class="transition-all relative" data-aos="fade-up">
                                     <h4 class="text-xl font-black text-fpt-blue uppercase mb-2">@sub.Title</h4>
-                                    <p class="text-sm text-zinc-600">@sub.Content</p>
-                                </div>
+                                    <p class="text-[10px] font-bold text-zinc-400 uppercase mb-4">Tác giả: @sub.Author</p>
+                                    <p class="text-sm text-zinc-600 line-clamp-3 mb-6">@sub.Content</p>
+                                    
+                                    <div class="flex items-center gap-4 pt-4 border-t border-zinc-50">
+                                        <button @onclick="() => VoteSubmission(sub.Id)" disabled="@_votingIds.Contains(sub.Id)" class="flex items-center gap-2 text-[10px] font-black uppercase @(sub.Votes?.Any() == true ? "text-fpt-orange" : "text-zinc-400") hover:text-fpt-orange transition-colors disabled:opacity-50">
+                                            <LucideIcon Name="Heart" Size="18" Fill="@(sub.Votes?.Any() == true ? "#FF6B00" : "transparent")" class="@(sub.Votes?.Any() == true ? "text-fpt-orange" : "text-zinc-300")" />
+                                            <span>Bình chọn (@(sub.Votes?.Count ?? 0))</span>
+                                        </button>
+                                        <button class="flex items-center gap-2 text-[10px] font-black uppercase text-zinc-400 hover:text-fpt-blue transition-colors">
+                                            <LucideIcon Name="MessageCircle" Size="18" />
+                                            <span>Bình luận (@(sub.Comments?.Count ?? 0))</span>
+                                        </button>
+                                    </div>
+                                </FptCard>
                             }
                         }
                     </div>
@@ -58,36 +88,47 @@
             </div>
 
             <!-- Sidebar -->
-            <div class="space-y-8">
-                <div class="p-8 bg-fpt-blue text-white -skew-x-[13deg]">
+            <div class="space-y-8" data-aos="fade-left">
+                <div class="p-8 bg-fpt-blue text-white -skew-x-[13deg] shadow-xl">
                     <div class="skew-x-[13deg]">
-                        <h3 class="text-xl font-black italic mb-2 uppercase">Gửi bài ngay</h3>
-                        <p class="text-[10px] font-bold text-white/60 mb-8 uppercase">Học sinh nộp bài tại đây</p>
+                        <h3 class="text-xl font-black italic mb-2 uppercase">Gửi bài thi</h3>
+                        <p class="text-[10px] font-bold text-white/60 mb-2 uppercase">Học sinh nộp bài tại đây</p>
+                        <div class="flex items-center gap-2 text-[9px] font-bold text-fpt-orange bg-fpt-orange/10 px-3 py-1 mb-8 w-fit uppercase">
+                            <LucideIcon Name="Send" Size="12" /> Đến thẳng Ban giám khảo
+                        </div>
+                        <FptButton Variant="secondary" Class="w-full !bg-white !text-fpt-blue border-none shadow-md" OnClick="() => _showSubmitModal = true">Tham gia ngay</FptButton>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Gallery -->
-        <div class="mt-32">
+        <div class="mt-32" data-aos="fade-up">
             <h2 class="fpt-section-title">Góc Ấn Phẩm <span class="italic text-fpt-orange">Nhái Bén</span></h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 @if (_publications != null && _publications.Any())
                 {
                     @foreach (var pub in _publications)
                     {
-                        <div class="aspect-[3/4] bg-fpt-blue -skew-x-[6deg] relative overflow-hidden group p-8">
-                           <div class="skew-x-[6deg] text-white">
-                                <h4 class="text-2xl font-black uppercase">@pub.Title</h4>
-                                <a href="@pub.PdfPath" target="_blank" class="text-[10px] font-bold underline mt-4 block">XEM PDF</a>
+                        <div class="aspect-[3/4] bg-fpt-blue -skew-x-[6deg] relative overflow-hidden group p-8 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+                           <div class="skew-x-[6deg] text-white flex flex-col h-full justify-between z-10 relative">
+                                <div>
+                                    <h4 class="text-2xl font-black uppercase mb-2">@pub.Title</h4>
+                                    <p class="text-xs text-white/80 line-clamp-3">@pub.Description</p>
+                                </div>
+                                <a href="@pub.PdfPath" target="_blank" class="text-[10px] font-black uppercase underline mt-4 block hover:text-fpt-orange transition-colors">XEM PDF</a>
                            </div>
+                           @if (!string.IsNullOrEmpty(pub.CoverImagePath))
+                           {
+                               <img src="@pub.CoverImagePath" class="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity" />
+                           }
                         </div>
                     }
                 }
                 else if (_publications == null)
                 {
                     @for(int i=0; i<3; i++) {
-                        <div class="aspect-[3/4] bg-zinc-50 animate-pulse border border-zinc-100 p-8">
+                        <div class="aspect-[3/4] bg-zinc-50 animate-pulse border border-zinc-100 p-8 shadow-sm">
                             <div class="h-8 bg-zinc-200 w-3/4 mb-4"></div>
                             <div class="h-4 bg-zinc-100 w-1/2"></div>
                         </div>
@@ -98,27 +139,180 @@
     </div>
 </section>
 
+<!-- MODAL: GỬI BÀI -->
+<FptModal IsOpen="_showSubmitModal" OnClose="() => _showSubmitModal = false" Title="Nộp bài Ngữ Văn" Subtitle="Hệ thống gửi bài sáng tác FPT">
+    <HeaderIcon>
+        <LucideIcon Name="PenTool" Size="24" />
+    </HeaderIcon>
+    <ChildContent>
+        <div class="space-y-10">
+            @if (_isSuccess)
+            {
+                <div class="text-center py-12 space-y-8" data-aos="zoom-in">
+                    <div class="w-24 h-24 bg-fpt-green text-white rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-fpt-green/40">
+                        <LucideIcon Name="CheckCircle" Size="40" />
+                    </div>
+                    <div>
+                        <h4 class="text-3xl font-black text-fpt-blue uppercase italic">Gửi bài thành công!</h4>
+                        <p class="text-zinc-500 mt-3 font-medium text-lg">Cảm ơn bạn đã đóng góp cho chuyên mục Ngữ Văn. Bài thi đã được gửi đến Ban giám khảo.</p>
+                    </div>
+                    <FptButton OnClick="() => { _showSubmitModal = false; _isSuccess = false; }">Đóng cửa sổ</FptButton>
+                </div>
+            }
+            else
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <FptInput Label="Họ và tên" @bind-Value="_newSubmission.Author" Placeholder="Nguyễn Văn A..." />
+                    <FptInput Label="Tiêu đề bài viết" @bind-Value="_newSubmission.Title" Placeholder="Tác phẩm của tôi..." />
+                </div>
+                
+                <FptInput Label="Nội dung" Type="textarea" @bind-Value="_newSubmission.Content" Rows="6" Placeholder="Viết nội dung tại đây..." />
+                
+                <div class="flex items-center gap-6 p-8 bg-fpt-orange/5 rounded-[2rem] border border-fpt-orange/10 border-dashed">
+                    <LucideIcon Name="Info" Size="24" Class="text-fpt-orange" />
+                    <p class="text-[10px] font-bold text-zinc-500 uppercase leading-relaxed ">
+                        Bài viết sẽ được duyệt bởi Ban biên tập trước khi đăng tải chính thức.
+                    </p>
+                </div>
+
+                <FptButton OnClick="SubmitEntry" Disabled="@_isSubmitting" Class="w-full py-6">
+                    @if (_isSubmitting) { <Spinner /> }
+                    <span>Xác nhận gửi bài</span>
+                </FptButton>
+            }
+        </div>
+    </ChildContent>
+</FptModal>
+
+<!-- MODAL: CHỈNH SỬA THỂ LỆ -->
+<FptModal IsOpen="_showRulesEditor" OnClose="() => _showRulesEditor = false" Title="Chỉnh sửa Thể lệ" Subtitle="Ngữ Văn">
+    <HeaderIcon>
+        <LucideIcon Name="Settings" Size="24" />
+    </HeaderIcon>
+    <ChildContent>
+        <div class="space-y-8">
+            <FptInput Label="Nội dung thể lệ" Type="textarea" @bind-Value="_rules!.Value" Rows="8" />
+            <FptButton OnClick="SaveRules" Disabled="@_isSavingRules" Class="w-full">
+                @if (_isSavingRules) { <Spinner /> }
+                <span>Lưu thay đổi</span>
+            </FptButton>
+        </div>
+    </ChildContent>
+</FptModal>
+
 @code {
     private List<Submission>? _submissions;
     private List<Publication>? _publications;
+    private SiteSetting _rules = new() { Key = "Rules_Van", Value = "Mọi tác phẩm đều là tiếng vọng của tâm hồn." };
+    private bool _showSubmitModal = false;
+    private bool _showRulesEditor = false;
+    private bool _isSubmitting = false;
+    private bool _isSavingRules = false;
+    private bool _isSuccess = false;
+    private HashSet<int> _votingIds = new();
+    private Submission _newSubmission = new() { Author = "Học sinh FPT", Subject = SubjectArea.Van, Type = SubmissionType.SangTac };
+    private HubConnection? _hubConnection;
 
     protected override async Task OnInitializedAsync()
     {
+        await Auth.InitializeAsync();
+        
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Http.BaseAddress + "notificationHub")
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On("SubmissionUpdated", async () =>
+        {
+            await LoadData();
+            StateHasChanged();
+        });
+
+        await _hubConnection.StartAsync();
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
         try {
-            // Simulated delay for premium feel
-            await Task.Delay(500);
-            _submissions = await Http.GetFromJsonAsync<List<Submission>>("/api/submissions");
+            var allSubmissions = await Http.GetFromJsonAsync<List<Submission>>("/api/submissions");
+            if (allSubmissions != null)
+            {
+                _submissions = allSubmissions.Where(s => s.Subject == SubjectArea.Van).ToList();
+            }
+            
             _publications = await Http.GetFromJsonAsync<List<Publication>>("/api/publications");
+
+            var rulesRes = await Http.GetAsync($"/api/admin/settings/{_rules.Key}");
+            if (rulesRes.IsSuccessStatusCode)
+            {
+                _rules = await rulesRes.Content.ReadFromJsonAsync<SiteSetting>() ?? _rules;
+            }
         } catch {
-            // Fallback for demo when API is missing
-            _submissions = new() { 
-                new Submission { Title = "Tiếng vọng từ đá", Content = "Tác phẩm tản văn đạt giải nhất tháng 3.", Author = "An B." },
-                new Submission { Title = "Mưa trên phố", Content = "Thơ sáng tác buổi chiều vắng.", Author = "Linh K." }
-            };
-            _publications = new() {
-                new Publication { Title = "Nhái Bén Số 10", PdfPath = "#" },
-                new Publication { Title = "Nhái Bén Số 11", PdfPath = "#" }
-            };
+            _submissions = new List<Submission>();
+            _publications = new List<Publication>();
+        }
+    }
+
+    private async Task SaveRules()
+    {
+        _isSavingRules = true;
+        try
+        {
+            var res = await Http.PostAsJsonAsync("/api/admin/settings", _rules);
+            if (res.IsSuccessStatusCode)
+            {
+                _showRulesEditor = false;
+            }
+        }
+        catch {}
+        finally { _isSavingRules = false; }
+    }
+
+    private async Task VoteSubmission(int id)
+    {
+        if (_votingIds.Contains(id)) return;
+        _votingIds.Add(id);
+        try
+        {
+            var res = await Http.PostAsync($"/api/submissions/{id}/vote", null);
+            if (res.IsSuccessStatusCode)
+            {
+                // SignalR will trigger reload for everyone
+            }
+        }
+        catch {}
+        finally { 
+            _votingIds.Remove(id); 
+        }
+    }
+
+    private async Task SubmitEntry()
+    {
+        if (string.IsNullOrWhiteSpace(_newSubmission.Title) || string.IsNullOrWhiteSpace(_newSubmission.Content)) return;
+        
+        _isSubmitting = true;
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/api/submissions", _newSubmission);
+            if (response.IsSuccessStatusCode)
+            {
+                _isSuccess = true;
+                _newSubmission = new() { Author = "Học sinh FPT", Subject = SubjectArea.Van, Type = SubmissionType.SangTac };
+                // SignalR will trigger reload
+            }
+        }
+        catch { }
+        finally { _isSubmitting = false; }
+    }
+
+    [Inject] MyWebTemplateV2.Client.Services.AuthService Auth { get; set; } = default!;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
         }
     }
 }

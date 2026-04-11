@@ -2,32 +2,21 @@ using MyWebTemplateV2.Components;
 using Microsoft.EntityFrameworkCore;
 using MyWebTemplateV2.Data;
 using MyWebTemplateV2.Services;
+using MyWebTemplateV2.Extensions;
+using MyWebTemplateV2.Endpoints;
+using MyWebTemplateV2.Client;
 using MyWebTemplateV2.Client.Models;
-using NeoUI.Blazor;
-using NeoUI.Blazor.Extensions;
-using NeoUI.Blazor.Primitives.Extensions;
+using MyWebTemplateV2.Hubs;
+using MyWebTemplateV2; // Added this
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+// Add services to the container using extension method
+builder.Services.AddAppServices(builder.Configuration);
 
-var systemConnectionString = builder.Configuration.GetConnectionString("SystemConnection");
-builder.Services.AddDbContext<SystemDbContext>(options =>
-    options.UseMySql(systemConnectionString, ServerVersion.AutoDetect(systemConnectionString)));
-
-builder.Services.AddSingleton<AiChatService>();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<FileUploadService>();
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:3002") });
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
-
-builder.Services.AddNeoUIPrimitives();
-builder.Services.AddNeoUIComponents();
 
 var app = builder.Build();
 
@@ -46,80 +35,9 @@ app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages:
 
 app.UseAntiforgery();
 
-// API: Chat
-app.MapPost("/api/chat", async (HttpContext context, AiChatService aiChatService) =>
-{
-    var request = await context.Request.ReadFromJsonAsync<ChatRequest>();
-    if (request == null || string.IsNullOrEmpty(request.Prompt)) return;
-    
-    context.Response.ContentType = "text/plain";
-    try {
-        await foreach (var token in aiChatService.StreamChatAsync(request.Prompt, request.Images))
-        {
-            await context.Response.WriteAsync(token);
-            await context.Response.Body.FlushAsync();
-        }
-    } catch (Exception ex) {
-        await context.Response.WriteAsync($"[System Error]: {ex.Message}");
-    }
-});
-
-// API: Submissions
-app.MapGet("/api/submissions", async (AppDbContext db) => 
-    await db.Submissions.OrderByDescending(s => s.CreatedAt).ToListAsync());
-
-app.MapPost("/api/submissions", async (AppDbContext db, Submission submission) => {
-    submission.CreatedAt = DateTime.Now;
-    db.Submissions.Add(submission);
-    await db.SaveChangesAsync();
-    return Results.Created($"/api/submissions/{submission.Id}", submission);
-});
-
-// API: Publications
-app.MapGet("/api/publications", async (AppDbContext db) => 
-    await db.Publications.OrderByDescending(p => p.CreatedAt).Take(6).ToListAsync());
-
-app.MapPost("/api/publications", async (AppDbContext db, Publication pub) => {
-    pub.CreatedAt = DateTime.Now;
-    db.Publications.Add(pub);
-    await db.SaveChangesAsync();
-    return Results.Ok(pub);
-});
-
-// API: AI Knowledge
-app.MapGet("/api/ai-knowledge", async (SystemDbContext db) => 
-    await db.AiKnowledge.FirstOrDefaultAsync() ?? new AiKnowledge { Context = "Bạn là trợ lý ảo của website Ngoại khóa nhịp đập." });
-
-app.MapPost("/api/ai-knowledge", async (SystemDbContext db, AiKnowledge knowledge) => {
-    var existing = await db.AiKnowledge.FirstOrDefaultAsync();
-    if (existing == null) {
-        db.AiKnowledge.Add(knowledge);
-    } else {
-        existing.Context = knowledge.Context;
-        existing.UpdatedAt = DateTime.Now;
-    }
-    await db.SaveChangesAsync();
-    return Results.Ok();
-});
-
-app.MapPost("/api/admin/verify", async (AuthService auth, AdminLoginRequest req) => 
-    await auth.VerifyAdminAsync(req.Username, req.Password) ? Results.Ok() : Results.Unauthorized());
-
-app.MapDelete("/api/publications/{id:int}", async (AppDbContext db, int id) => {
-    var pub = await db.Publications.FindAsync(id);
-    if (pub == null) return Results.NotFound();
-    db.Publications.Remove(pub);
-    await db.SaveChangesAsync();
-    return Results.NoContent();
-});
-
-app.MapDelete("/api/submissions/{id:int}", async (AppDbContext db, int id) => {
-    var sub = await db.Submissions.FindAsync(id);
-    if (sub == null) return Results.NotFound();
-    db.Submissions.Remove(sub);
-    await db.SaveChangesAsync();
-    return Results.NoContent();
-});
+// Map API Endpoints using extension method
+app.MapApiEndpoints();
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
@@ -137,7 +55,29 @@ using (var scope = app.Services.CreateScope())
     await systemDb.Database.EnsureCreatedAsync();
 
     var authService = scope.ServiceProvider.GetRequiredService<AuthService>();
-    await authService.CreateInitialAdminAsync("admin", "Fpt@123456");
+    await authService.CreateInitialAdminAsync(Constants.Admin.DefaultUsername, Constants.Admin.DefaultPassword);
+
+    // Seed Data for Publications and Submissions if empty
+    if (!await appDb.Publications.AnyAsync())
+    {
+        appDb.Publications.AddRange(
+            new Publication { Title = "Nhái Bén #1: Khởi Nguyên", Author = "Ban biên tập", Description = "Số báo đầu tiên của ấn phẩm Nhái Bén với nhiều tâm sự của lứa học sinh khóa 1.", CoverImagePath = "images/dashboard_mockup.png", PdfPath = "#", CreatedAt = DateTime.Now.AddDays(-30) },
+            new Publication { Title = "Nhái Bén #2: Thanh Xuân", Author = "Ban biên tập", Description = "Ghi lại những khoảnh khắc đẹp nhất của tuổi học trò.", CoverImagePath = "images/dashboard_mockup.png", PdfPath = "#", CreatedAt = DateTime.Now.AddDays(-15) },
+            new Publication { Title = "Nhái Bén #3: Tương Lai", Author = "Ban biên tập", Description = "Những ước mơ và hoài bão của học sinh FPT.", CoverImagePath = "images/dashboard_mockup.png", PdfPath = "#", CreatedAt = DateTime.Now }
+        );
+        await appDb.SaveChangesAsync();
+    }
+
+    if (!await appDb.Submissions.AnyAsync())
+    {
+        appDb.Submissions.AddRange(
+            new Submission { Title = "Bài văn đạt giải Nhất thành phố", Content = "Đây là nội dung bài văn...", Author = "Nguyễn Văn A", Type = SubmissionType.SangTac, Subject = SubjectArea.Van, CreatedAt = DateTime.Now.AddDays(-10) },
+            new Submission { Title = "Tài liệu ôn thi KTPL giữa kì", Content = "Tóm tắt các kiến thức trọng tâm...", Author = "Trần Thị B", Type = SubmissionType.BaiThi, Subject = SubjectArea.KTPL, CreatedAt = DateTime.Now.AddDays(-5) },
+            new Submission { Title = "Cảm nhận về mùa thu Hà Nội", Content = "Mùa thu Hà Nội thật đẹp...", Author = "Lê Văn C", Type = SubmissionType.SangTac, Subject = SubjectArea.Van, CreatedAt = DateTime.Now.AddDays(-2) },
+            new Submission { Title = "Đề thi thử môn Văn học kì 2", Content = "Bộ đề thi thử bám sát cấu trúc đề minh họa...", Author = "Giáo viên D", Type = SubmissionType.BaiThi, Subject = SubjectArea.Van, CreatedAt = DateTime.Now }
+        );
+        await appDb.SaveChangesAsync();
+    }
 
     await systemDb.Database.ExecuteSqlRawAsync(@"
         CREATE TABLE IF NOT EXISTS `AiKnowledge` (
@@ -158,6 +98,3 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
-
-public record ChatRequest(string Prompt, IEnumerable<string>? Images = null);
-public record AdminLoginRequest(string Username, string Password);

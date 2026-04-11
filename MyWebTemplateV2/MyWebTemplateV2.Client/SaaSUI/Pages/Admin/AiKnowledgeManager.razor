@@ -1,0 +1,98 @@
+@page "/admin/ai-knowledge"
+@layout MyWebTemplateV2.Client.SaaSUI.Layout.AdminLayout
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@using MudBlazor
+@using Color = MudBlazor.Color
+@using Size = MudBlazor.Size
+@using MyWebTemplateV2.Client.Models
+@using System.Net.Http.Headers
+@using MyWebTemplateV2.Client.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<MudText Typo="Typo.h4" Class="mb-6">Cấu hình Kiến thức AI</MudText>
+
+<MudPaper Class="pa-6" Elevation="2">
+    <MudText Typo="Typo.h6" Class="mb-4">System Prompt cho Chatbot</MudText>
+    <MudText Typo="Typo.body2" Class="mb-4 text-zinc-500">
+        Nội dung này xác định "tính cách" và "kiến thức nền" của trợ lý ảo. Bạn có thể thay đổi cách AI trả lời, phạm vi hỗ trợ và các thông tin quan trọng mà AI cần nắm vững.
+    </MudText>
+    
+    <MudTextField @bind-Value="_aiKnowledge.Context" Label="Nội dung kiến thức (System Prompt)" Variant="Variant.Outlined" Lines="15" Class="mb-6" Placeholder="Nhập chỉ dẫn cho AI tại đây..." />
+    
+    <div class="d-flex justify-end">
+        <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" OnClick="SaveAiKnowledge" Disabled="@_isSavingAi" StartIcon="@Icons.Material.Filled.Save" Size="MudBlazor.Size.Large">
+            @if (_isSavingAi) { <MudProgressCircular Class="ms-n1" Size="MudBlazor.Size.Small" Indeterminate="true"/> } else { <span>Lưu cấu hình</span> }
+        </MudButton>
+    </div>
+</MudPaper>
+
+<MudAlert Severity="Severity.Info" Class="mt-6" Variant="Variant.Outlined">
+    Mẹo: Bạn có thể yêu cầu AI luôn giới thiệu về website "Nhịp đập" và các hoạt động như "Nhái Bén" trong nội dung trên.
+</MudAlert>
+
+@code {
+    private AiKnowledge _aiKnowledge = new();
+    private bool _isSavingAi = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        if (!Auth.IsLoggedIn)
+        {
+            Nav.NavigateTo("/admin/login");
+            return;
+        }
+
+        if (Http.DefaultRequestHeaders.Authorization == null && Auth.Token != null)
+        {
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Auth.Token);
+        }
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+            _aiKnowledge = await Http.GetFromJsonAsync<AiKnowledge>("/api/ai-knowledge") ?? new();
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Lỗi tải kiến thức AI: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private async Task SaveAiKnowledge()
+    {
+        if (string.IsNullOrWhiteSpace(_aiKnowledge.Context))
+        {
+            Snackbar.Add("Nội dung kiến thức không được để trống", Severity.Warning);
+            return;
+        }
+
+        _isSavingAi = true;
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/api/ai-knowledge", _aiKnowledge);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Đã cập nhật kiến thức AI thành công", Severity.Success);
+            }
+            else
+            {
+                Snackbar.Add("Lỗi khi cập nhật kiến thức AI", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        finally
+        {
+            _isSavingAi = false;
+        }
+    }
+}

@@ -1,0 +1,69 @@
+@inherits LayoutComponentBase
+@using MudBlazor
+@using MyWebTemplateV2.Client.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<MudThemeProvider Theme="_myTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1" Color="MudBlazor.Color.Primary">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="MudBlazor.Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudText Typo="Typo.h6" Class="ml-3">Hệ thống Quản trị - Nhịp đập</MudText>
+        <MudSpacer />
+        <MudButton Color="MudBlazor.Color.Inherit" OnClick="Logout" StartIcon="@Icons.Material.Filled.Logout">Đăng xuất</MudButton>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="2" ClipMode="DrawerClipMode.Docked">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h6">Admin Panel</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Href="/admin/dashboard" Icon="@Icons.Material.Filled.Dashboard">Tổng quan</MudNavLink>
+            <MudDivider Class="my-2" />
+            <MudNavLink Href="/admin/submissions" Icon="@Icons.Material.Filled.Article">Quản lý Bài viết</MudNavLink>
+            <MudNavLink Href="/admin/publications" Icon="@Icons.Material.Filled.AutoStories">Quản lý Ấn phẩm</MudNavLink>
+            <MudNavLink Href="/admin/comments" Icon="@Icons.Material.Filled.Comment">Quản lý Bình luận</MudNavLink>
+            <MudDivider Class="my-2" />
+            <MudNavLink Href="/admin/ai-knowledge" Icon="@Icons.Material.Filled.AutoAwesome">Cấu hình AI</MudNavLink>
+            <MudDivider Class="my-2" />
+            <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home">Về trang chủ</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="my-4 pt-4">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    private async Task Logout()
+    {
+        await Auth.Logout();
+        Nav.NavigateTo("/admin/login");
+    }
+
+    private MudTheme _myTheme = new MudTheme()
+    {
+        PaletteLight = new PaletteLight()
+        {
+            Primary = "#005DAA", // FPT Blue
+            Secondary = "#F37021", // FPT Orange
+            AppbarBackground = "#005DAA",
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = "#005DAA",
+            Secondary = "#F37021",
+        }
+    };
+}

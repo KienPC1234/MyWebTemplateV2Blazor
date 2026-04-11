@@ -11,5 +11,6 @@ namespace MyWebTemplateV2.Data
 
         public DbSet<AdminUser> AdminUsers { get; set; }
     public DbSet<AiKnowledge> AiKnowledge { get; set; }
+    public DbSet<SiteSetting> SiteSettings { get; set; }
     }
 }

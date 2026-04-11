@@ -1,0 +1,1 @@
+using System; using System.Reflection; using System.Linq; var a = Assembly.LoadFrom("/home/kien/.nuget/packages/lucide.blazor/0.0.38/lib/net8.0/Lucide.Blazor.dll"); foreach(var t in a.GetTypes().Where(x => x.IsPublic)) Console.WriteLine(t.FullName);

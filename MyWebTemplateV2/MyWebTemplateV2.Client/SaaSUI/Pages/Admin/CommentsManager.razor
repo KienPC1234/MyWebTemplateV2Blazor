@@ -1,0 +1,104 @@
+@page "/admin/comments"
+@layout MyWebTemplateV2.Client.SaaSUI.Layout.AdminLayout
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@using Color = MudBlazor.Color
+@using Size = MudBlazor.Size
+@using MyWebTemplateV2.Client.Models
+@using System.Net.Http.Headers
+@using MyWebTemplateV2.Client.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<MudText Typo="Typo.h4" Class="mb-6">Quản lý Bình luận</MudText>
+
+<MudTable Items="@_comments" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info" Filter="@FilterFunc1">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Danh sách Bình luận</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Tìm kiếm..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<Comment, object>(x=>x.Author)">Người gửi</MudTableSortLabel></MudTh>
+        <MudTh>Nội dung</MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Comment, object>(x=>x.CreatedAt)">Ngày gửi</MudTableSortLabel></MudTh>
+        <MudTh>Hành động</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Người gửi">@context.Author</MudTd>
+        <MudTd DataLabel="Nội dung">@context.Text</MudTd>
+        <MudTd DataLabel="Ngày gửi">@context.CreatedAt.ToString("g")</MudTd>
+        <MudTd DataLabel="Hành động">
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteComment(context.Id))" />
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private List<Comment>? _comments;
+    private bool _loading = true;
+    private string _searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        if (!Auth.IsLoggedIn)
+        {
+            Nav.NavigateTo("/admin/login");
+            return;
+        }
+
+        if (Http.DefaultRequestHeaders.Authorization == null && Auth.Token != null)
+        {
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Auth.Token);
+        }
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _loading = true;
+        try
+        {
+            _comments = await Http.GetFromJsonAsync<List<Comment>>(Constants.Api.Comments);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Lỗi tải bình luận: {ex.Message}", Severity.Error);
+        }
+        _loading = false;
+    }
+
+    private bool FilterFunc1(Comment element) => FilterFunc(element, _searchString);
+
+    private bool FilterFunc(Comment element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString)) return true;
+        if (element.Author.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        if (element.Text.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        return false;
+    }
+
+    private async Task DeleteComment(int id)
+    {
+        bool result = await JS.InvokeAsync<bool>("confirm", "Bạn có chắc chắn muốn xóa bình luận này?");
+        if (result)
+        {
+            var response = await Http.DeleteAsync($"{Constants.Api.Comments}/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Đã xóa bình luận.", Severity.Info);
+                await LoadData();
+            }
+            else
+            {
+                Snackbar.Add("Lỗi khi xóa bình luận", Severity.Error);
+            }
+        }
+    }
+}

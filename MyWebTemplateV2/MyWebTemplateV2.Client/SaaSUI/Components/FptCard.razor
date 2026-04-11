@@ -1,0 +1,40 @@
+<div class="@GetCardClass()" @attributes="AdditionalAttributes">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Variant { get; set; } = "default"; // default, soft, hover
+    [Parameter] public string Color { get; set; } = "orange"; // orange, green, blue
+    [Parameter] public string Class { get; set; } = "";
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string GetCardClass()
+    {
+        var baseClass = "transition-all duration-700 overflow-hidden bg-white ";
+        
+        var variantClass = Variant switch
+        {
+            "soft" => "p-12 bg-white/80 backdrop-blur-xl border border-white/20 rounded-[2rem] shadow-xl hover:shadow-3xl hover:-translate-y-2 hover:border-fpt-orange/30",
+            "hover" => "group relative bg-white rounded-[3rem] p-4 border border-zinc-100 hover:border-fpt-orange/20 hover:shadow-3xl hover:-translate-y-4",
+            "default" => "p-12 bg-white border border-zinc-100 hover:shadow-2xl hover:shadow-fpt-orange/5 hover:border-fpt-orange/20",
+            _ => ""
+        };
+
+        if (Variant == "default")
+        {
+            var borderColor = Color switch
+            {
+                "green" => "border-t-[4px] border-t-fpt-green",
+                "blue" => "border-t-[4px] border-t-fpt-blue",
+                "orange" => "border-t-[4px] border-t-fpt-orange",
+                _ => ""
+            };
+            variantClass = $"{variantClass} {borderColor}";
+        }
+
+        return $"{baseClass} {variantClass} {Class}";
+    }
+}

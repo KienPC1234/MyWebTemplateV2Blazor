@@ -1,51 +1,52 @@
 @page "/lien-he"
-@using NeoUI.Blazor
-@using NeoUI.Blazor.Primitives
-@using NeoUI.Icons.Lucide
+@using MyWebTemplateV2.Client.SaaSUI.Components
 
 <PageTitle>Liên hệ | Ngoại khóa nhịp đập</PageTitle>
 
-<section class="py-32 bg-white">
+<section class="py-32 bg-white min-h-screen">
     <div class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
-            <div>
-                <h1 class="hero-title">Kết nối <br/> <span class="hero-highlight italic">Với chúng tôi</span></h1>
-                <p class="text-sm text-zinc-500 mb-12 max-w-sm">
+            <div data-aos="fade-right">
+                <h1 class="text-6xl md:text-8xl font-black text-fpt-blue leading-[0.85] tracking-[-0.05em] uppercase mb-8">Kết nối <br/> <span class="text-fpt-orange italic">Với chúng tôi</span></h1>
+                <p class="text-sm text-zinc-500 mb-12 max-w-sm font-medium">
                     Mọi thắc mắc về hoạt động ngoại khóa, ấn phẩm Nhái Bén hoặc kỹ thuật website, vui lòng liên hệ Ban truyền thông.
                 </p>
                 
-                <div class="space-y-8">
-                    <div class="flex gap-6">
-                        <div class="w-12 h-12 bg-fpt-orange flex items-center justify-center -skew-x-[13deg]">
-                            <LucideIcon Name="mail" class="w-6 h-6 text-white skew-x-[13deg]" />
+                <div class="space-y-12">
+                    <div class="flex gap-8 group">
+                        <div class="w-16 h-16 bg-fpt-orange text-white flex items-center justify-center -skew-x-[13deg] shadow-xl shadow-fpt-orange/20 group-hover:rotate-6 transition-transform">
+                            <LucideIcon Name="Mail" Size="32" class="skew-x-[13deg]" />
                         </div>
                         <div>
-                            <div class="text-[10px] font-black uppercase  text-zinc-400">Email</div>
-                            <div class="text-sm font-bold text-fpt-blue">contact@fpt.edu.vn</div>
+                            <div class="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-1">Email chính thức</div>
+                            <div class="text-xl font-black text-fpt-blue group-hover:text-fpt-orange transition-colors">contact@fpt.edu.vn</div>
                         </div>
                     </div>
-                    <div class="flex gap-6">
-                        <div class="w-12 h-12 bg-fpt-green flex items-center justify-center -skew-x-[13deg]">
-                            <LucideIcon Name="phone" class="w-6 h-6 text-white skew-x-[13deg]" />
+                    <div class="flex gap-8 group">
+                        <div class="w-16 h-16 bg-fpt-green text-white flex items-center justify-center -skew-x-[13deg] shadow-xl shadow-fpt-green/20 group-hover:-rotate-6 transition-transform">
+                            <LucideIcon Name="PhoneCall" Size="32" class="skew-x-[13deg]" />
                         </div>
                         <div>
-                            <div class="text-[10px] font-black uppercase  text-zinc-400">Hotline</div>
-                            <div class="text-sm font-bold text-fpt-blue">1900 1234</div>
+                            <div class="text-[10px] font-black uppercase text-zinc-400 tracking-widest mb-1">Hotline hỗ trợ</div>
+                            <div class="text-xl font-black text-fpt-blue group-hover:text-fpt-green transition-colors">1900 1234</div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="p-10 bg-zinc-50 border border-zinc-100">
-                <form class="space-y-6">
-                    <div class="grid grid-cols-2 gap-6">
-                        <input class="bg-white border-none p-4 text-xs outline-none focus:ring-1 focus:ring-fpt-orange" placeholder="Họ và tên" />
-                        <input class="bg-white border-none p-4 text-xs outline-none focus:ring-1 focus:ring-fpt-orange" placeholder="Lớp" />
+            <div class="p-12 bg-zinc-50 border border-zinc-100 rounded-[3rem] shadow-2xl shadow-zinc-200/50" data-aos="fade-left">
+                <div class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <FptInput Label="Họ và tên" Placeholder="Nguyễn Văn A..." />
+                        <FptInput Label="Lớp / Khối" Placeholder="12A1..." />
                     </div>
-                    <input class="w-full bg-white border-none p-4 text-xs outline-none focus:ring-1 focus:ring-fpt-orange" placeholder="Tiêu đề" />
-                    <textarea class="w-full bg-white border-none p-4 text-xs outline-none focus:ring-1 focus:ring-fpt-orange h-32" placeholder="Nội dung tin nhắn..."></textarea>
-                    <button class="btn-fpt w-full">Gửi tin nhắn</button>
-                </form>
+                    <FptInput Label="Tiêu đề" Placeholder="Tôi muốn hỏi về..." />
+                    <FptInput Label="Nội dung" Type="textarea" Rows="5" Placeholder="Nhập nội dung tin nhắn tại đây..." />
+                    <FptButton Variant="main" Class="w-full py-6">
+                        <span>Gửi tin nhắn</span>
+                        <LucideIcon Name="Send" Size="18" />
+                    </FptButton>
+                </div>
             </div>
         </div>
     </div>

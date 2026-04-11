@@ -1,12 +1,10 @@
 @page "/"
-@using NeoUI.Blazor
-@using NeoUI.Blazor.Primitives
-@using NeoUI.Icons.Lucide
 @using MyWebTemplateV2.Client.Models
+@using MyWebTemplateV2.Client.SaaSUI.Components
 @inject HttpClient Http
 @inject NavigationManager Nav
 
-<PageTitle>Ngoại khóa Nhịp đập | FPT Education</PageTitle>
+<PageTitle>Trang chủ | FPT Education</PageTitle>
 
 <!-- HERO ENGINE: HIGH-END VISUALS -->
 <section class="relative min-h-[95vh] flex items-center overflow-hidden bg-white pt-24 pb-32">
@@ -19,7 +17,7 @@
 
     <div class="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-16 items-center relative z-10">
         <!-- Content Column -->
-        <div class="lg:col-span-7 flex flex-col items-start animate-fpt-fade-in">
+        <div class="lg:col-span-7 flex flex-col items-start" data-aos="fade-right">
             <div class="group inline-flex items-center gap-4 px-6 py-2 bg-white border border-zinc-200 rounded-full shadow-xl shadow-zinc-200/50 mb-12 hover:border-fpt-orange transition-all duration-500">
                 <div class="w-2 h-2 rounded-full bg-fpt-orange animate-pulse"></div>
                 <span class="text-[10px] font-black uppercase  text-zinc-500 group-hover:text-fpt-orange transition-colors">FPT Extracurricular 2026</span>
@@ -40,13 +38,13 @@
             </p>
             
             <div class="flex flex-wrap gap-8">
-                <button @onclick='() => Nav.NavigateTo("/ngoai-khoa")' class="fpt-btn-main">
+                <FptButton OnClick='() => Nav.NavigateTo("/ngoai-khoa")'>
                     <span>Khám phá ngay</span>
-                    <LucideIcon Name="arrow-up-right" class="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                </button>
-                <button @onclick="() => _showSubmitModal = true" class="fpt-btn-secondary">
+                    <LucideIcon Name="ArrowUpRight" Size="18" />
+                </FptButton>
+                <FptButton Variant="secondary" OnClick="() => _showSubmitModal = true">
                     <span>Gửi bài sáng tác</span>
-                </button>
+                </FptButton>
             </div>
             
             <!-- Trust Indicators -->
@@ -55,7 +53,7 @@
                     @for (int i = 1; i <= 4; i++)
                     {
                         <div class="w-12 h-12 rounded-2xl border-4 border-white bg-zinc-100 flex items-center justify-center text-zinc-400 overflow-hidden shadow-md">
-                            <LucideIcon Name="user" class="w-5 h-5" />
+                            <LucideIcon Name="User" Size="20" />
                         </div>
                     }
                 </div>
@@ -67,7 +65,7 @@
         </div>
 
         <!-- Visual Column -->
-        <div class="lg:col-span-5 relative animate-fpt-zoom-in" style="animation-delay: 0.3s">
+        <div class="lg:col-span-5 relative" data-aos="fade-left" data-aos-delay="200">
             <div class="relative aspect-[4/5] w-full">
                 <!-- Abstract Stack -->
                 <div class="absolute top-10 right-0 w-[90%] h-full bg-zinc-50 rounded-[3rem] border border-zinc-200 -rotate-3 transition-transform hover:rotate-0 duration-700"></div>
@@ -79,7 +77,7 @@
                     <div class="absolute bottom-10 left-10 right-10 p-8 bg-white/90 backdrop-blur-xl rounded-[2rem] border border-white/50 shadow-2xl">
                         <div class="flex items-center gap-4 mb-3">
                             <div class="w-10 h-10 rounded-xl bg-fpt-orange/10 flex items-center justify-center text-fpt-orange">
-                                <LucideIcon Name="sparkles" class="w-5 h-5" />
+                                <LucideIcon Name="Sparkles" Size="20" />
                             </div>
                             <span class="text-[10px] font-black uppercase  text-fpt-blue">Latest Insight</span>
                         </div>
@@ -117,7 +115,7 @@
                 <p class="text-zinc-400 mt-6 text-lg font-medium">Khám phá thế giới quan đa chiều qua những trang viết đầy cảm hứng.</p>
             </div>
             <button @onclick='() => Nav.NavigateTo("/mon-hoc/van")' class="group flex items-center gap-4 text-xs font-black uppercase  text-fpt-blue hover:text-fpt-orange transition-all">
-                Xem tất cả ấn phẩm <LucideIcon Name="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                Xem tất cả ấn phẩm <LucideChevronRight Size="16" />
             </button>
         </div>
 
@@ -133,23 +131,23 @@
             {
                 @foreach (var pub in _latestPublications)
                 {
-                    <div class="group relative bg-white rounded-[3rem] p-4 border border-zinc-100 hover:border-fpt-orange/20 hover:shadow-3xl transition-all duration-700 hover:-translate-y-4 overflow-hidden">
+                    <FptCard Variant="hover">
                         <div class="aspect-[4/5] bg-zinc-50 rounded-[2.5rem] relative overflow-hidden mb-8">
                             <img src="@pub.CoverImagePath" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
                             <div class="absolute inset-0 bg-fpt-blue/80 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center gap-6">
-                                <button @onclick="() => OpenPdf(pub.PdfPath)" class="w-16 h-16 bg-fpt-orange text-white rounded-full flex items-center justify-center hover:scale-110 shadow-2xl"><LucideIcon Name="eye" /></button>
-                                <a href="@pub.PdfPath" download class="w-16 h-16 bg-white text-fpt-blue rounded-full flex items-center justify-center hover:scale-110 shadow-2xl"><LucideIcon Name="download" /></a>
+                                <button @onclick="() => OpenPdf(pub.PdfPath)" class="w-16 h-16 bg-fpt-orange text-white rounded-full flex items-center justify-center hover:scale-110 shadow-2xl"><LucideIcon Name="Eye" Size="24" /></button>
+                                <a href="@pub.PdfPath" download class="w-16 h-16 bg-white text-fpt-blue rounded-full flex items-center justify-center hover:scale-110 shadow-2xl"><LucideIcon Name="Download" Size="24" /></a>
                             </div>
                         </div>
                         <div class="px-6 pb-6 text-center">
                             <span class="text-[10px] font-black text-fpt-green uppercase  mb-2 block">Issue #@pub.Id</span>
                             <h4 class="text-2xl font-black text-fpt-blue uppercase leading-tight group-hover:text-fpt-orange transition-colors">@pub.Title</h4>
                             <div class="mt-4 flex items-center justify-center gap-2 text-[10px] font-bold text-zinc-400">
-                                <LucideIcon Name="calendar" class="w-3 h-3" />
+                                <LucideIcon Name="Calendar" Size="14" />
                                 <span>@pub.CreatedAt.ToString("MMMM, yyyy")</span>
                             </div>
                         </div>
-                    </div>
+                    </FptCard>
                 }
             }
         </div>
@@ -171,9 +169,9 @@
                     <p class="text-white/60 text-lg font-medium max-w-md leading-relaxed mb-12">
                         Theo dõi nhịp đập sáng tạo của học sinh FPT qua bảng tin cập nhật thời gian thực.
                     </p>
-                    <button @onclick="() => _showSubmitModal = true" class="fpt-btn-main !bg-white !text-fpt-blue hover:!bg-fpt-orange hover:!text-white">
+                    <FptButton Class="!bg-white !text-fpt-blue hover:!bg-fpt-orange hover:!text-white" OnClick="() => _showSubmitModal = true">
                         <span>Gửi tác phẩm mới</span>
-                    </button>
+                    </FptButton>
                 </div>
                 
                 <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-[3rem] p-8 lg:p-12">
@@ -189,7 +187,7 @@
                                 <div class="flex items-center justify-between border-b border-white/10 pb-6 last:border-0 last:pb-0 group">
                                     <div class="flex items-center gap-5">
                                         <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center text-fpt-orange group-hover:bg-fpt-orange group-hover:text-white transition-all">
-                                            <LucideIcon Name="feather" class="w-5 h-5" />
+                                            <LucideIcon Name="Feather" Size="20" />
                                         </div>
                                         <div>
                                             <div class="text-white font-black uppercase text-sm group-hover:text-fpt-orange transition-colors">@sub.Title</div>
@@ -208,72 +206,57 @@
 </section>
 
 <!-- MODAL: GỬI BÀI (REFINED) -->
-@if (_showSubmitModal)
-{
-    <div class="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-fpt-blue/80 backdrop-blur-xl animate-fpt-fade-in">
-        <div class="bg-white w-full max-w-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] rounded-[3rem] overflow-hidden">
-            <div class="bg-zinc-50 p-10 border-b border-zinc-100 flex justify-between items-center">
-                <div class="flex items-center gap-5">
-                    <div class="w-14 h-14 bg-fpt-blue text-white rounded-2xl flex items-center justify-center shadow-xl shadow-fpt-blue/20">
-                        <LucideIcon Name="send" class="w-7 h-7" />
+<FptModal IsOpen="_showSubmitModal" OnClose="() => _showSubmitModal = false" Title="Submit Your Art" Subtitle="Hệ thống gửi bài sáng tác FPT">
+    <HeaderIcon>
+        <LucideIcon Name="Send" Size="24" />
+    </HeaderIcon>
+    <ChildContent>
+        <div class="space-y-10">
+            @if (_isSuccess)
+            {
+                <div class="text-center py-12 space-y-8" data-aos="zoom-in">
+                    <div class="w-24 h-24 bg-fpt-green text-white rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-fpt-green/40">
+                        <LucideIcon Name="CheckCircle" Size="40" />
                     </div>
                     <div>
-                        <h3 class="text-3xl font-black uppercase italic text-fpt-blue ">Submit Your <span class="text-fpt-orange">Art</span></h3>
-                        <p class="text-[10px] font-black uppercase  text-zinc-400 mt-1">Hệ thống gửi bài sáng tác FPT</p>
+                        <h4 class="text-3xl font-black text-fpt-blue uppercase italic">Gửi bài thành công!</h4>
+                        <p class="text-zinc-500 mt-3 font-medium text-lg">Cảm ơn bạn đã đóng góp cho cộng đồng sáng tạo FPT Education.</p>
                     </div>
+                    <FptButton OnClick="() => { _showSubmitModal = false; _isSuccess = false; }">Đóng cửa sổ</FptButton>
                 </div>
-                <button @onclick="() => _showSubmitModal = false" class="w-12 h-12 rounded-full hover:bg-zinc-200 flex items-center justify-center transition-all group">
-                    <LucideIcon Name="x" class="w-6 h-6 text-zinc-400 group-hover:text-fpt-blue" />
-                </button>
-            </div>
-            
-            <div class="p-12 space-y-10">
-                @if (_isSuccess)
-                {
-                    <div class="text-center py-12 space-y-8 animate-fpt-zoom-in">
-                        <div class="w-24 h-24 bg-fpt-green text-white rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-fpt-green/40">
-                            <LucideIcon Name="check-circle" class="w-12 h-12" />
-                        </div>
-                        <div>
-                            <h4 class="text-3xl font-black text-fpt-blue uppercase italic">Gửi bài thành công!</h4>
-                            <p class="text-zinc-500 mt-3 font-medium text-lg">Cảm ơn bạn đã đóng góp cho cộng đồng sáng tạo FPT Education.</p>
-                        </div>
-                        <button @onclick="() => { _showSubmitModal = false; _isSuccess = false; }" class="fpt-btn-main">Đóng cửa sổ</button>
-                    </div>
-                }
-                else
-                {
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div class="space-y-3">
-                            <label class="text-[10px] font-black uppercase text-zinc-400  ml-4">Full Name</label>
-                            <input @bind="_newSubmission.Author" class="fpt-premium-input w-full" placeholder="Nguyễn Văn A..." />
-                        </div>
-                        <div class="space-y-3">
-                            <label class="text-[10px] font-black uppercase text-zinc-400  ml-4">Title</label>
-                            <input @bind="_newSubmission.Title" class="fpt-premium-input w-full" placeholder="Tác phẩm của tôi..." />
-                        </div>
+            }
+            else
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div class="space-y-3">
+                        <label class="text-[10px] font-black uppercase text-zinc-400  ml-4">Full Name</label>
+                        <input @bind="_newSubmission.Author" class="bg-zinc-50 border-2 border-transparent px-8 py-5 rounded-[2rem] text-sm font-bold text-zinc-800 outline-none transition-all duration-300 focus:border-fpt-orange focus:bg-white focus:shadow-xl focus:shadow-fpt-orange/5 w-full" placeholder="Nguyễn Văn A..." />
                     </div>
                     <div class="space-y-3">
-                        <label class="text-[10px] font-black uppercase text-zinc-400  ml-4">Content</label>
-                        <textarea @bind="_newSubmission.Content" class="fpt-premium-input w-full h-48 resize-none" placeholder="Viết nội dung tại đây..."></textarea>
+                        <label class="text-[10px] font-black uppercase text-zinc-400  ml-4">Title</label>
+                        <input @bind="_newSubmission.Title" class="bg-zinc-50 border-2 border-transparent px-8 py-5 rounded-[2rem] text-sm font-bold text-zinc-800 outline-none transition-all duration-300 focus:border-fpt-orange focus:bg-white focus:shadow-xl focus:shadow-fpt-orange/5 w-full" placeholder="Tác phẩm của tôi..." />
                     </div>
-                    
-                    <div class="flex items-center gap-6 p-8 bg-fpt-orange/5 rounded-[2rem] border border-fpt-orange/10 border-dashed">
-                        <LucideIcon Name="info" class="w-10 h-10 text-fpt-orange" />
-                        <p class="text-[10px] font-bold text-zinc-500 uppercase leading-relaxed ">
-                            Bài viết sẽ được duyệt bởi Ban biên tập trước khi đăng tải chính thức.
-                        </p>
-                    </div>
+                </div>
+                <div class="space-y-3">
+                    <label class="text-[10px] font-black uppercase text-zinc-400  ml-4">Content</label>
+                    <textarea @bind="_newSubmission.Content" class="bg-zinc-50 border-2 border-transparent px-8 py-5 rounded-[2rem] text-sm font-bold text-zinc-800 outline-none transition-all duration-300 focus:border-fpt-orange focus:bg-white focus:shadow-xl focus:shadow-fpt-orange/5 w-full h-48 resize-none" placeholder="Viết nội dung tại đây..."></textarea>
+                </div>
+                
+                <div class="flex items-center gap-6 p-8 bg-fpt-orange/5 rounded-[2rem] border border-fpt-orange/10 border-dashed">
+                    <LucideIcon Name="Info" Size="24" Class="text-fpt-orange" />
+                    <p class="text-[10px] font-bold text-zinc-500 uppercase leading-relaxed ">
+                        Bài viết sẽ được duyệt bởi Ban biên tập trước khi đăng tải chính thức.
+                    </p>
+                </div>
 
-                    <button @onclick="SubmitEntry" disabled="@_isSubmitting" class="fpt-btn-main w-full py-6 flex items-center justify-center gap-4">
-                        @if (_isSubmitting) { <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> }
-                        <span>Confirm Submission</span>
-                    </button>
-                }
-            </div>
+                <FptButton OnClick="SubmitEntry" Disabled="@_isSubmitting" Class="w-full py-6">
+                    @if (_isSubmitting) { <Spinner /> }
+                    <span>Confirm Submission</span>
+                </FptButton>
+            }
         </div>
-    </div>
-}
+    </ChildContent>
+</FptModal>
 
 @code {
     private List<Publication>? _latestPublications;
@@ -323,18 +306,3 @@
 
     private void OpenPdf(string path) => Nav.NavigateTo(path, true);
 }
-
-<style>
-    .fpt-btn-main {
-        @@apply flex items-center gap-4 px-12 py-6 bg-fpt-blue text-white rounded-[2rem] font-black uppercase  text-xs shadow-2xl shadow-fpt-blue/20 hover:bg-fpt-orange hover:shadow-fpt-orange/40 hover:-translate-y-2 active:translate-y-0 transition-all duration-500 group;
-    }
-    .fpt-btn-secondary {
-        @@apply flex items-center gap-4 px-12 py-6 border-2 border-fpt-blue text-fpt-blue rounded-[2rem] font-black uppercase  text-xs hover:bg-fpt-blue hover:text-white hover:shadow-2xl hover:shadow-fpt-blue/30 hover:-translate-y-2 active:translate-y-0 transition-all duration-500;
-    }
-    .fpt-premium-input {
-        @@apply bg-zinc-50 border-2 border-transparent px-8 py-5 rounded-[2rem] text-sm font-bold text-zinc-800 outline-none transition-all duration-300;
-    }
-    .fpt-premium-input:focus {
-        @@apply border-fpt-orange bg-white shadow-xl shadow-fpt-orange/5;
-    }
-</style>

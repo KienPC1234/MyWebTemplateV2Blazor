@@ -1,62 +1,54 @@
 @page "/ngoai-khoa"
-@using NeoUI.Blazor
-@using NeoUI.Blazor.Primitives
-@using NeoUI.Icons.Lucide
+@using MyWebTemplateV2.Client.SaaSUI.Components
 
 <PageTitle>Hoạt động Ngoại khóa | Nhịp đập</PageTitle>
 
-<section class="py-24 bg-white">
+<section class="py-24 bg-white min-h-screen">
     <div class="max-w-7xl mx-auto px-6">
         <h2 class="fpt-section-title">Chương trình ngoại khóa</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Motion>
-                <Presets><SlideInFromBottom Duration="0.5" /></Presets>
-                <ChildContent>
-                    <div class="fpt-card">
-                        <div class="w-12 h-12 bg-fpt-orange text-white flex items-center justify-center -skew-x-[13deg] mb-8">
-                            <LucideIcon Name="music" class="w-6 h-6 skew-x-[13deg]" />
-                        </div>
-                        <h3 class="text-xl font-black text-fpt-blue uppercase mb-4">Câu lạc bộ Nghệ thuật</h3>
-                        <p class="text-[11px] text-zinc-500 leading-relaxed mb-6">
-                            Nơi hội tụ những tâm hồn yêu âm nhạc, hội họa và diễn xuất. Các buổi sinh hoạt diễn ra vào chiều thứ 4 hàng tuần.
-                        </p>
-                        <button class="text-xs font-black text-fpt-orange uppercase  border-b-2 border-fpt-orange pb-1">Xem chi tiết</button>
-                    </div>
-                </ChildContent>
-            </Motion>
+            <FptCard Color="orange" Class="transition-all" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-12 h-12 bg-fpt-orange text-white flex items-center justify-center -skew-x-[13deg] mb-8 shadow-lg shadow-fpt-orange/20">
+                    <LucideIcon Name="Music" Size="20" class="skew-x-[13deg]" />
+                </div>
+                <h3 class="text-xl font-black text-fpt-blue uppercase mb-4">Câu lạc bộ Nghệ thuật</h3>
+                <p class="text-[11px] text-zinc-500 leading-relaxed mb-6">
+                    Nơi hội tụ những tâm hồn yêu âm nhạc, hội họa và diễn xuất. Các buổi sinh hoạt diễn ra vào chiều thứ 4 hàng tuần.
+                </p>
+                <button class="text-xs font-black text-fpt-orange uppercase  border-b-2 border-fpt-orange pb-1 flex items-center gap-2">
+                    <span>Xem chi tiết</span>
+                    <LucideIcon Name="ArrowRight" Size="14" />
+                </button>
+            </FptCard>
 
-            <Motion>
-                <Presets><SlideInFromBottom Duration="0.6" /></Presets>
-                <ChildContent>
-                    <div class="fpt-card fpt-card-green">
-                        <div class="w-12 h-12 bg-fpt-green text-white flex items-center justify-center -skew-x-[13deg] mb-8">
-                            <LucideIcon Name="code" class="w-6 h-6 skew-x-[13deg]" />
-                        </div>
-                        <h3 class="text-xl font-black text-fpt-blue uppercase mb-4">CLB Lập trình & Robotics</h3>
-                        <p class="text-[11px] text-zinc-500 leading-relaxed mb-6">
-                            Khám phá thế giới công nghệ, AI và tự động hóa. Tham gia các cuộc thi Hackathon và sáng tạo phần mềm.
-                        </p>
-                        <button class="text-xs font-black text-fpt-green uppercase  border-b-2 border-fpt-green pb-1">Xem chi tiết</button>
-                    </div>
-                </ChildContent>
-            </Motion>
+            <FptCard Color="green" Class="transition-all" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-12 h-12 bg-fpt-green text-white flex items-center justify-center -skew-x-[13deg] mb-8 shadow-lg shadow-fpt-green/20">
+                    <LucideIcon Name="Code" Size="20" class="skew-x-[13deg]" />
+                </div>
+                <h3 class="text-xl font-black text-fpt-blue uppercase mb-4">CLB Lập trình & Robotics</h3>
+                <p class="text-[11px] text-zinc-500 leading-relaxed mb-6">
+                    Khám phá thế giới công nghệ, AI và tự động hóa. Tham gia các cuộc thi Hackathon và sáng tạo phần mềm.
+                </p>
+                <button class="text-xs font-black text-fpt-green uppercase  border-b-2 border-fpt-green pb-1 flex items-center gap-2">
+                    <span>Xem chi tiết</span>
+                    <LucideIcon Name="ArrowRight" Size="14" />
+                </button>
+            </FptCard>
 
-            <Motion>
-                <Presets><SlideInFromBottom Duration="0.7" /></Presets>
-                <ChildContent>
-                    <div class="fpt-card fpt-card-blue">
-                        <div class="w-12 h-12 bg-fpt-blue text-white flex items-center justify-center -skew-x-[13deg] mb-8">
-                            <LucideIcon Name="tent" class="w-6 h-6 skew-x-[13deg]" />
-                        </div>
-                        <h3 class="text-xl font-black text-fpt-blue uppercase mb-4">Hoạt động Kỹ năng sống</h3>
-                        <p class="text-[11px] text-zinc-500 leading-relaxed mb-6">
-                            Các buổi dã ngoại, cắm trại và rèn luyện kỹ năng sinh tồn, làm việc nhóm và lãnh đạo.
-                        </p>
-                        <button class="text-xs font-black text-fpt-blue uppercase  border-b-2 border-fpt-blue pb-1">Xem chi tiết</button>
-                    </div>
-                </ChildContent>
-            </Motion>
+            <FptCard Color="blue" Class="transition-all" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-12 h-12 bg-fpt-blue text-white flex items-center justify-center -skew-x-[13deg] mb-8 shadow-lg shadow-fpt-blue/20">
+                    <LucideIcon Name="Tent" Size="20" class="skew-x-[13deg]" />
+                </div>
+                <h3 class="text-xl font-black text-fpt-blue uppercase mb-4">Hoạt động Kỹ năng sống</h3>
+                <p class="text-[11px] text-zinc-500 leading-relaxed mb-6">
+                    Các buổi dã ngoại, cắm trại và rèn luyện kỹ năng sinh tồn, làm việc nhóm và lãnh đạo.
+                </p>
+                <button class="text-xs font-black text-fpt-blue uppercase  border-b-2 border-fpt-blue pb-1 flex items-center gap-2">
+                    <span>Xem chi tiết</span>
+                    <LucideIcon Name="ArrowRight" Size="14" />
+                </button>
+            </FptCard>
         </div>
     </div>
 </section>

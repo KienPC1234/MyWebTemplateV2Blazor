@@ -1,0 +1,211 @@
+@page "/admin/publications"
+@layout MyWebTemplateV2.Client.SaaSUI.Layout.AdminLayout
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@using MudBlazor
+@using Color = MudBlazor.Color
+@using Size = MudBlazor.Size
+@using MyWebTemplateV2.Client.Models
+@using System.Net.Http.Headers
+@using MyWebTemplateV2.Client.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<MudText Typo="Typo.h4" Class="mb-6">Quản lý Ấn phẩm Nhái Bén</MudText>
+
+<MudToolBar Class="mb-4 pa-0">
+    <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="OpenCreateModal">
+        Thêm ấn phẩm mới
+    </MudButton>
+    <MudSpacer />
+</MudToolBar>
+
+<MudTable Items="@_publications" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="MudBlazor.Color.Info">
+    <HeaderContent>
+        <MudTh>Ảnh bìa</MudTh>
+        <MudTh>Tiêu đề</MudTh>
+        <MudTh>Tác giả</MudTh>
+        <MudTh>Ngày đăng</MudTh>
+        <MudTh>File PDF</MudTh>
+        <MudTh>Hành động</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Ảnh bìa">
+            <MudImage Src="@(string.IsNullOrEmpty(context.CoverImagePath) ? "images/dashboard_mockup.png" : context.CoverImagePath)" Width="50" Height="70" ObjectFit="ObjectFit.Cover" Alt="Cover" Elevation="1" />
+        </MudTd>
+        <MudTd DataLabel="Tiêu đề">@context.Title</MudTd>
+        <MudTd DataLabel="Tác giả">@context.Author</MudTd>
+        <MudTd DataLabel="Ngày đăng">@context.CreatedAt.ToShortDateString()</MudTd>
+        <MudTd DataLabel="File PDF">
+            @if (!string.IsNullOrEmpty(context.PdfPath) && context.PdfPath != "#")
+            {
+                <MudButton Variant="Variant.Text" Color="MudBlazor.Color.Info" StartIcon="@Icons.Material.Filled.PictureAsPdf" Href="@context.PdfPath" Target="_blank" Size="MudBlazor.Size.Small">PDF</MudButton>
+            }
+            else
+            {
+                <MudText Typo="Typo.caption" Color="MudBlazor.Color.Warning">Trống</MudText>
+            }
+        </MudTd>
+        <MudTd DataLabel="Hành động">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="MudBlazor.Color.Primary" OnClick="@(() => EditPublication(context))" />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="MudBlazor.Color.Error" OnClick="@(() => DeletePublication(context.Id))" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudDialog @bind-Visible="_showModal" Options="new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true }">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@(_isEditing ? "Chỉnh sửa" : "Thêm") Ấn phẩm</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="_editingPub.Title" Label="Tiêu đề" Variant="Variant.Outlined" Class="mb-4" />
+        <MudTextField @bind-Value="_editingPub.Author" Label="Tác giả" Variant="Variant.Outlined" Class="mb-4" />
+        <MudTextField @bind-Value="_editingPub.Description" Label="Mô tả ngắn" Variant="Variant.Outlined" Lines="3" Class="mb-4" />
+        
+        <div class="d-flex flex-column gap-2 mb-4">
+            <MudText Typo="Typo.caption">File PDF</MudText>
+            <div class="d-flex align-center gap-2">
+                <InputFile id="pdfInput" OnChange="UploadPdfFile" hidden accept=".pdf" />
+                <MudButton HtmlTag="label" for="pdfInput" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.CloudUpload" Size="MudBlazor.Size.Small">Tải PDF</MudButton>
+                @if (!string.IsNullOrEmpty(_editingPub.PdfPath)) {
+                    <MudText Typo="Typo.caption" Color="MudBlazor.Color.Success">OK</MudText>
+                }
+            </div>
+        </div>
+
+        <div class="d-flex flex-column gap-2">
+            <MudText Typo="Typo.caption">Ảnh bìa</MudText>
+            <div class="d-flex align-center gap-2">
+                <InputFile id="coverInput" OnChange="UploadCoverFile" hidden accept=".jpg,.png,.jpeg" />
+                <MudButton HtmlTag="label" for="coverInput" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Image" Size="MudBlazor.Size.Small">Tải Ảnh bìa</MudButton>
+                 @if (!string.IsNullOrEmpty(_editingPub.CoverImagePath)) {
+                    <MudText Typo="Typo.caption" Color="MudBlazor.Color.Success">OK</MudText>
+                }
+            </div>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => _showModal = false">Hủy</MudButton>
+        <MudButton Color="MudBlazor.Color.Primary" Variant="Variant.Filled" OnClick="SavePublication" Disabled="@_isSaving">Lưu</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private List<Publication>? _publications;
+    private bool _loading = true;
+    private bool _showModal = false;
+    private bool _isEditing = false;
+    private Publication _editingPub = new();
+    private bool _isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        if (!Auth.IsLoggedIn)
+        {
+            Nav.NavigateTo("/admin/login");
+            return;
+        }
+
+        if (Http.DefaultRequestHeaders.Authorization == null && Auth.Token != null)
+        {
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Auth.Token);
+        }
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _loading = true;
+        try {
+            _publications = await Http.GetFromJsonAsync<List<Publication>>("/api/publications");
+        } catch (Exception ex) {
+            Snackbar.Add($"Lỗi tải: {ex.Message}", Severity.Error);
+        }
+        _loading = false;
+    }
+
+    private void OpenCreateModal()
+    {
+        _isEditing = false;
+        _editingPub = new Publication { Author = "Ban biên tập", PdfPath = "#" };
+        _showModal = true;
+    }
+
+    private void EditPublication(Publication pub)
+    {
+        _isEditing = true;
+        _editingPub = new Publication {
+            Id = pub.Id,
+            Title = pub.Title,
+            Author = pub.Author,
+            Description = pub.Description,
+            PdfPath = pub.PdfPath,
+            CoverImagePath = pub.CoverImagePath,
+            CreatedAt = pub.CreatedAt
+        };
+        _showModal = true;
+    }
+
+    private async Task UploadPdfFile(InputFileChangeEventArgs e) => await UploadFile(e.File, "publications", path => { _editingPub.PdfPath = path; });
+    private async Task UploadCoverFile(InputFileChangeEventArgs e) => await UploadFile(e.File, "covers", path => { _editingPub.CoverImagePath = path; });
+
+    private async Task UploadFile(IBrowserFile file, string subFolder, Action<string> onUploaded)
+    {
+        using var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(file.OpenReadStream(1024 * 1024 * 50));
+        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+        content.Add(fileContent, "file", file.Name);
+        content.Add(new StringContent(subFolder), "subFolder");
+
+        var response = await Http.PostAsync("/api/upload", content);
+        if (response.IsSuccessStatusCode)
+        {
+            var result = await response.Content.ReadFromJsonAsync<UploadResponse>();
+            if (result != null)
+            {
+                onUploaded(result.Path);
+                Snackbar.Add("Đã tải lên file", Severity.Success);
+            }
+        }
+        else Snackbar.Add("Lỗi tải file", Severity.Error);
+    }
+
+    private async Task SavePublication()
+    {
+        if (string.IsNullOrWhiteSpace(_editingPub.Title)) return;
+        _isSaving = true;
+        try
+        {
+            HttpResponseMessage response;
+            if (_isEditing) response = await Http.PutAsJsonAsync($"/api/publications/{_editingPub.Id}", _editingPub);
+            else response = await Http.PostAsJsonAsync("/api/publications", _editingPub);
+
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Thành công", Severity.Success);
+                _showModal = false;
+                await LoadData();
+            }
+        }
+        catch (Exception ex) { Snackbar.Add(ex.Message, Severity.Error); }
+        finally { _isSaving = false; }
+    }
+
+    private async Task DeletePublication(int id)
+    {
+        bool result = await JS.InvokeAsync<bool>("confirm", "Xóa ấn phẩm này?");
+        if (result)
+        {
+            var response = await Http.DeleteAsync($"/api/publications/{id}");
+            if (response.IsSuccessStatusCode) {
+                Snackbar.Add("Đã xóa", Severity.Info);
+                await LoadData();
+            }
+        }
+    }
+
+    public class UploadResponse { public string Path { get; set; } = ""; }
+}

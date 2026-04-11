@@ -1,104 +1,118 @@
 @page "/mon-hoc/ktpl"
-@using NeoUI.Blazor
-@using NeoUI.Blazor.Primitives
-@using NeoUI.Icons.Lucide
 @using MyWebTemplateV2.Client.Models
+@using System.Net.Http.Json
+@using MyWebTemplateV2.Client.SaaSUI.Components
+@inject HttpClient Http
+@inject IJSRuntime JS
+@using Microsoft.AspNetCore.SignalR.Client
+@implements IAsyncDisposable
 
 <PageTitle>Phân môn KTPL | Sản phẩm & Pháp luật</PageTitle>
 
 <section class="py-20 bg-zinc-50 min-h-screen">
     <div class="max-w-7xl mx-auto px-6">
         <!-- Header -->
-        <Motion>
-            <Presets><SlideInFromBottom Duration="0.8" /></Presets>
-            <ChildContent>
-                <div class="flex items-center gap-6 mb-16">
-                    <div class="w-20 h-20 bg-fpt-blue -skew-x-[13deg] flex items-center justify-center shadow-xl">
-                         <LucideIcon Name="scale" class="w-10 h-10 text-white skew-x-[13deg]" />
-                    </div>
-                    <div>
-                        <h1 class="text-5xl font-black text-fpt-blue uppercase ">Phân môn <span class="text-fpt-orange italic">KTPL</span></h1>
-                        <div class="flex items-center gap-2 mt-2">
-                            <span class="text-[10px] font-black uppercase  text-zinc-400">Chủ đề:</span>
-                            <Badge Variant="BadgeVariant.Outline" class="border-fpt-blue text-fpt-blue rounded-none font-black text-[10px] px-3">KINH TẾ & PHÁP LUẬT 4.0</Badge>
-                        </div>
+        <div data-aos="fade-right">
+            <div class="flex items-center gap-6 mb-16">
+                <div class="w-20 h-20 bg-fpt-blue -skew-x-[13deg] flex items-center justify-center shadow-xl">
+                     <LucideIcon Name="Scale" Size="40" StrokeWidth="3" Class="text-white skew-x-[13deg]" />
+                </div>
+                <div>
+                    <h1 class="text-5xl font-black text-fpt-blue uppercase ">Phân môn <span class="text-fpt-orange italic">KTPL</span></h1>
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="text-[10px] font-black uppercase  text-zinc-400">Chủ đề:</span>
+                        <span class="border border-fpt-blue text-fpt-blue rounded-none font-black text-[10px] px-3 py-1 inline-flex items-center">KINH TẾ & PHÁP LUẬT 4.0</span>
                     </div>
                 </div>
-            </ChildContent>
-        </Motion>
+            </div>
+        </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             
             <!-- Sidebar: Thể lệ & Thiết kế -->
-            <div class="lg:col-span-1 space-y-8">
-                <div class="p-8 bg-white border border-zinc-100">
-                    <h3 class="text-xs font-black uppercase  text-fpt-blue mb-6">Thể lệ cuộc thi</h3>
-                    <div class="space-y-4 text-[11px] font-bold text-zinc-500 uppercase leading-relaxed">
-                        <div class="flex gap-3">
-                            <span class="text-fpt-orange">01.</span>
-                            <span>Thiết kế infographic về quyền công dân.</span>
-                        </div>
-                        <div class="flex gap-3">
-                            <span class="text-fpt-orange">02.</span>
-                            <span>Sản phẩm phải có tính ứng dụng thực tế.</span>
-                        </div>
-                        <div class="flex gap-3">
-                            <span class="text-fpt-orange">03.</span>
-                            <span>Nộp bài qua mã QR hoặc trực tiếp tại đây.</span>
-                        </div>
+            <div class="lg:col-span-1 space-y-8" data-aos="fade-up">
+                <div class="p-8 bg-white border border-zinc-100 relative group">
+                    <div class="flex justify-between items-start mb-6">
+                        <h3 class="text-xs font-black uppercase  text-fpt-blue">Thể lệ cuộc thi</h3>
+                        @if (Auth.IsLoggedIn)
+                        {
+                            <button @onclick="() => _showRulesEditor = true" class="text-[9px] font-black uppercase text-zinc-400 hover:text-fpt-blue transition-colors flex items-center gap-1">
+                                <LucideIcon Name="Edit3" Size="16" />
+                                [Sửa]
+                            </button>
+                        }
+                    </div>
+                    <div class="space-y-4 text-[11px] font-bold text-zinc-500 uppercase leading-relaxed whitespace-pre-wrap">
+                        @(_rules?.Value ?? "Đang tải thể lệ...")
                     </div>
                 </div>
 
-                <div class="p-8 bg-fpt-green text-white -skew-x-[13deg]">
+                <div class="p-8 bg-fpt-green text-white -skew-x-[13deg] shadow-xl relative">
+                    <div class="absolute -right-4 -top-4 w-12 h-12 bg-white rounded-full flex items-center justify-center text-fpt-green font-black text-[9px] shadow-lg border-2 border-fpt-green skew-x-[13deg] z-10 uppercase">
+                        Thiết kế
+                    </div>
                     <div class="skew-x-[13deg]">
-                        <h3 class="text-lg font-black uppercase mb-2">Gửi thiết kế</h3>
+                        <h3 class="text-lg font-black uppercase mb-2">Gửi bài dự thi</h3>
                         <p class="text-[9px] font-bold text-white/70 uppercase  mb-6">Định dạng: JPG, PNG, PDF</p>
-                        <button class="w-full py-3 bg-white text-fpt-green font-black uppercase  text-[10px] hover:bg-fpt-blue hover:text-white transition-all">
-                            Chọn tệp tin...
-                        </button>
+                        <FptButton Class="w-full py-3 !bg-white !text-fpt-green font-black uppercase text-[10px] hover:!bg-fpt-blue hover:!text-white transition-all shadow-md" OnClick="() => _showSubmitModal = true">
+                            Tạo mới
+                        </FptButton>
                     </div>
                 </div>
             </div>
 
             <!-- Main: Sản phẩm Grid -->
             <div class="lg:col-span-3">
-                <div class="bg-white border border-zinc-200 p-8 mb-8 flex justify-between items-center">
-                    <div>
-                        <h2 class="text-xl font-black text-fpt-blue uppercase">Sản phẩm tiêu biểu</h2>
-                        <p class="text-[10px] font-bold text-zinc-400 uppercase  mt-1">Sử dụng mã QR để truy cập thông tin chi tiết</p>
+                <div class="bg-white border border-zinc-200 p-8 mb-8 flex justify-between items-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full border-2 border-fpt-blue flex items-center justify-center text-fpt-blue">
+                            <span class="font-black text-xs">QR</span>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-black text-fpt-blue uppercase">Sản phẩm <span class="italic text-fpt-orange">Tiêu biểu</span></h2>
+                            <p class="text-[10px] font-bold text-zinc-400 uppercase  mt-1">Sử dụng mã QR để truy cập thông tin chi tiết</p>
+                        </div>
                     </div>
-                    <LucideIcon Name="layout-grid" class="w-6 h-6 text-zinc-200" />
+                    <LucideIcon Name="LayoutGrid" Size="24" Class="text-zinc-300" />
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    @foreach (var prod in _products)
+                    @if (_products == null)
                     {
-                        <Motion>
-                            <Presets><FadeIn Duration="0.5" /></Presets>
-                            <ChildContent>
-                                <div class="bg-white group overflow-hidden border border-zinc-100 hover:border-fpt-orange transition-all duration-500">
+                        <div class="col-span-2 flex justify-center p-8"><Spinner /></div>
+                    }
+                    else if (!_products.Any())
+                    {
+                        <div class="col-span-2 text-zinc-500 italic text-sm">Chưa có sản phẩm nào trong môn KTPL.</div>
+                    }
+                    else
+                    {
+                        @foreach (var prod in _products)
+                        {
+                            <div data-aos="fade-up">
+                                <div class="bg-white group overflow-hidden border border-zinc-100 hover:border-fpt-orange transition-all duration-500 shadow-sm hover:shadow-xl hover:-translate-y-1">
                                     <div class="flex h-56">
                                         <div class="w-1/3 bg-zinc-50 flex flex-col items-center justify-center p-4 border-r border-zinc-50 group-hover:bg-fpt-orange/5 transition-colors">
-                                            <div class="w-20 h-20 bg-white border border-zinc-200 flex items-center justify-center relative">
-                                                <LucideIcon Name="qr-code" class="w-16 h-16 text-zinc-800" />
+                                            <div class="w-20 h-20 bg-white border border-zinc-200 flex items-center justify-center relative shadow-sm">
+                                                <LucideIcon Name="QrCode" Size="40" class="text-zinc-800" />
                                                 <div class="absolute inset-0 bg-fpt-orange/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                             </div>
-                                            <div class="text-[8px] font-black uppercase text-zinc-400 mt-4 ">Quét mã sản phẩm</div>
+                                            <div class="text-[8px] font-black uppercase text-zinc-400 mt-4 group-hover:text-fpt-orange transition-colors">Quét mã sản phẩm</div>
                                         </div>
                                         <div class="w-2/3 p-8 flex flex-col justify-between">
                                             <div>
-                                                <div class="text-[9px] font-black text-fpt-orange uppercase  mb-2">@prod.Type</div>
-                                                <h4 class="text-xl font-black text-fpt-blue uppercase leading-tight mb-4">@prod.Title</h4>
-                                                <p class="text-[11px] text-zinc-500 leading-relaxed line-clamp-2">@prod.Content</p>
+                                                <div class="text-[9px] font-black text-fpt-orange uppercase mb-2">@prod.Type.ToString()</div>
+                                                <h4 class="text-xl font-black text-fpt-blue uppercase leading-tight mb-2 group-hover:text-fpt-orange transition-colors">@prod.Title</h4>
+                                                <p class="text-[11px] text-zinc-500 leading-relaxed line-clamp-3">@prod.Content</p>
                                             </div>
-                                            <div class="flex items-center gap-4 pt-4 border-t border-zinc-50">
-                                                <div class="text-[10px] font-black text-zinc-400 uppercase">Tác giả: @prod.Author</div>
+                                            <div class="flex items-center gap-4 pt-4 border-t border-zinc-50 mt-4">
+                                                <div class="text-[10px] font-black text-zinc-400 uppercase">Tác giả: <span class="text-fpt-blue">@prod.Author</span></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </ChildContent>
-                        </Motion>
+                            </div>
+                        }
                     }
                 </div>
             </div>
@@ -107,29 +121,156 @@
     </div>
 </section>
 
+<!-- MODAL: GỬI BÀI -->
+<FptModal IsOpen="_showSubmitModal" OnClose="() => _showSubmitModal = false" Title="Nộp thiết kế KTPL" Subtitle="Hệ thống gửi bài sáng tác FPT">
+    <HeaderIcon>
+        <LucideIcon Name="Scale" Size="24" />
+    </HeaderIcon>
+    <ChildContent>
+        <div class="space-y-10">
+            @if (_isSuccess)
+            {
+                <div class="text-center py-12 space-y-8" data-aos="zoom-in">
+                    <div class="w-24 h-24 bg-fpt-green text-white rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-fpt-green/40">
+                        <LucideIcon Name="CheckCircle" Size="40" />
+                    </div>
+                    <div>
+                        <h4 class="text-3xl font-black text-fpt-blue uppercase italic">Nộp thiết kế thành công!</h4>
+                        <p class="text-zinc-500 mt-3 font-medium text-lg">Cảm ơn bạn đã đóng góp cho chuyên mục KTPL.</p>
+                    </div>
+                    <FptButton OnClick="() => { _showSubmitModal = false; _isSuccess = false; }">Đóng cửa sổ</FptButton>
+                </div>
+            }
+            else
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <FptInput Label="Họ và tên / Nhóm" @bind-Value="_newSubmission.Author" Placeholder="Nhóm 1 - 12A1..." />
+                    <FptInput Label="Tên sản phẩm" @bind-Value="_newSubmission.Title" Placeholder="Sản phẩm thiết kế..." />
+                </div>
+                
+                <FptInput Label="Mô tả sản phẩm" Type="textarea" @bind-Value="_newSubmission.Content" Rows="6" Placeholder="Viết mô tả ngắn gọn về thiết kế..." />
+                
+                <div class="flex items-center gap-6 p-8 bg-fpt-orange/5 rounded-[2rem] border border-fpt-orange/10 border-dashed">
+                    <LucideIcon Name="Info" Size="24" Class="text-fpt-orange" />
+                    <p class="text-[10px] font-bold text-zinc-500 uppercase leading-relaxed ">
+                        Sản phẩm sẽ được duyệt bởi Ban biên tập. (Tính năng upload ảnh đang phát triển, mô tả ý tưởng của bạn trước nhé).
+                    </p>
+                </div>
+
+                <FptButton OnClick="SubmitEntry" Disabled="@_isSubmitting" Class="w-full py-6">
+                    @if (_isSubmitting) { <Spinner /> }
+                    <span>Xác nhận nộp bài</span>
+                </FptButton>
+            }
+        </div>
+    </ChildContent>
+</FptModal>
+
+<!-- MODAL: CHỈNH SỬA THỂ LỆ -->
+<FptModal IsOpen="_showRulesEditor" OnClose="() => _showRulesEditor = false" Title="Chỉnh sửa Thể lệ" Subtitle="KTPL">
+    <HeaderIcon>
+        <LucideIcon Name="Settings" Size="24" />
+    </HeaderIcon>
+    <ChildContent>
+        <div class="space-y-8">
+            <FptInput Label="Nội dung thể lệ" Type="textarea" @bind-Value="_rules!.Value" Rows="8" />
+            <FptButton OnClick="SaveRules" Disabled="@_isSavingRules" Class="w-full">
+                @if (_isSavingRules) { <Spinner /> }
+                <span>Lưu thay đổi</span>
+            </FptButton>
+        </div>
+    </ChildContent>
+</FptModal>
+
 @code {
-    private List<Submission> _products = new()
+    private List<Submission>? _products;
+    private SiteSetting _rules = new() { Key = "Rules_KTPL", Value = "01. Thiết kế infographic về quyền công dân.\n02. Sản phẩm phải có tính ứng dụng thực tế.\n03. Nộp bài qua mã QR hoặc trực tiếp tại đây." };
+    private bool _showSubmitModal = false;
+    private bool _showRulesEditor = false;
+    private bool _isSubmitting = false;
+    private bool _isSavingRules = false;
+    private bool _isSuccess = false;
+    private Submission _newSubmission = new() { Author = "Học sinh FPT", Subject = SubjectArea.KTPL, Type = SubmissionType.ThietKe };
+    private HubConnection? _hubConnection;
+
+    protected override async Task OnInitializedAsync()
     {
-        new Submission 
-        { 
-            Title = "Cẩm nang Pháp luật học đường", 
-            Author = "Nhóm 1 - 12A1", 
-            Type = SubmissionType.ThietKe,
-            Content = "Bộ infographic sinh động về quyền và nghĩa vụ của học sinh trong môi trường học đường số."
-        },
-        new Submission 
-        { 
-            Title = "Kinh tế tuần hoàn trong trường học", 
-            Author = "Nguyễn Hoàng M", 
-            Type = SubmissionType.ThietKe,
-            Content = "Mô hình kinh doanh xanh ứng dụng tại canteen trường học nhằm giảm thiểu rác thải nhựa."
-        },
-        new Submission 
-        { 
-            Title = "App Luật cho người Việt", 
-            Author = "Phạm Gia H", 
-            Type = SubmissionType.ThietKe,
-            Content = "Ý tưởng thiết kế ứng dụng tra cứu luật nhanh chóng dành cho đối tượng thanh thiếu niên."
+        await Auth.InitializeAsync();
+        
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Http.BaseAddress + "notificationHub")
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On("SubmissionUpdated", async () =>
+        {
+            await LoadData();
+            StateHasChanged();
+        });
+
+        await _hubConnection.StartAsync();
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try {
+            var allSubmissions = await Http.GetFromJsonAsync<List<Submission>>("/api/submissions");
+            if (allSubmissions != null)
+            {
+                _products = allSubmissions.Where(s => s.Subject == SubjectArea.KTPL).ToList();
+            }
+
+            var rulesRes = await Http.GetAsync($"/api/admin/settings/{_rules.Key}");
+            if (rulesRes.IsSuccessStatusCode)
+            {
+                _rules = await rulesRes.Content.ReadFromJsonAsync<SiteSetting>() ?? _rules;
+            }
+        } catch {
+            _products = new List<Submission>();
         }
-    };
+    }
+
+    private async Task SaveRules()
+    {
+        _isSavingRules = true;
+        try
+        {
+            var res = await Http.PostAsJsonAsync("/api/admin/settings", _rules);
+            if (res.IsSuccessStatusCode)
+            {
+                _showRulesEditor = false;
+            }
+        }
+        catch {}
+        finally { _isSavingRules = false; }
+    }
+
+    private async Task SubmitEntry()
+    {
+        if (string.IsNullOrWhiteSpace(_newSubmission.Title) || string.IsNullOrWhiteSpace(_newSubmission.Content)) return;
+        
+        _isSubmitting = true;
+        try
+        {
+            var response = await Http.PostAsJsonAsync("/api/submissions", _newSubmission);
+            if (response.IsSuccessStatusCode)
+            {
+                _isSuccess = true;
+                _newSubmission = new() { Author = "Học sinh FPT", Subject = SubjectArea.KTPL, Type = SubmissionType.ThietKe };
+            }
+        }
+        catch { }
+        finally { _isSubmitting = false; }
+    }
+
+    [Inject] MyWebTemplateV2.Client.Services.AuthService Auth { get; set; } = default!;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
 }

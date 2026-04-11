@@ -14,7 +14,7 @@ namespace MyWebTemplateV2.Client.Models
     public enum SubjectArea
     {
         Van,
-        KTPL
+        KTPL // Keep uppercase as it is an acronym commonly used this way in Vietnam
     }
 
     public class Submission
@@ -85,5 +85,12 @@ namespace MyWebTemplateV2.Client.Models
         public int Id { get; set; }
         public string Context { get; set; } = string.Empty;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
+    }
+
+    public class SiteSetting
+    {
+        [Key]
+        public string Key { get; set; } = string.Empty;
+        public string Value { get; set; } = string.Empty;
     }
 }

@@ -1,0 +1,45 @@
+@if (IsOpen)
+{
+    <div class="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-fpt-blue/80 backdrop-blur-xl animate-fpt-fade-in" @attributes="AdditionalAttributes">
+        <div class="bg-white w-full max-w-3xl shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5)] rounded-[3rem] overflow-hidden">
+            <!-- Header -->
+            <div class="bg-zinc-50 p-10 border-b border-zinc-100 flex justify-between items-center">
+                <div class="flex items-center gap-5">
+                    @if (HeaderIcon != null)
+                    {
+                        <div class="w-14 h-14 bg-fpt-blue text-white rounded-2xl flex items-center justify-center shadow-xl shadow-fpt-blue/20">
+                            @HeaderIcon
+                        </div>
+                    }
+                    <div>
+                        <h3 class="text-3xl font-black uppercase italic text-fpt-blue ">@Title</h3>
+                        @if (!string.IsNullOrEmpty(Subtitle))
+                        {
+                            <p class="text-[10px] font-black uppercase text-zinc-400 mt-1">@Subtitle</p>
+                        }
+                    </div>
+                </div>
+                <button @onclick="OnClose" class="w-12 h-12 rounded-full hover:bg-zinc-200 flex items-center justify-center transition-all group">
+                    <i class="bi bi-x-lg text-zinc-400 group-hover:text-fpt-blue"></i>
+                </button>
+            </div>
+            
+            <!-- Body -->
+            <div class="p-12">
+                @ChildContent
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string Subtitle { get; set; } = "";
+    [Parameter] public RenderFragment? HeaderIcon { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+}

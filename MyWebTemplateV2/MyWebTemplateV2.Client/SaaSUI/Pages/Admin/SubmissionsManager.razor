@@ -1,0 +1,194 @@
+@page "/admin/submissions"
+@layout MyWebTemplateV2.Client.SaaSUI.Layout.AdminLayout
+@inject HttpClient Http
+@inject ISnackbar Snackbar
+@using MudBlazor
+@using Color = MudBlazor.Color
+@using Size = MudBlazor.Size
+@using MyWebTemplateV2.Client.Models
+@using System.Net.Http.Headers
+@using MyWebTemplateV2.Client.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<MudText Typo="Typo.h4" Class="mb-6">Quản lý Bài viết Học sinh</MudText>
+
+<MudPaper Elevation="1" Class="pa-4 mb-6">
+    <div class="d-flex align-center">
+        <MudIcon Icon="@Icons.Material.Filled.Info" Color="MudBlazor.Color.Info" Class="mr-3" />
+        <MudText Typo="Typo.body2">
+            Tại đây bạn có thể quản lý tất cả các bài viết, tác phẩm sáng tác và bài thi từ hai phân môn Ngữ Văn và KTPL.
+        </MudText>
+    </div>
+</MudPaper>
+
+<MudTable Items="@_submissions" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="MudBlazor.Color.Info" Filter="@FilterFunc1">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Danh sách Bài viết</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Tìm kiếm tiêu đề, tác giả..." Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="MudBlazor.Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel SortBy="new Func<Submission, object>(x=>x.Title)">Tiêu đề</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Submission, object>(x=>x.Author)">Tác giả</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Submission, object>(x=>x.Subject)">Môn học</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="new Func<Submission, object>(x=>x.Type)">Loại</MudTableSortLabel></MudTh>
+        <MudTh>Lượt thích</MudTh>
+        <MudTh>Bình luận</MudTh>
+        <MudTh>Hành động</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Tiêu đề">@context.Title</MudTd>
+        <MudTd DataLabel="Tác giả">@context.Author</MudTd>
+        <MudTd DataLabel="Môn học">
+            <MudChip T="string" Color="@(context.Subject == SubjectArea.Van ? MudBlazor.Color.Warning : MudBlazor.Color.Info)" Size="MudBlazor.Size.Small">@context.Subject</MudChip>
+        </MudTd>
+        <MudTd DataLabel="Loại">@context.Type</MudTd>
+        <MudTd DataLabel="Lượt thích">@(context.Votes?.Count ?? 0)</MudTd>
+        <MudTd DataLabel="Bình luận">@(context.Comments?.Count ?? 0)</MudTd>
+        <MudTd DataLabel="Hành động">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="MudBlazor.Color.Primary" OnClick="@(() => EditSubmission(context))" />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="MudBlazor.Color.Error" OnClick="@(() => DeleteSubmission(context.Id))" />
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<MudDialog @bind-Visible="_showEditModal" Options="new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Medium, FullWidth = true }">
+    <TitleContent>
+        <MudText Typo="Typo.h6">Chỉnh sửa Bài viết</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField @bind-Value="_editingSub.Title" Label="Tiêu đề" Variant="Variant.Outlined" Class="mb-4" />
+        <MudTextField @bind-Value="_editingSub.Author" Label="Tác giả" Variant="Variant.Outlined" Class="mb-4" />
+        <MudSelect T="SubjectArea" @bind-Value="_editingSub.Subject" Label="Môn học" Variant="Variant.Outlined" Class="mb-4">
+            <MudSelectItem Value="SubjectArea.Van">Ngữ Văn</MudSelectItem>
+            <MudSelectItem Value="SubjectArea.KTPL">KTPL</MudSelectItem>
+        </MudSelect>
+        <MudSelect T="SubmissionType" @bind-Value="_editingSub.Type" Label="Loại bài" Variant="Variant.Outlined" Class="mb-4">
+            <MudSelectItem Value="SubmissionType.SangTac">Sáng tác</MudSelectItem>
+            <MudSelectItem Value="SubmissionType.BaiThi">Bài thi</MudSelectItem>
+            <MudSelectItem Value="SubmissionType.ThietKe">Thiết kế</MudSelectItem>
+        </MudSelect>
+        <MudTextField @bind-Value="_editingSub.Content" Label="Nội dung" Variant="Variant.Outlined" Lines="10" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => _showEditModal = false">Hủy</MudButton>
+        <MudButton Color="MudBlazor.Color.Primary" Variant="Variant.Filled" OnClick="SaveSubmission" Disabled="@_isSaving">Lưu thay đổi</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private List<Submission>? _submissions;
+    private bool _loading = true;
+    private string _searchString = "";
+    private bool _showEditModal = false;
+    private Submission _editingSub = new();
+    private bool _isSaving = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        if (!Auth.IsLoggedIn)
+        {
+            Nav.NavigateTo("/admin/login");
+            return;
+        }
+
+        if (Http.DefaultRequestHeaders.Authorization == null && Auth.Token != null)
+        {
+            Http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(Auth.Token);
+        }
+
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        _loading = true;
+        try
+        {
+            _submissions = await Http.GetFromJsonAsync<List<Submission>>("/api/submissions");
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Lỗi tải bài viết: {ex.Message}", Severity.Error);
+        }
+        _loading = false;
+    }
+
+    private bool FilterFunc1(Submission element) => FilterFunc(element, _searchString);
+
+    private bool FilterFunc(Submission element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString)) return true;
+        if (element.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        if (element.Author.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        if (element.Content.Contains(searchString, StringComparison.OrdinalIgnoreCase)) return true;
+        return false;
+    }
+
+    private void EditSubmission(Submission sub)
+    {
+        _editingSub = new Submission
+        {
+            Id = sub.Id,
+            Title = sub.Title,
+            Author = sub.Author,
+            Content = sub.Content,
+            Subject = sub.Subject,
+            Type = sub.Type,
+            CreatedAt = sub.CreatedAt,
+            ImagePath = sub.ImagePath
+        };
+        _showEditModal = true;
+    }
+
+    private async Task SaveSubmission()
+    {
+        _isSaving = true;
+        try
+        {
+            var response = await Http.PutAsJsonAsync($"/api/submissions/{_editingSub.Id}", _editingSub);
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Đã cập nhật bài viết thành công", Severity.Success);
+                _showEditModal = false;
+                await LoadData();
+            }
+            else
+            {
+                Snackbar.Add("Lỗi khi cập nhật bài viết", Severity.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
+        finally
+        {
+            _isSaving = false;
+        }
+    }
+
+    private async Task DeleteSubmission(int id)
+    {
+        bool result = await JS.InvokeAsync<bool>("confirm", "Bạn có chắc chắn muốn xóa bài viết này?");
+        if (result)
+        {
+            var response = await Http.DeleteAsync($"/api/submissions/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Đã xóa bài viết.", Severity.Info);
+                await LoadData();
+            }
+            else
+            {
+                Snackbar.Add("Lỗi khi xóa bài viết", Severity.Error);
+            }
+        }
+    }
+}

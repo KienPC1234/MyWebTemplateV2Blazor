@@ -1,20 +1,153 @@
-<div class="flex items-center gap-1">
-    <NavLink class="px-4 py-2 rounded-lg text-sm font-medium text-surface-600 hover:text-primary-600 hover:bg-primary-50 dark:text-surface-400 dark:hover:text-primary-400 dark:hover:bg-primary-950/30 transition-all" 
-             href="" Match="NavLinkMatch.All">
-        Home
-    </NavLink>
-    
-    <NavLink class="px-4 py-2 rounded-lg text-sm font-medium text-surface-600 hover:text-primary-600 hover:bg-primary-50 dark:text-surface-400 dark:hover:text-primary-400 dark:hover:bg-primary-950/30 transition-all" 
-             href="weather">
-        Weather
-    </NavLink>
+@inject NavigationManager Nav
+@using MyWebTemplateV2.Client.SaaSUI.Components
+@inject IJSRuntime JS
 
-    <a href="https://github.com/kien-phanh" target="_blank" 
-       class="px-4 py-2 rounded-lg text-sm font-medium text-surface-600 hover:text-primary-600 hover:bg-primary-50 dark:text-surface-400 dark:hover:text-primary-400 dark:hover:bg-primary-950/30 transition-all">
-        Documentation
-    </a>
-</div>
+<header class="fpt-header glass-effect">
+    <div class="fpt-nav-container">
+        <!-- Brand Signature -->
+        <a href="/" class="flex items-center gap-4 group transition-transform hover:scale-105">
+            <div class="flex gap-1">
+                <div class="w-1.5 h-6 bg-fpt-orange -skew-x-[13deg] shadow-lg shadow-fpt-orange/20 group-hover:h-8 transition-all"></div>
+                <div class="w-1.5 h-6 bg-fpt-green -skew-x-[13deg] shadow-lg shadow-fpt-green/20 group-hover:h-8 transition-all delay-75"></div>
+                <div class="w-1.5 h-6 bg-fpt-blue -skew-x-[13deg] shadow-lg shadow-fpt-blue/20 group-hover:h-8 transition-all delay-150"></div>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-xl font-black italic text-fpt-blue uppercase leading-none tracking-tighter">Nhịp đập</span>
+                <span class="text-[9px] font-black uppercase text-fpt-orange tracking-widest mt-0.5 group-hover:text-fpt-green transition-colors">FPT Education</span>
+            </div>
+        </a>
+
+        <!-- Main Desktop Navigation -->
+        <nav class="hidden lg:flex items-center gap-10">
+            <NavLink href="/" class="nav-link-modern" Match="NavLinkMatch.All">
+                <MudIcon Icon="@Icons.Material.Filled.Home" Size="Size.Small" Class="mb-1" />
+                <span>Trang chủ</span>
+            </NavLink>
+            <NavLink href="/ngoai-khoa" class="nav-link-modern">
+                <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" Size="Size.Small" Class="mb-1" />
+                <span>Ngoại khóa</span>
+            </NavLink>
+            <div class="relative group">
+                <button class="nav-link-modern flex flex-col items-center">
+                    <MudIcon Icon="@Icons.Material.Filled.MenuBook" Size="Size.Small" Class="mb-1" />
+                    <div class="flex items-center gap-1">
+                        <span>Chuyên môn</span>
+                        <MudIcon Icon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Class="group-hover:rotate-180 transition-transform" />
+                    </div>
+                </button>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 bg-white shadow-3xl rounded-[2.5rem] border border-zinc-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-[100] p-4 overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-fpt-orange/5 via-transparent to-fpt-blue/5 pointer-events-none"></div>
+                    <NavLink href="/mon-hoc/van" class="dropdown-item flex items-center gap-4 relative">
+                        <div class="w-10 h-10 rounded-2xl bg-fpt-orange/10 flex items-center justify-center text-fpt-orange">
+                            <MudIcon Icon="@Icons.Material.Filled.Edit" />
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[11px] font-black uppercase text-fpt-blue leading-tight">Ngữ Văn</span>
+                            <span class="text-[8px] font-bold text-zinc-400 uppercase tracking-wider mt-0.5">Ấn phẩm Nhái Bén</span>
+                        </div>
+                    </NavLink>
+                    <NavLink href="/mon-hoc/ktpl" class="dropdown-item flex items-center gap-4 mt-2 relative">
+                        <div class="w-10 h-10 rounded-2xl bg-fpt-blue/10 flex items-center justify-center text-fpt-blue">
+                            <MudIcon Icon="@Icons.Material.Filled.Balance" />
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[11px] font-black uppercase text-fpt-blue leading-tight">KTPL</span>
+                            <span class="text-[8px] font-bold text-zinc-400 uppercase tracking-wider mt-0.5">Kinh tế & Pháp luật</span>
+                        </div>
+                    </NavLink>
+                </div>
+            </div>
+            <NavLink href="/lien-he" class="nav-link-modern">
+                <MudIcon Icon="@Icons.Material.Filled.Email" Size="Size.Small" Class="mb-1" />
+                <span>Liên hệ</span>
+            </NavLink>
+        </nav>
+
+        <!-- Dynamic Actions -->
+        <div class="flex items-center gap-6">
+            <button class="hidden md:flex items-center gap-3 px-8 py-3.5 bg-zinc-900 text-white rounded-full font-black uppercase text-[10px] hover:shadow-2xl hover:shadow-black/20 transition-all hover:-translate-y-1 active:scale-95 border border-white/10" onclick="document.querySelector('.ai-chat-toggle-btn')?.click()">
+                <MudIcon Icon="@Icons.Material.Filled.SmartToy" Size="Size.Small" />
+                <span class="tracking-widest">AI Assistant</span>
+            </button>
+            
+            <button class="hidden md:flex items-center justify-center w-12 h-12 bg-white border border-zinc-200 rounded-2xl text-zinc-400 hover:text-fpt-orange hover:border-fpt-orange/30 transition-all" @onclick='() => Nav.NavigateTo("/admin/login")'>
+                <MudIcon Icon="@Icons.Material.Filled.AdminPanelSettings" />
+            </button>
+            
+            <!-- Mobile Menu Toggle -->
+            <button @onclick="ToggleMobileMenu" class="lg:hidden w-12 h-12 flex items-center justify-center text-fpt-blue bg-zinc-50 rounded-2xl">
+                 @if (_isMenuOpen) { <MudIcon Icon="@Icons.Material.Filled.Close" /> } else { <MudIcon Icon="@Icons.Material.Filled.Menu" /> }
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation Overlay -->
+    @if (_isMenuOpen)
+    {
+        <div class="lg:hidden absolute top-full left-0 w-full bg-white border-b border-zinc-100 p-8 shadow-2xl animate-fpt-fade-in z-[90]">
+            <nav class="flex flex-col gap-6">
+                <a href="/" @onclick="ToggleMobileMenu" class="mobile-nav-link text-fpt-blue italic">
+                    <MudIcon Icon="@Icons.Material.Filled.Home" />
+                    <span>Trang chủ</span>
+                </a>
+                <a href="/ngoai-khoa" @onclick="ToggleMobileMenu" class="mobile-nav-link text-fpt-blue italic">
+                    <MudIcon Icon="@Icons.Material.Filled.AutoAwesome" />
+                    <span>Ngoại khóa</span>
+                </a>
+                <div class="h-px bg-zinc-100 my-2"></div>
+                <a href="/mon-hoc/van" @onclick="ToggleMobileMenu" class="mobile-nav-link text-fpt-orange italic">
+                    <MudIcon Icon="@Icons.Material.Filled.Edit" />
+                    <span>Ngữ Văn</span>
+                </a>
+                <a href="/mon-hoc/ktpl" @onclick="ToggleMobileMenu" class="mobile-nav-link text-fpt-blue italic">
+                    <MudIcon Icon="@Icons.Material.Filled.Balance" />
+                    <span>KTPL</span>
+                </a>
+                <div class="h-px bg-zinc-100 my-2"></div>
+                <a href="/lien-he" @onclick="ToggleMobileMenu" class="mobile-nav-link text-fpt-green italic">
+                    <MudIcon Icon="@Icons.Material.Filled.Email" />
+                    <span>Liên hệ</span>
+                </a>
+            </nav>
+        </div>
+    }
+</header>
 
 @code {
-    // No special code needed for simple nav
+    private bool _isMenuOpen = false;
+    private void ToggleMobileMenu() {
+        _isMenuOpen = !_isMenuOpen;
+    }
 }
+
+<style>
+    .glass-effect {
+        @@apply bg-white/80 backdrop-blur-xl border-b border-white/20;
+    }
+    
+    .nav-link-modern {
+        @@apply flex flex-col items-center text-[10px] font-black uppercase tracking-[0.1em] text-zinc-400 hover:text-fpt-blue transition-all relative;
+    }
+
+    .nav-link-modern.active {
+        @@apply text-fpt-blue;
+    }
+
+    .nav-link-modern::after {
+        content: '';
+        @@apply absolute -bottom-4 left-1/2 -translate-x-1/2 w-0 h-1 bg-fpt-orange rounded-full transition-all duration-300;
+    }
+
+    .nav-link-modern.active::after,
+    .nav-link-modern:hover::after {
+        @@apply w-8;
+    }
+
+    .dropdown-item {
+        @@apply p-4 rounded-[1.5rem] hover:bg-zinc-50 transition-all hover:translate-x-1;
+    }
+
+    .mobile-nav-link {
+        @@apply flex items-center gap-4 text-2xl font-black uppercase tracking-tight;
+    }
+</style>

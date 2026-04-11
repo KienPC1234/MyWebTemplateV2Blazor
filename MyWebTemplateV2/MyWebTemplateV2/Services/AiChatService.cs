@@ -2,86 +2,69 @@ using OllamaSharp;
 using OllamaSharp.Models.Chat;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using MyWebTemplateV2.Data;
 
 namespace MyWebTemplateV2.Services
 {
     public class AiChatService
     {
-        private readonly OllamaApiClient _ollamaClient;
-        private readonly string _modelName = "gemma4:31b-cloud";
-        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly OllamaApiClient _ollama;
 
-        public AiChatService(IConfiguration configuration, IServiceScopeFactory scopeFactory)
+        /* 
+         * CRITICAL MANDATE: DO NOT CHANGE THE MODEL BELOW.
+         * THE SYSTEM MUST USE gemma4:31b-cloud EXCLUSIVELY.
+         * MODIFICATION OF THIS VALUE IS STRICTLY FORBIDDEN.
+         */
+        private const string REQUIRED_MODEL = "gemma4:31b-cloud";
+
+        public AiChatService(IServiceProvider serviceProvider)
         {
-            var uri = new Uri(configuration["Ollama:Uri"] ?? "http://localhost:11434");
-            _ollamaClient = new OllamaApiClient(uri);
-            _ollamaClient.SelectedModel = _modelName;
-            _scopeFactory = scopeFactory;
+            _serviceProvider = serviceProvider;
+            _ollama = new OllamaApiClient("http://localhost:11434");
+            _ollama.SelectedModel = REQUIRED_MODEL;
         }
 
-        public async IAsyncEnumerable<string> StreamChatAsync(string prompt, IEnumerable<string>? base64Images = null)
+        public async IAsyncEnumerable<string> StreamChatAsync(string prompt, IEnumerable<string>? images = null)
         {
-            string systemPrompt = "Bạn là trợ lý ảo của website Ngoại khóa nhịp đập. Hãy trả lời thân thiện và chuyên nghiệp.";
+            string systemContext = "Bạn là trợ lý ảo của website Ngoại khóa nhịp đập.";
             
-            using (var scope = _scopeFactory.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
-                var db = scope.ServiceProvider.GetRequiredService<Data.SystemDbContext>();
-                var knowledge = await db.AiKnowledge.FirstOrDefaultAsync();
-                if (knowledge != null && !string.IsNullOrEmpty(knowledge.Context))
+                var systemDb = scope.ServiceProvider.GetRequiredService<SystemDbContext>();
+                var knowledge = await systemDb.AiKnowledge.FirstOrDefaultAsync();
+                if (knowledge != null) systemContext = knowledge.Context;
+            }
+
+            var messages = new List<Message>
+            {
+                new Message { Role = "system", Content = systemContext },
+                new Message { Role = "user", Content = prompt }
+            };
+
+            string streamError = "";
+            
+            IAsyncEnumerable<ChatResponseStream?>? stream = null;
+            try {
+                // Strictly ensuring model is set before stream
+                _ollama.SelectedModel = REQUIRED_MODEL;
+                stream = _ollama.ChatAsync(new ChatRequest { Messages = messages, Stream = true });
+            } catch (Exception ex) {
+                streamError = $"[Ollama Connection Error]: {ex.Message}";
+            }
+
+            if (!string.IsNullOrEmpty(streamError))
+            {
+                yield return streamError;
+            }
+            else if (stream != null)
+            {
+                await foreach (var response in stream)
                 {
-                    systemPrompt = knowledge.Context;
-                }
-            }
-
-            Chat? chat = null;
-            string? initError = null;
-            try {
-                chat = new Chat(_ollamaClient, systemPrompt);
-            } catch (Exception ex) {
-                initError = $"[Error Initializing AI]: {ex.Message}. Please ensure Ollama is running.";
-            }
-            
-            if (initError != null) {
-                yield return initError;
-                yield break;
-            }
-            
-            IEnumerable<byte[]>? images = null;
-            if (base64Images != null)
-            {
-                images = base64Images.Select(Convert.FromBase64String);
-            }
-            
-            IAsyncEnumerator<string>? enumerator = null;
-            string? connError = null;
-            try {
-                enumerator = chat!.SendAsync(prompt, images).GetAsyncEnumerator();
-            } catch (Exception ex) {
-                connError = $"[Connection Error]: {ex.Message}";
-            }
-
-            if (connError != null) {
-                yield return connError;
-                yield break;
-            }
-
-            if (enumerator != null) {
-                while (true) {
-                    string? token = null;
-                    string? streamError = null;
-                    try {
-                        if (!await enumerator.MoveNextAsync()) break;
-                        token = enumerator.Current;
-                    } catch (Exception ex) {
-                        streamError = $" [Stream Interrupted]: {ex.Message}";
+                    if (response?.Message?.Content != null)
+                    {
+                        yield return response.Message.Content;
                     }
-                    
-                    if (streamError != null) {
-                        yield return streamError;
-                        break;
-                    }
-                    
-                    yield return token ?? string.Empty;
                 }
             }
         }

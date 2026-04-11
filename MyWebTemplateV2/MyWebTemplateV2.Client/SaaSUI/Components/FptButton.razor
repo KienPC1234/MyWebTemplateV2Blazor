@@ -1,0 +1,39 @@
+<button class="@GetButtonClass()" @onclick="OnClick" type="@Type" disabled="@Disabled" @attributes="AdditionalAttributes">
+    @if (ChildContent != null)
+    {
+        @ChildContent
+    }
+    else
+    {
+        <span>@Text</span>
+    }
+</button>
+
+@code {
+    [Parameter] public string Text { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnClick { get; set; }
+    [Parameter] public string Variant { get; set; } = "main"; // main, secondary, outline, ghost
+    [Parameter] public string Type { get; set; } = "button";
+    [Parameter] public bool Disabled { get; set; }
+    [Parameter] public string Class { get; set; } = "";
+    
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string GetButtonClass()
+    {
+        var baseClass = "flex items-center justify-center gap-4 transition-all duration-500 group font-black uppercase text-xs ";
+        
+        var variantClass = Variant switch
+        {
+            "main" => "px-12 py-6 bg-fpt-blue text-white rounded-[2rem] shadow-2xl shadow-fpt-blue/20 hover:bg-fpt-orange hover:shadow-fpt-orange/40 hover:-translate-y-2 active:translate-y-0",
+            "secondary" => "px-12 py-6 border-2 border-fpt-blue text-fpt-blue rounded-[2rem] hover:bg-fpt-blue hover:text-white hover:shadow-2xl hover:shadow-fpt-blue/30 hover:-translate-y-2 active:translate-y-0",
+            "outline" => "px-8 py-4 border-2 border-zinc-200 text-zinc-400 rounded-2xl hover:text-fpt-orange hover:border-fpt-orange/30 hover:shadow-lg hover:shadow-fpt-orange/10",
+            "ghost" => "text-zinc-400 hover:text-fpt-orange transition-colors",
+            _ => ""
+        };
+
+        return $"{baseClass} {variantClass} {Class}";
+    }
+}

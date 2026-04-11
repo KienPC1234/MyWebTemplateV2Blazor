@@ -1,11 +1,8 @@
 @page "/admin/login"
-@layout MyWebTemplateV2.Client.SaaSUI.Layout.MainLayout
-@inject MyWebTemplateV2.Client.Services.AuthService Auth
+@layout Layout.MainLayout
+@inject Services.AuthService Auth
 @inject NavigationManager Nav
-@using Microsoft.AspNetCore.Components.Web
-@using NeoUI.Blazor
-@using NeoUI.Blazor.Primitives
-@using NeoUI.Icons.Lucide
+@using MyWebTemplateV2.Client.SaaSUI.Components
 
 <PageTitle>Đăng nhập Quản trị | Nhịp đập</PageTitle>
 
@@ -28,7 +25,7 @@
             <!-- Brand logo -->
             <div class="flex flex-col items-center mb-12 text-center">
                 <div class="w-20 h-20 bg-fpt-blue text-white rounded-[2rem] flex items-center justify-center shadow-2xl shadow-fpt-blue/20 mb-6 group hover:rotate-12 transition-transform">
-                     <LucideIcon Name="shield-check" class="w-10 h-10" />
+                     <i class="bi bi-shield-lock text-4xl"></i>
                 </div>
                 <h2 class="text-3xl font-black text-fpt-blue uppercase italic tracking-tighter">Hệ thống <span class="text-fpt-orange">Quản trị</span></h2>
                 <p class="text-[10px] font-black uppercase tracking-widest text-zinc-400 mt-3">Secure Access Portal</p>
@@ -37,7 +34,7 @@
             @if (!string.IsNullOrEmpty(_error))
             {
                 <div class="bg-red-50 border border-red-100 p-6 rounded-3xl mb-8 flex items-start gap-4">
-                    <LucideIcon Name="alert-circle" class="w-5 h-5 text-red-500 mt-0.5" />
+                    <i class="bi bi-exclamation-triangle-fill text-red-500 text-lg mt-0.5"></i>
                     <div>
                         <h4 class="text-[10px] font-black text-red-600 uppercase tracking-widest mb-1">Lỗi đăng nhập</h4>
                         <p class="text-xs font-bold text-red-500/80 leading-relaxed">@_error</p>
@@ -46,28 +43,14 @@
             }
 
             <div class="space-y-8">
-                <div>
-                    <label class="text-[10px] font-black uppercase text-zinc-500 mb-3 block ml-4">Username</label>
-                    <div class="relative group">
-                        <div class="absolute left-6 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-fpt-orange transition-colors">
-                            <LucideIcon Name="user" class="w-5 h-5" />
-                        </div>
-                        <input @bind="_username" class="fpt-login-input w-full pl-16" placeholder="Admin username..." />
-                    </div>
-                </div>
+                <FptInput Label="Username" @bind-Value="_username" Placeholder="Admin username..." BootstrapIcon="person">
+                </FptInput>
                 
-                <div>
-                    <label class="text-[10px] font-black uppercase text-zinc-500 mb-3 block ml-4">Password</label>
-                    <div class="relative group">
-                        <div class="absolute left-6 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-fpt-orange transition-colors">
-                            <LucideIcon Name="lock" class="w-5 h-5" />
-                        </div>
-                        <input @bind="_password" type="password" @onkeyup="HandleKeyUp" class="fpt-login-input w-full pl-16" placeholder="••••••••" />
-                    </div>
-                </div>
+                <FptInput Label="Password" @bind-Value="_password" Type="password" OnKeyUp="HandleKeyUp" Placeholder="••••••••" BootstrapIcon="lock">
+                </FptInput>
                 
                 <div class="pt-4">
-                    <button @onclick="HandleLogin" disabled="@_isLoggingIn" class="btn-fpt w-full py-5 text-sm flex items-center justify-center gap-3 group">
+                    <FptButton OnClick="HandleLogin" Disabled="@_isLoggingIn" Class="w-full py-5 text-sm">
                         @if (_isLoggingIn)
                         {
                             <Spinner />
@@ -76,14 +59,14 @@
                         else
                         {
                             <span>Xác nhận truy cập</span>
-                            <LucideIcon Name="arrow-right" class="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+                            <i class="bi bi-arrow-right ms-2"></i>
                         }
-                    </button>
+                    </FptButton>
                 </div>
                 
                 <div class="flex justify-between items-center pt-8 border-t border-zinc-50">
                     <button @onclick='() => Nav.NavigateTo("/")' class="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-fpt-blue flex items-center gap-2">
-                        <LucideIcon Name="chevron-left" class="w-4 h-4" /> Quay lại trang chủ
+                        <i class="bi bi-chevron-left"></i> Quay lại trang chủ
                     </button>
                     <span class="text-[10px] font-black text-zinc-300 uppercase">Nexus v3.2</span>
                 </div>
@@ -96,7 +79,18 @@
     private string _username = "";
     private string _password = "";
     private string? _error;
-    private bool _isLoggingIn = false;
+    private bool _isLoggingIn;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitializeAsync();
+        if (Auth.IsLoggedIn)
+        {
+            Nav.NavigateTo("/admin/dashboard");
+        }
+    }
+
+    [Inject] IJSRuntime Js { get; set; } = default!;
 
     private async Task HandleKeyUp(KeyboardEventArgs e)
     {
@@ -140,21 +134,3 @@
         }
     }
 }
-
-<style>
-    .fpt-login-input {
-        background: #f8f8f8;
-        border: 2px solid transparent;
-        padding: 1.25rem 1.5rem;
-        font-size: 0.875rem;
-        font-weight: 700;
-        border-radius: 1.5rem;
-        outline: none;
-        transition: all 0.3s;
-    }
-    .fpt-login-input:focus {
-        border-color: oklch(var(--fpt-orange));
-        background: white;
-        box-shadow: 0 15px 40px -15px oklch(var(--fpt-orange) / 0.15);
-    }
-</style>
